@@ -131,6 +131,10 @@ mark{background:color-mix(in srgb,var(--acc) 35%,transparent);color:inherit;bord
 .win.town{background:linear-gradient(160deg,#173d2a,#0f1a14)}.win.maf{background:linear-gradient(160deg,#4a0f17,#160a0c)}
 .st{border-collapse:collapse;width:100%;font-size:14px}.st th,.st td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}.st th:first-child,.st td:first-child{text-align:left}.st th{color:var(--mute);font-weight:600;font-size:13px}.scroll{overflow-x:auto}
 .wrap{position:relative}.credit{position:absolute;top:max(12px,env(safe-area-inset-top));right:16px;font-size:13px;color:var(--mute);background:color-mix(in srgb,var(--acc) 10%,#0b0e13);border:1px solid var(--line);border-radius:999px;padding:5px 12px;z-index:4}
+.games{display:grid;gap:14px;margin:14px 0}.gcard{display:block;width:100%;text-align:left;padding:0;border-radius:20px;overflow:hidden;border:1px solid var(--line);background:var(--card)}
+.gcard .pic{display:block;aspect-ratio:300/130;background:var(--b);color:var(--a)}.gcard .pic svg{width:100%;height:100%;display:block}
+.gcard .tx{display:block;padding:14px 16px 16px}.gcard small{color:var(--a);font-weight:800}.gcard h2{margin:4px 0 6px}.gcard .go{display:inline-flex;margin-top:12px;padding:10px 18px;border-radius:12px;background:var(--a);color:#111;font-weight:800}
+.gcard.soon{opacity:.6}
 .qr{width:200px;margin:12px auto;background:#fff;border-radius:12px;padding:6px}.qr svg{display:block;width:100%;height:auto}
 .sep{height:1px;background:var(--line);margin:14px 0}
 details summary{cursor:pointer;font-weight:700;min-height:40px;display:flex;align-items:center}
@@ -679,6 +683,7 @@ orbit:`<rect width="300" height="150" fill="currentColor" opacity=".04"/><g fill
 plague:`<rect width="300" height="150" fill="currentColor" opacity=".05"/><circle cx="226" cy="44" r="20" fill="#0a0605" stroke="currentColor" stroke-width="3"/><g stroke="currentColor" stroke-width="2">${Array.from({length:12},(_,i)=>{const a=i*Math.PI/6;return `<line x1="${226+Math.cos(a)*25}" y1="${44+Math.sin(a)*25}" x2="${226+Math.cos(a)*33}" y2="${44+Math.sin(a)*33}"/>`}).join('')}</g><path d="M0 150V108h30V92l12-12 12 12v16h24v-30h10l14-40 14 40h10v30h30V96l14-10 14 10v12h24V90h20v18h22v42z" fill="#1d1210"/><path d="M60 40l6 4 6-4M90 30l5 3 5-3M40 56l5 3 5-3" stroke="#d9cfc2" stroke-width="2" fill="none" opacity=".6"/>`,
 vamp:`<rect width="300" height="150" fill="currentColor" opacity=".05"/><circle cx="210" cy="46" r="30" fill="#f1e3e6" opacity=".85"/><path d="M0 150V118l60-28 50 18 50-40 60 30 80-20v72z" fill="#1c1016"/><path d="M128 84V50h8v-8h6v8h8V40l6-10 6 10v44h10V60h12v24z" fill="#0b0609"/><rect x="152" y="54" width="4" height="7" fill="currentColor"/><g fill="#0b0609">${[[80,40],[100,28],[250,70],[60,60]].map(([x,y])=>`<path d="M${x} ${y}q4-5 8 0q4-5 8 0l-8 4z"/>`).join('')}</g>`,
 ice:`<rect width="300" height="150" fill="currentColor" opacity=".04"/><path d="M0 40q50-25 100 0t100 0t100-5" stroke="#5fe0b0" stroke-width="10" fill="none" opacity=".35"/><path d="M0 60q60-20 120 0t180-8" stroke="#7fb8ff" stroke-width="6" fill="none" opacity=".25"/><rect x="0" y="118" width="300" height="32" fill="#e6f0f5" opacity=".25"/><path d="M60 120a30 22 0 0160 0z" fill="#1a2630"/><path d="M140 120a24 18 0 0148 0z" fill="#1a2630"/><rect x="200" y="96" width="50" height="24" fill="currentColor" opacity=".85"/><rect x="210" y="102" width="8" height="6" fill="#0a1116"/><rect x="226" y="102" width="8" height="6" fill="#0a1116"/><path d="M265 120V60m-8 10h16m-12 12h8" stroke="#cfd8de" stroke-width="2"/><path d="M30 128l6-6 6 6 10-2 2 6-24 2z" fill="#0a1116"/>`,
+bunker:`<rect width="300" height="150" fill="currentColor" opacity=".05"/><circle cx="240" cy="36" r="14" fill="currentColor" opacity=".5"/><path d="M0 112q75-14 150-6t150-4v48H0z" fill="#221c12"/><path d="M95 112v-26a55 34 0 01110 0v26z" fill="#2e2618"/><circle cx="150" cy="96" r="22" fill="#14110b" stroke="currentColor" stroke-width="5"/><path d="M150 76v40M130 96h40" stroke="currentColor" stroke-width="3"/><circle cx="150" cy="96" r="6" fill="currentColor"/><path d="M30 120l8-14 8 14zM250 118l10-18 10 18z" fill="#3a3020"/>`,
 hotel:`<rect width="300" height="150" fill="currentColor" opacity=".05"/><path d="M0 110L70 30l50 50 40-44 70 74 70-60v100H0z" fill="#1a2427"/><path d="M70 30l14 16-14-4-10 6zM160 36l16 18-16-4-12 8z" fill="#e8f2f2" opacity=".8"/><path d="M110 150v-44l40-26 40 26v44z" fill="#2a2018"/><path d="M104 108l46-32 46 32" stroke="currentColor" stroke-width="4" fill="none"/><g fill="currentColor">${[122,144,166].map(x=>`<rect x="${x}" y="114" width="12" height="12" rx="1"/>`).join('')}</g><rect x="0" y="140" width="300" height="10" fill="#e8f2f2" opacity=".3"/>`
 };
 const pic=id=>`<svg viewBox="0 0 300 150" preserveAspectRatio="xMidYMid slice">${PIC[id]||''}</svg>`;
@@ -687,7 +692,7 @@ const pic=id=>`<svg viewBox="0 0 300 150" preserveAspectRatio="xMidYMid slice">$
 let S=null, mode=null, isHost=false;
 const me={pid:LS.get('maf.pid',null)||rid(), name:LS.get('maf.name','')};
 LS.set('maf.pid',me.pid);
-const ui={screen:'home',tab:'game',scen:'mall',open:null,draft:'',speaker:null,tts:false,listening:false,partial:'',teamSel:[],flip:{},err:'',skew:0,confirm:null,localNames:[],code:'',spoken:null,pend:[]};
+const ui={page:'hub',screen:'home',tab:'game',scen:'mall',open:null,draft:'',speaker:null,tts:false,listening:false,partial:'',teamSel:[],flip:{},err:'',skew:0,confirm:null,localNames:[],code:'',spoken:null,pend:[]};
 const net={ready:true,peer:null,conns:new Map(),host:null,code:'',retry:null,status:''};const PFX='mafsurv-k7q-';let myPres={};
 let myPk=null,myA={},mySp=[];
 
@@ -758,16 +763,24 @@ function reconnectSoon(){if(net.retry||!S||isHost||S.local)return;net.retry=setT
 setInterval(()=>{if(!S||S.local)return;
   if(isHost){for(const {c} of net.conns.values())try{if(c.open)c.send({t:'h'})}catch(e){}return}
   if(mode==='net'&&net.host&&net.last&&Date.now()-net.last>8000&&!net.retry){net.status='Связь с телефоном создателя прервалась — переподключаюсь…';try{net.host.close()}catch(e){}net.host=null;render();reconnectSoon()}},3000);
+const SITE='Вечер игр';
+const GAMES={mafia:{t:'Мафия: Выживание',mode:'mafia',min:4,pic:'vamp',acc:'#ff5c7a',bg:'#120a10',sub:'Найди предателей и выживи',d:'Классическая мафия, но вы ещё и спасаетесь от катастрофы: кризисы, общий инвентарь, тайные вылазки отрядов. Две цели — вычислить мафию и дожить до эвакуации.'},
+  survive:{t:'Выживание',mode:'coop',min:3,pic:'ice',acc:'#8fe3d2',bg:'#0b1316',sub:'Все вместе против катастрофы',d:'Мафии нет. У каждого персонаж, здоровье и две тайные задачи. Днём решаете кризисы, ночью дежурите, лечите и ищете припасы. Задача — продержаться до эвакуации.'},
+  bunker:{t:'Бункер',soon:1,pic:'bunker',acc:'#f2b84b',bg:'#14110b',sub:'Мест на всех не хватит',d:'Скоро. Карты характеристик, споры, кто войдёт в бункер, и жизнь тех, кто остался снаружи.'}};
+function pageFromHash(){const h=(location.hash||'').slice(1);return GAMES[h]&&!GAMES[h].soon?h:'hub'}
+function setTitle(){try{document.title=S?(COOP()?GAMES.survive.t:GAMES.mafia.t):ui.page!=='hub'?GAMES[ui.page].t:SITE}catch(e){}}
+function goPage(p){ui.page=p;ui.err='';try{if(p==='hub')history.replaceState(null,'',location.pathname+location.search);else location.hash=p}catch(e){}window.scrollTo(0,0);render()}
 function initNet(){
+  ui.page=pageFromHash();
   render();
   const h=(location.hash||'').match(/^#g-([a-z0-9]{3,8})$/);
   if(h){const hs=LS.get('maf.host',null);if(hs&&hs.code===h[1]&&hs.S&&hs.S.hostPid===me.pid&&hs.S.phase!=='end'){resumeHost(hs.S);return}
     if(me.name)joinGame(h[1],true);else{ui.code=h[1];render()}}
-  else{const lc=LS.get('maf.local',null);if(lc&&lc.phase&&lc.phase!=='end'){ui.resume=true;render()}}
+  else{const lc=LS.get('maf.local',null);if(lc&&lc.phase&&lc.phase!=='end'){ui.resume=lc.mode||'mafia';render()}}
 }
 
 /* ---------- engine (host) ---------- */
-function newState(code,local){return {v:1,gid:rid(6),rev:0,code:code||'',local:!!local,hostPid:local?null:me.pid,scen:ui.scen,phase:'lobby',pn:0,pk:0,players:[],kicked:[],day:0,evac:4,meters:{a:4,b:4,c:4},inv:{},inp:{},log:[],chron:[],priv:{},votes:[],missions:[],crisis:null,timer:null,deck:[],lead:[],li:0,lastHeal:null,shield:false,res:null,win:null,ai:null,lq:null,opts:{},hostNow:Date.now()}}
+function newState(code,local){return {v:1,mode:ui.page==='survive'?'coop':'mafia',gid:rid(6),rev:0,code:code||'',local:!!local,hostPid:local?null:me.pid,scen:ui.scen,phase:'lobby',pn:0,pk:0,players:[],kicked:[],day:0,evac:4,meters:{a:4,b:4,c:4},inv:{},inp:{},log:[],chron:[],priv:{},votes:[],missions:[],crisis:null,timer:null,deck:[],lead:[],li:0,lastHeal:null,shield:false,res:null,win:null,ai:null,lq:null,opts:{},hostNow:Date.now()}}
 const ADV=['intro','cres','discuss','vres','morning'],WAIT=['deal','crisis','team','mission','vote','night'];
 const pool=()=>S.phase==='deal'?S.players:alive();
 const goN=()=>pool().filter(p=>S.inp[p.pid]?.go).length;
@@ -1051,8 +1064,8 @@ async function joinGame(code,auto){code=String(code||'').toLowerCase().replace(/
   ui.tries=0;mode='net';isHost=false;ui.screen='game';ui.err='';try{location.hash='g-'+code}catch(e){}
   if(!S){render()}}
 function needName(){const v=clean($('#nm')?.value||me.name).slice(0,20);if(!v){ui.err='Сначала введите имя';render();return false}me.name=v;LS.set('maf.name',v);return true}
-function leave(){if(net.retry){clearTimeout(net.retry);net.retry=null}if(isHost)LS.del('maf.host');try{net.host&&net.host.close()}catch(e){}try{net.peer&&net.peer.destroy()}catch(e){}net.peer=null;net.host=null;net.conns=new Map();net.status='';S=null;mode=null;isHost=false;ui.screen='home';ui.tab='game';try{history.replaceState(null,'',location.pathname+location.search)}catch(e){try{location.hash=''}catch(_){}}render()}
-function startLocal(resume){mode='local';isHost=false;ui.screen='game';if(resume){S=LS.get('maf.local',null)}if(!S||!S.local){S=newState('',true)}render()}
+function leave(){const back=S?(S.mode==='coop'?'survive':'mafia'):ui.page;if(net.retry){clearTimeout(net.retry);net.retry=null}if(isHost)LS.del('maf.host');try{net.host&&net.host.close()}catch(e){}try{net.peer&&net.peer.destroy()}catch(e){}net.peer=null;net.host=null;net.conns=new Map();net.status='';S=null;mode=null;isHost=false;ui.screen='home';ui.tab='game';ui.page=back;try{location.hash=back}catch(e){}render()}
+function startLocal(resume){mode='local';isHost=false;ui.screen='game';if(resume){S=LS.get('maf.local',null);if(S&&S.local&&!S.mode)S.mode='mafia'}if(!S||!S.local){S=newState('',true)}render()}
 
 /* ---------- mic ---------- */
 const NSR=window.SpeechRecognition||window.webkitSpeechRecognition;let rec=null;
@@ -1065,7 +1078,7 @@ function micToggle(){
 
 /* ---------- AI ---------- */
 function narr(){if(!S)return '';const s=sc(),ph=S.phase;
-  switch(ph){case 'intro':return s.intro;
+  switch(ph){case 'intro':return COOP()?coopIntro(s):s.intro;
   case 'crisis':return `День ${S.day}. ${crDef().t}. ${crDef().x}`;
   case 'team':return `Лидер дня, ${nm(S.crisis.lead)}, собирает отряд из ${teamSize()} человек.`;
   case 'mission':return `Отряд уходит: ${S.crisis.team.map(nm).join(', ')}. ${COOP()?'Каждый тайно решает: выложиться или беречь себя.':'Каждый тайно решает, помочь или подвести.'}`;
@@ -1107,22 +1120,23 @@ function phaseSound(){if(!S||!SND.on||ui.sndPk===S.pk)return;const first=ui.sndP
   else if(ph==='vres')SND.sting(S.res&&S.res.pid?'death':'phase');else if(ph==='end'){const p=P(me.pid);SND.sting(!S.local&&p&&SIDE(p.role)!==S.win.side?'lose':'win')}else if(ph!=='lobby')SND.sting('phase')}
 
 /* ---------- stats ---------- */
-function recordStats(){if(!S||!S.final||!S.win)return;const st=LS.get('maf.stats',{p:{},g:[],gids:[]});if(st.gids.includes(S.gid))return;
-  st.gids.push(S.gid);st.gids=st.gids.slice(-60);const w=S.win.side;
-  S.players.forEach(p=>{const k=p.name.trim().toLowerCase();const r=st.p[k]=st.p[k]||{n:p.name,g:0,w:0,maf:0,mw:0,goals:0,pts:0,snipe:0};r.n=p.name;
-    r.g++;if(SIDE(p.role)===w)r.w++;if(SIDE(p.role)!=='town'){r.maf++;if(SIDE(p.role)===w)r.mw++}if(S.final.goals[p.pid])r.goals++;r.pts+=S.final.pts[p.pid]||0;r.snipe+=S.final.snipe[p.pid]||0});
-  st.g.unshift({d:new Date().toLocaleDateString('ru-RU'),t:sc().title+(COOP()?' (выживание)':''),w:COOP()?(w==='town'?'все выжили':'не выжили'):w==='town'?'выжившие':w==='man'?'маньяк':sc().roles.maf.pl.toLowerCase()});st.g=st.g.slice(0,20);LS.set('maf.stats',st)}
-function statsHtml(){const st=LS.get('maf.stats',{p:{},g:[]});const rows=Object.values(st.p).sort((a,b)=>b.pts-a.pts);
-  if(!rows.length)return `<div class="box"><div class="lbl">Статистика компании</div><p class="small mute">Пока пусто. После первой партии здесь появится рейтинг: кто сколько выигрывал, сколько раз был мафией и кто лучше всех вычисляет врагов. Данные хранятся на этом телефоне.</p></div>`;
-  return `<div class="box"><div class="lbl">Рейтинг компании · хранится на этом телефоне</div><div class="scroll"><table class="st"><thead><tr><th>Игрок</th><th>Очки</th><th>Игр</th><th>Побед</th><th>Мафией</th><th>Цели</th><th>Снайп.</th></tr></thead><tbody>${rows.map((r,i)=>`<tr><td>${i<3?['1.','2.','3.'][i]+' ':''}${esc(r.n)}</td><td>${r.pts}</td><td>${r.g}</td><td>${Math.round(r.w/r.g*100)}%</td><td>${r.maf}${r.maf?' ('+r.mw+' поб.)':''}</td><td>${r.goals}</td><td>${r.snipe}</td></tr>`).join('')}</tbody></table></div>
-  <p class="tiny mute">«Снайп.» — голоса против мафии и маньяка.</p></div>
-  ${st.g.length?`<div class="box"><div class="lbl">Последние партии</div>${st.g.map(g=>`<p class="small">${esc(g.d)} · ${esc(g.t)} · ${/выжил/.test(g.w)?esc(g.w):'победили '+esc(g.w)}</p>`).join('')}</div>`:''}
-  <button class="btn ghost" style="width:100%" data-act="resetStats">${ui.rs?'Точно очистить?':'Очистить статистику'}</button>`}
+function loadStats(){const st=LS.get('maf.stats',null)||{};if(!st.v){const old=st;const nw={v:2,gids:old.gids||[],m:{mafia:{p:old.p||{},g:old.g||[]},coop:{p:{},g:[]}}};LS.set('maf.stats',nw);return nw}return st}
+function recordStats(){if(!S||!S.final||!S.win)return;const st=loadStats();if(st.gids.includes(S.gid))return;
+  st.gids.push(S.gid);st.gids=st.gids.slice(-80);const w=S.win.side,md=COOP()?'coop':'mafia',M=st.m[md]=st.m[md]||{p:{},g:[]};
+  S.players.forEach(p=>{const k=p.name.trim().toLowerCase();const r=M.p[k]=M.p[k]||{n:p.name,g:0,w:0,maf:0,mw:0,goals:0,pts:0,snipe:0};r.n=p.name;
+    r.g++;if(SIDE(p.role)===w)r.w++;if(SIDE(p.role)!=='town'){r.maf++;if(SIDE(p.role)===w)r.mw++}if(S.final.goals[p.pid])r.goals++;r.pts+=S.final.pts[p.pid]||0;r.snipe+=(S.final.snipe||{})[p.pid]||0});
+  M.g.unshift({d:new Date().toLocaleDateString('ru-RU'),t:sc().title,w:COOP()?(w==='town'?'все выжили':'не выжили'):w==='town'?'победили выжившие':w==='man'?'победил маньяк':'победили '+sc().roles.maf.pl.toLowerCase()});M.g=M.g.slice(0,20);LS.set('maf.stats',st)}
+function statsHtml(md){md=md||(S&&COOP()?'coop':'mafia');const st=loadStats(),M=st.m[md]||{p:{},g:[]},isC=md==='coop',title=isC?GAMES.survive.t:GAMES.mafia.t;const rows=Object.values(M.p).sort((a,b)=>b.pts-a.pts);
+  if(!rows.length)return `<div class="box"><div class="lbl">${esc(title)}</div><p class="small mute">Пока пусто. После первой партии здесь появится рейтинг компании. Данные хранятся на этом телефоне.</p></div>`;
+  return `<div class="box"><div class="lbl">${esc(title)} · рейтинг на этом телефоне</div><div class="scroll"><table class="st"><thead><tr><th>Игрок</th><th>Очки</th><th>Игр</th><th>${isC?'Выжили':'Побед'}</th>${isC?'':'<th>Мафией</th>'}<th>Цели</th>${isC?'':'<th>Снайп.</th>'}</tr></thead><tbody>${rows.map((r,i)=>`<tr><td>${i<3?['1.','2.','3.'][i]+' ':''}${esc(r.n)}</td><td>${r.pts}</td><td>${r.g}</td><td>${Math.round(r.w/r.g*100)}%</td>${isC?'':`<td>${r.maf}${r.maf?' ('+r.mw+' поб.)':''}</td>`}<td>${r.goals}</td>${isC?'':`<td>${r.snipe}</td>`}</tr>`).join('')}</tbody></table></div>
+  ${isC?'':'<p class="tiny mute">«Снайп.» — голоса против мафии и маньяка.</p>'}
+  ${M.g.length?`<div class="lbl" style="margin-top:10px">Последние партии</div>${M.g.slice(0,8).map(g=>`<p class="small">${esc(g.d)} · ${esc(g.t)} · ${esc(g.w)}</p>`).join('')}`:''}</div>
+  <button class="btn ghost" style="width:100%" data-act="resetStats">${ui.rs?'Точно очистить всю статистику?':'Очистить статистику'}</button>`}
 
 /* ---------- share card ---------- */
 async function shareCard(){if(!S||!S.win)return;const s=sc(),F=S.final||{pts:{},awards:[]},W=1080,H=1350,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
   x.fillStyle=s.bg;x.fillRect(0,0,W,H);const gr=x.createRadialGradient(W/2,0,50,W/2,0,900);gr.addColorStop(0,s.acc+'55');gr.addColorStop(1,'transparent');x.fillStyle=gr;x.fillRect(0,0,W,H);
-  x.fillStyle=s.acc;x.font='bold 44px Manrope, sans-serif';x.fillText('МАФИЯ: ВЫЖИВАНИЕ · '+s.title.toUpperCase(),70,110);
+  x.fillStyle=s.acc;x.font='bold 44px Manrope, sans-serif';x.fillText((COOP()?'ВЫЖИВАНИЕ':'МАФИЯ: ВЫЖИВАНИЕ')+' · '+s.title.toUpperCase(),70,110);
   const t=COOP()?(S.win.side==='town'?'Мы выжили':'Группа не выжила'):S.win.side==='town'?'Выжившие победили':S.win.side==='man'?'Маньяк победил':s.roles.maf.pl+' победили';
   x.fillStyle='#fff';x.font='bold 86px "Russo One", sans-serif';x.fillText(t,70,230);
   x.font='34px Manrope, sans-serif';x.fillStyle='#cfd3da';x.fillText('Дней: '+S.day+' · игроков: '+S.players.length,70,290);
@@ -1144,7 +1158,7 @@ function render(){
   const app=$('#app');if(!app)return;
   if(pDown){pPend=true;return}
   const a=document.activeElement,fid=a&&a.id,ss=a&&a.selectionStart;
-  const s=sc();document.body.style.setProperty('--acc',s.acc);document.body.style.setProperty('--sbg',s.bg);
+  const s=sc();const hubAcc=!S&&ui.page==='hub';document.body.style.setProperty('--acc',hubAcc?'#b5d94a':s.acc);document.body.style.setProperty('--sbg',hubAcc?'#0d0f14':s.bg);setTitle();
   let h;
   if(!S)h=homeView();else if(S.phase==='lobby')h=lobbyView();else h=gameView();
   document.body.classList.toggle('night',!!S&&S.phase==='night');
@@ -1157,7 +1171,13 @@ function render(){
 }
 
 function scenStrip(sel,act){return `<div class="strip">${SCEN.map(x=>`<button class="sc ${sel===x.id?'on':''}" style="--a:${x.acc};--b:${x.bg}" data-act="${act}" data-v="${x.id}"><span class="pic">${pic(x.id)}</span><span class="tx"><small>${esc(x.sub)}</small><h3>${esc(x.title)}</h3></span></button>`).join('')}</div>`}
-function scenDetail(id){const x=SCEN.find(s=>s.id===id);if(!x)return '';const r=x.roles;
+const CINT={mall:[' Но среди вас',' Нужно продержаться.'],tower:[' Но по ночам',' Нужно продержаться.'],train:[' Но в составе',' Нужно продержаться до спасения.'],orbit:[' Бортовой ИИ',' Нужно продержаться.'],plague:[' Это не только чума',' Обоз с хлебом и лекарями обещан через несколько дней.'],hotel:[' Утром в номере',' Спасатели пробьются через несколько дней.'],vamp:[' Старики шепчут',' Санный обоз из города придёт через несколько дней.']};
+function coopIntro(x){const c=CINT[x.id];if(!c)return x.intro;const i=x.intro.indexOf(c[0]);return i<0?x.intro:x.intro.slice(0,i)+c[1]}
+function scenDetail(id,md){const x=SCEN.find(s=>s.id===id);if(!x)return '';const r=x.roles;
+  if(md==='coop')return `<div class="box acc"><h3>${esc(x.title)}</h3><p class="small mute">${esc(x.sub)}</p><p>${esc(coopIntro(x))}</p>
+  <div class="lbl" style="margin-top:10px">Что держать на плаву</div><div class="inv">${x.m.map(m=>`<span class="chip"><svg width="14" height="14"><use href="#i-${m[1]}"/></svg>${esc(m[0])}</span>`).join('')}</div>
+  <div class="lbl" style="margin-top:10px">Ночная угроза</div><p class="small">${esc(THREAT[x.id]||'')}</p>
+  <div class="lbl" style="margin-top:10px">Кризисы (${x.cr.length})</div><p class="small mute">${x.cr.map(c=>esc(c.t)).join(' · ')}</p></div>`;
   return `<div class="box acc"><h3>${esc(x.title)}</h3><p class="small mute">${esc(x.sub)}</p><p>${esc(x.intro)}</p>
   <div class="sep"></div><div class="lbl">Роли</div>
   <p class="small"><b style="color:#ff8a90">${esc(r.maf.n)}</b> — ${esc(r.maf.d)}</p>
@@ -1166,10 +1186,21 @@ function scenDetail(id){const x=SCEN.find(s=>s.id===id);if(!x)return '';const r=
   <div class="lbl" style="margin-top:10px">Возможные находки</div><div class="inv">${Object.values(x.items).map(i=>`<span class="chip">${esc(i)}</span>`).join('')}</div>
   <div class="lbl" style="margin-top:10px">Кризисы</div><p class="small mute">${x.cr.map(c=>esc(c.t)).join(' · ')}</p></div>`}
 
-function homeView(){
-  return `<div class="hero"><h1>Мафия:<br><span>Выживание</span></h1><p class="mute">Найдите мафию и выживите вместе. Каждый играет со своего телефона, сидя в одной комнате. Ни регистрации, ни ведущего. Мафия от 4 игроков, режим чистого выживания от 3.</p></div>
+function homeView(){return ui.page==='hub'?hubView():gameHome(ui.page)}
+function hubView(){
+  return `<div class="hero"><h1>${esc(SITE)}</h1><p class="mute">Игры для компании в одной комнате. Каждый играет со своего телефона, без регистрации и без ведущего.</p></div>
+  <div class="games">${Object.entries(GAMES).map(([k,g])=>`<button class="gcard ${g.soon?'soon':''}" style="--a:${g.acc};--b:${g.bg}" ${g.soon?'disabled':`data-act="page" data-v="${k}"`}><span class="pic">${pic(g.pic)}</span><span class="tx"><small>${esc(g.sub)}${g.min?' · от '+g.min+' игроков':''}</small><h2>${esc(g.t)}</h2><span class="small mute" style="display:block">${esc(g.d)}</span>${g.soon?'<span class="chip" style="margin-top:8px">Скоро</span>':`<span class="go">Открыть</span>`}</span></button>`).join('')}</div>
+  <div class="box"><div class="lbl">Есть код от друзей?</div><input id="nm" maxlength="20" placeholder="Ваше имя" value="${esc(me.name)}" autocomplete="off" style="margin-bottom:8px">
+  <div class="row"><input id="code" maxlength="8" placeholder="Код игры" value="${esc(ui.code)}" style="flex:1 1 120px;text-transform:uppercase" autocomplete="off"><button class="btn pri" data-act="join">Войти</button></div>
+  ${ui.err?`<p class="small" style="color:${/…$/.test(ui.err)?'var(--mute)':'#ff8a90'}">${esc(ui.err)}</p>`:''}
+  <p class="tiny mute">Код сам приведёт в нужную игру.</p></div>
+  <details class="box"><summary>Статистика компании</summary>${statsHtml('mafia')}${statsHtml('coop')}</details>`}
+function gameHome(pg){const g=GAMES[pg],md=g.mode;const isC=md==='coop';
+  return `<button class="btn ghost sm" data-act="page" data-v="hub" style="margin-top:6px">← Все игры</button>
+  <div class="hero"><h1>${isC?'<span>Выживание</span>':'Мафия:<br><span>Выживание</span>'}</h1><p class="mute">${esc(g.d)} От ${g.min} игроков.</p></div>
+  <div class="lbl">Истории</div>
   ${scenStrip(ui.scen,'pickScenHome')}
-  ${scenDetail(ui.scen)}
+  ${scenDetail(ui.scen,md)}
   <div class="box" id="enter"><div class="lbl">Ваше имя</div><input id="nm" maxlength="20" placeholder="Например, Куаныш" value="${esc(me.name)}" autocomplete="off">
   ${ui.err?`<p class="small" style="color:${/…$/.test(ui.err)?'var(--mute)':'#ff8a90'}">${esc(ui.err)}</p>`:''}
   <div class="sep"></div>
@@ -1177,36 +1208,34 @@ function homeView(){
   <div class="row" style="margin-top:10px"><input id="code" maxlength="8" placeholder="Код игры" value="${esc(ui.code)}" style="flex:1 1 120px;text-transform:uppercase" autocomplete="off"><button class="btn" data-act="join">Войти</button></div>
   <p class="tiny mute">Телефоны соединяются напрямую. Надёжнее всего, когда все в одном Wi‑Fi.</p>
   <div class="sep"></div>
-  <div class="row"><button class="btn ghost" data-act="local">Один телефон на всех</button>${ui.resume?'<button class="btn ghost" data-act="localResume">Продолжить партию</button>':''}</div></div>
-  <details class="box"><summary>Статистика компании</summary>${statsHtml()}</details>
-  ${rulesHtml()}`}
+  <div class="row"><button class="btn ghost" data-act="local">Один телефон на всех</button>${ui.resume===md?'<button class="btn ghost" data-act="localResume">Продолжить партию</button>':''}</div></div>
+  <details class="box"><summary>Статистика: ${esc(g.t)}</summary>${statsHtml(md)}</details>
+  ${isC?coopRules():rulesHtml()}`}
 
 const gameUrl=()=>location.origin+location.pathname+'#g-'+S.code;
 function qrSvg(t){try{if(typeof qrcode!=='function')return '';const q=qrcode(0,'M');q.addData(t);q.make();return q.createSvgTag({cellSize:5,margin:2,scalable:true})}catch(e){return ''}}
-async function shareLink(){const u=gameUrl();try{if(navigator.share){await navigator.share({title:'Мафия: Выживание',text:'Заходи в игру, код '+S.code.toUpperCase(),url:u});return}}catch(e){if(e&&e.name==='AbortError')return}
+async function shareLink(){const u=gameUrl();try{if(navigator.share){await navigator.share({title:COOP()?GAMES.survive.t:GAMES.mafia.t,text:'Заходи в игру «'+(COOP()?GAMES.survive.t:GAMES.mafia.t)+'», код '+S.code.toUpperCase(),url:u});return}}catch(e){if(e&&e.name==='AbortError')return}
   try{await navigator.clipboard.writeText(u);toast('Ссылка скопирована')}catch(e){toast(u)}}
 
 function lobbyView(){const s=sc(),host=isHost||S.local;
   let h=netBanner()+`<div style="display:flex;justify-content:flex-start">${toggles()}</div><div class="hero" style="padding-top:6px">`;
-  if(!S.local)h+=`<div class="lbl" style="text-align:center">Код игры</div><div class="code">${esc(S.code.toUpperCase())}</div>
+  if(!S.local)h+=`<div class="lbl" style="text-align:center">${esc(COOP()?GAMES.survive.t:GAMES.mafia.t)} · код игры</div><div class="code">${esc(S.code.toUpperCase())}</div>
   <div class="qr">${qrSvg(gameUrl())}</div>
   <p class="small mute" style="text-align:center">Друзья наводят камеру на QR-код или открывают этот сайт и вводят код. Ведущего нет: создатель играет как все. ${isHost?'Ваш телефон держит связь игры — не закрывайте страницу и не блокируйте экран надолго.':''}</p>
   <button class="btn" style="width:100%" data-act="share">Отправить ссылку друзьям</button>`;
-  else h+=`<h2>Один телефон</h2><p class="small mute">Добавьте всех игроков. Тайные шаги (карты, ночь, вылазки) телефон покажет каждому по очереди.</p>`;
+  else h+=`<h2>${esc(COOP()?GAMES.survive.t:GAMES.mafia.t)} · один телефон</h2><p class="small mute">Добавьте всех игроков. Тайные шаги (карты, ночь, вылазки) телефон покажет каждому по очереди.</p>`;
   h+=`</div><div class="box"><div class="lbl">Игроки: ${S.players.length} ${S.players.length<minP()?'· нужно минимум '+minP():''}</div>
   ${S.players.map(p=>`<div class="pl"><span class="av">${esc(p.name.slice(0,1).toUpperCase())}</span><span class="nm"><b>${esc(p.name)}${p.pid===me.pid&&!S.local?' (вы)':''}</b>${!S.local&&p.pid===S.hostPid?'<span class="tiny mute">создатель · играет как все</span>':''}${!S.local&&isHost&&p.pid!==me.pid&&!onlinePids().has(p.pid)?'<span class="tiny" style="color:#ff8a90">не в сети</span>':''}</span>${host&&p.pid!==S.hostPid?`<button class="btn sm ghost" data-act="kick" data-v="${esc(p.pid)}">Убрать</button>`:''}</div>`).join('')}
   ${S.local?`<div class="row"><input id="addn" maxlength="20" placeholder="Имя игрока" style="flex:1 1 160px" autocomplete="off"><button class="btn" data-act="addLocal">Добавить</button></div>`:''}
   </div>
-  ${modeHtml()}
+  ${!COOP()&&S.players.length===4?'<div class="box"><p class="small">Вчетвером первая ночь — ночь знакомства: убивать нельзя, детектив уже проверяет.</p></div>':''}
   ${COOP()?'':optsHtml()}
   <div class="lbl">Сценарий ${host?'— выберите':''}</div>
   ${host?scenStrip(S.scen,'pickScen'):''}
-  ${scenDetail(S.scen)}
+  ${scenDetail(S.scen,S.mode)}
   <button class="btn ghost" data-act="leave" style="width:100%">Выйти из комнаты</button>`;
   return h}
 
-function modeHtml(){const host=isHost||S.local,c=COOP();
-  return `<div class="box"><div class="lbl">Режим ${host?'· выберите':''}</div><div class="grid2"><button class="opt ${!c?'on':''}" ${host?'data-act="mode" data-v="mafia"':'disabled'} style="margin:0"><b>Мафия + выживание</b><span class="tiny mute" style="display:block">Ищете мафию и выживаете. От 4 игроков.</span></button><button class="opt ${c?'on':''}" ${host?'data-act="mode" data-v="coop"':'disabled'} style="margin:0"><b>Чистое выживание</b><span class="tiny mute" style="display:block">Без мафии: все вместе, у каждого свои задачи. От 3 игроков.</span></button></div>${!c&&S.players.length===4?'<p class="tiny mute">Вчетвером первая ночь — ночь знакомства: убивать нельзя.</p>':''}</div>`}
 function optsHtml(){const host=isHost||S.local,n=S.players.length,o=S.opts||{};
   return `<div class="box"><div class="lbl">Особые роли ${host?'· включите по желанию':''}</div>${['grd','jur','wit','hun','man','trt'].map(r=>{const on=!!o[r],ok=n>=SPEC[r].min;return `<button class="opt ${on?'on':''}" ${host?`data-act="opt" data-v="${r}"`:'disabled'} style="margin:8px 0;padding:10px 14px;min-height:0"><b>${esc(SPEC[r].n)}</b> ${on?'<span class="chip acc">включена</span>':''}<span class="tiny mute" style="display:block">${esc(SPEC[r].d)}</span><span class="tiny" style="display:block;color:${ok?'var(--mute)':'#ff8a90'}">от ${SPEC[r].min} игроков${on&&!ok?' — сейчас не войдёт в раздачу':''}</span></button>`}).join('')}<p class="tiny mute">Особые роли заменяют мирных, хотя бы один мирный остаётся всегда. Мест: при 5 игроках — 1, при 6 — 2, дальше больше. Если включить больше ролей, чем мест, в раздачу попадут случайные, и никто не знает, какие именно.</p></div>`}
 function card(pid){if(COOP())return coopCard(pid);const p=P(pid),s=sc(),on=ui.flip[pid],side=SIDE(p.role);
@@ -1260,7 +1289,7 @@ function gameView(){const vp=viewPid();let h=topBar()+netBanner();
   h+=`<div class="tabs"><button class="${ui.tab==='game'?'on':''}" data-act="tab" data-v="game">Игра</button><button class="${ui.tab==='dos'?'on':''}" data-act="tab" data-v="dos">Досье</button><button class="${ui.tab==='rules'?'on':''}" data-act="tab" data-v="rules">Правила</button></div>`;
   if(ui.tab==='dos')return h+dossier();
   if(ui.tab==='stats')return h+statsHtml();
-  if(ui.tab==='rules')return h+goals()+rulesHtml();
+  if(ui.tab==='rules')return h+goals()+(COOP()?coopRules():rulesHtml());
   if(S.local&&S.lq&&S.lq.i<S.lq.q.length&&!S.lq.show){const pid=S.lq.q[S.lq.i];
     return h+`<div class="pass"><p class="mute">${esc({deal:'Раздача карт',mission:'Тайный выбор отряда',night:'Ночь'}[S.phase]||'')} · ${S.lq.i+1} из ${S.lq.q.length}</p><p>Передай телефон</p><div class="nmx">${esc(nm(pid))}</div><button class="btn pri" data-act="lqShow">Я ${esc(nm(pid))} — показать</button><p class="tiny mute">Остальные отворачиваются</p></div>`}
   const me_=P(vp);
@@ -1278,7 +1307,7 @@ function phaseView(vp){const s=sc(),ph=S.phase,me_=P(vp),al=me_&&me_.alive;
   case 'deal':{if(!vp)return '';const rd=mine('ready',vp);
     return `<p class="mute" style="text-align:center">Твоя карта. Открой, запомни, закрой.</p>${card(vp)}
     <button class="btn pri" style="width:100%;margin-top:12px" data-act="ready" ${rd?'disabled':''}>${rd?'Готово — ждём остальных':'Запомнил(а)'}</button>${S.local?'':waitList()}`}
-  case 'intro':return `<div class="narr"><div class="k">Пролог</div><p>${esc(s.intro)}</p></div>${goals()}<div class="box"><div class="lbl">Как пойдёт игра</div><p class="small">Каждый день — кризис, который решаете вместе: голосуете за вариант, иногда отправляете отряд. В отряде мафия может тайно сорвать дело. Потом обсуждение и голосование за изгнание. Ночью все берут телефоны: у каждого своё тайное действие.</p></div>${vp?`<details class="box"><summary>Моя карта</summary>${card(vp)}</details>`:''}`;
+  case 'intro':return `<div class="narr"><div class="k">Пролог</div><p>${esc(COOP()?coopIntro(s):s.intro)}</p></div>${goals()}<div class="box"><div class="lbl">Как пойдёт игра</div><p class="small">Каждый день — кризис, который решаете вместе: голосуете за вариант, иногда отправляете отряд. В отряде мафия может тайно сорвать дело. Потом обсуждение и голосование за изгнание. Ночью все берут телефоны: у каждого своё тайное действие.</p></div>${vp?`<details class="box"><summary>Моя карта</summary>${card(vp)}</details>`:''}`;
   case 'crisis':{const cr=crDef(),my=mine('cv',vp);const by={};Object.entries(S.inp).forEach(([pid,o])=>{if(o.cv!==undefined)(by[o.cv]=by[o.cv]||[]).push(nm(pid))});
     return `<div class="narr"><div class="k">День ${S.day} · кризис · лидер: ${esc(nm(S.crisis.lead))}</div><h2>${esc(cr.t)}</h2><p>${esc(cr.x)}</p></div>
     <p class="small mute">${S.local?'Обсудите вслух и выберите вариант.':'Обсудите и проголосуйте. При равенстве решает лидер.'}</p>
@@ -1368,8 +1397,17 @@ function dossier(){const s=sc();let h=suspectBoard();
   h+=`<div class="box"><div class="lbl">Хроника</div>${S.chron.map(c=>`<p class="small"><b>Д${c.d}</b> ${esc(c.t)}</p>`).join('')||'<p class="small mute">Пусто</p>'}</div>`;
   return h}
 
+function coopRules(){return `<details class="box"><summary>Правила за минуту</summary><ul class="rules small">
+<li>От 3 игроков. Мафии нет: вы одна команда. Задача — продержаться до эвакуации, не дав ни одной из трёх шкал упасть до нуля.</li>
+<li>У каждого персонаж, специализация (Медик, Добытчик, Страж, Инженер, Переговорщик), здоровье 3 и <b>две тайные личные задачи</b>. За каждую +2 очка.</li>
+<li><b>День:</b> кризис → голосуете за решение. Для вылазки лидер дня выбирает отряд, и каждый тайно решает: выложиться или беречь себя. Провал ранит выложившихся.</li>
+<li><b>Обсуждение:</b> договоритесь, кто ночью дежурит, кто лечит, кто ищет. Отыгрывайте персонажей, ключевые фразы кидайте в протокол.</li>
+<li><b>Ночь:</b> каждый выбирает — дежурить, отдыхать (+1 здоровья), искать припасы или помочь другому. Потом приходит угроза: если дежурных хватает, отбились, если нет — кто-то ранен.</li>
+<li>Здоровье на нуле — без сознания, пока кто-то не поможет. Если все без сознания или шкала упала до нуля — проигрыш.</li>
+<li><b>Карман:</b> Бинты, Сухпаёк, Оберег — тайные предметы, которые можно использовать ночью.</li>
+<li>Иногда ночью всем приходит общее событие «да/нет».</li></ul></details>`}
 function rulesHtml(){return `<details class="box"><summary>Правила за минуту</summary><ul class="rules small">
-<li>От 5 игроков. Роли: мафия (1 на 5–6 игроков, 2 на 7–9, 3 на 10+), доктор, детектив, остальные — мирные. Названия ролей меняются под сценарий.</li>
+<li>От 4 игроков. Роли: мафия (1 на 4–6 игроков, 2 на 7–9, 3 на 10+), доктор, детектив, остальные — мирные. Названия ролей меняются под сценарий.</li>
 <li><b>Две цели выживших:</b> изгнать всю мафию и не дать ни одной из трёх шкал упасть до нуля до эвакуации.</li>
 <li><b>День:</b> кризис → голосуете за решение. Некоторые решения тратят предмет из общего инвентаря, другие требуют отряд. Лидер дня (меняется каждый день) выбирает отряд, каждый в отряде тайно жмёт «помочь» или «подвести». Подвести может только мафия; число саботажей объявляется вслух.</li>
 <li><b>Обсуждение:</b> говорите, оправдывайтесь, а ключевые фразы кидайте в протокол — микрофоном или голосовым вводом клавиатуры. Всё попадает в «Досье».</li>
@@ -1379,7 +1417,6 @@ function rulesHtml(){return `<details class="box"><summary>Правила за �
 <li><b>Особые роли</b> включаются в лобби: Телохранитель, Журналист, Свидетель, Охотник (от 5 игроков), Маньяк и Предатель (от 6). Включите несколько — в раздачу попадут случайные.</li>
 <li><b>Личная цель</b> у каждого на карте, например «добейся изгнания Х». За неё +2 очка в рейтинг, даже если твоя сторона проиграла.</li>
 <li><b>Карман:</b> некоторые находят тайные предметы — Оберег, Жучок, Апелляцию. О них знаешь только ты, так что можно блефовать.</li>
-<li><b>Режим «Чистое выживание»</b> (от 3 игроков): мафии нет. У каждого здоровье, специализация и две тайные задачи. Ночью все выбирают: дежурить, отдыхать, искать припасы или помочь другому. Задача — продержаться до эвакуации.</li>
 <li><b>Вчетвером в мафию</b> первая ночь — ночь знакомства: убивать нельзя, детектив уже проверяет.</li>
 <li><b>Ночные события:</b> иногда ночью всем приходит общий вопрос «да/нет», и решение большинства влияет на утро.</li></ul></details>`}
 
@@ -1432,13 +1469,13 @@ const A={
   pickScen:v=>{if(!(isHost||S.local))return;S.scen=v;ui.scen=v;commit()},
   create:()=>createGame(),
   join:()=>{ui.code=$('#code')?.value||'';joinGame(ui.code)},
+  page:v=>goPage(v),
   local:()=>{if($('#nm'))needNameSoft();LS.del('maf.local');S=null;startLocal(false)},
   localResume:()=>startLocal(true),
   leave:()=>{if(S&&S.local&&S.phase!=='lobby'&&S.phase!=='end'){LS.set('maf.local',S)}leave()},
   addLocal:()=>{const el=$('#addn');const v=clean(el?.value).slice(0,20);if(!v)return;if(S.players.some(p=>p.name.toLowerCase()===v.toLowerCase()))return toast('Такое имя уже есть');S.players.push({pid:rid(),name:v,alive:true});commit();setTimeout(()=>$('#addn')?.focus(),0)},
   kick:v=>{S.players=S.players.filter(p=>p.pid!==v);if(!S.local)S.kicked.push(v);commit()},
   start:()=>{if(S.players.length<minP())return;startGame();commit()},
-  mode:v=>{if(!(isHost||S.local))return;S.mode=v==='coop'?'coop':'mafia';commit()},
   force:()=>{force();commit()},
   day1:()=>{startDay();commit()},
   toDiscuss:()=>{afterCres();commit()},
@@ -1446,7 +1483,7 @@ const A={
   toNight:()=>{if(S.hunt)return toast('Сначала охотник стреляет');afterVres();commit()},
   toDay:()=>{if(S.hunt)return toast('Сначала охотник стреляет');afterMorning();commit()},
   shot:v=>{const who=S.hunt&&S.hunt.pid;if(!who)return;if(S.local||isHost){if(input(who,'shot',v))commit()}else{send('shot',v,me.pid)}},
-  again:()=>{const pl=S.players.map(p=>({pid:p.pid,name:p.name,alive:true}));const scn=S.scen,code=S.code,loc=S.local,k=S.kicked;S=newState(code,loc);S.players=pl;S.scen=scn;S.kicked=k||[];ui.flip={};commit()},
+  again:()=>{const pl=S.players.map(p=>({pid:p.pid,name:p.name,alive:true}));const scn=S.scen,code=S.code,loc=S.local,k=S.kicked,md=S.mode,op=S.opts;S=newState(code,loc);S.mode=md;S.opts=op||{};S.players=pl;S.scen=scn;S.kicked=k||[];ui.flip={};commit()},
   tmr:v=>{S.timer={end:Date.now()+(+v)*1000,dur:+v};commit()},
   tts:()=>{ui.tts=!ui.tts;if(ui.tts){ui.spoken=null;speak()}else{try{speechSynthesis.cancel()}catch(e){}}render()},
   share:()=>shareLink(),
@@ -1481,7 +1518,7 @@ function needNameSoft(){const v=clean($('#nm')?.value).slice(0,20);if(v){me.name
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b||b.disabled)return;const f=A[b.dataset.act];if(f){e.preventDefault();f(b.dataset.v)}});
 document.addEventListener('input',e=>{const b=e.target.dataset&&e.target.dataset.bind;if(b)ui[b]=e.target.value;if(e.target.id==='nm'){me.name=clean(e.target.value).slice(0,20)}if(e.target.id==='code')ui.code=e.target.value});
 document.addEventListener('keydown',e=>{if(e.key!=='Enter')return;const id=e.target.id;if(id==='addn'){e.preventDefault();A.addLocal()}else if(id==='code'){e.preventDefault();A.join()}else if(id==='draft'&&!e.shiftKey){e.preventDefault();A.say()}});
-window.addEventListener('hashchange',()=>{const h=(location.hash||'').match(/^#g-([a-z0-9]{3,8})$/);if(h&&!S)joinGame(h[1],true)});
+window.addEventListener('hashchange',()=>{if(S)return;const h=(location.hash||'').match(/^#g-([a-z0-9]{3,8})$/);if(h)joinGame(h[1],true);else{const p=pageFromHash();if(p!==ui.page){ui.page=p;render()}}});
 
 initNet();
 }
