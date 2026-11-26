@@ -1,10 +1,10 @@
-# Вечер игр (рабочее название)
+# Вечер игр
 
 Игры для компании в одной комнате: каждый со своего телефона, без регистрации и ведущего.
 
 - **Мафия: Выживание** — https://balbaevtemirlan.github.io/mafia/#mafia
 - **Выживание** (без мафии) — https://balbaevtemirlan.github.io/mafia/#survive
-- **Бункер** — скоро
+- **Бункер** — https://balbaevtemirlan.github.io/mafia/#bunker
 
 ## Подробности
 

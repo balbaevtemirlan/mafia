@@ -135,6 +135,9 @@ mark{background:color-mix(in srgb,var(--acc) 35%,transparent);color:inherit;bord
 .gcard .pic{display:block;aspect-ratio:300/130;background:var(--b);color:var(--a)}.gcard .pic svg{width:100%;height:100%;display:block}
 .gcard .tx{display:block;padding:14px 16px 16px}.gcard small{color:var(--a);font-weight:800}.gcard h2{margin:4px 0 6px}.gcard .go{display:inline-flex;margin-top:12px;padding:10px 18px;border-radius:12px;background:var(--a);color:#111;font-weight:800}
 .gcard.soon{opacity:.6}
+.binv{flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px}.binv .chip{flex:none}
+.bgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.bc{background:#0b0e13;border:1px solid var(--line);border-radius:10px;padding:7px 9px;display:flex;flex-direction:column;gap:2px}.bc b{font-size:14px;font-weight:700;line-height:1.3}.bc.hid{opacity:.55;border-style:dashed}.bc.act{margin-top:8px;border-color:var(--acc)}
+.bp{border-top:1px solid var(--line);padding:10px 0}.bp:first-of-type{border-top:0}.bp.out{opacity:.75}.bph{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
 .qr{width:200px;margin:12px auto;background:#fff;border-radius:12px;padding:6px}.qr svg{display:block;width:100%;height:auto}
 .sep{height:1px;background:var(--line);margin:14px 0}
 details summary{cursor:pointer;font-weight:700;min-height:40px;display:flex;align-items:center}
@@ -664,6 +667,52 @@ ice:[
  N('Запросить ускорить эвакуацию','i4',{c:2,r:'Материк обещал прислать самолёт при первом окне.'})]}]
 };
 SCEN.forEach(s=>{if(MORE[s.id])s.cr.push(...MORE[s.id])});
+/* ---------- Бункер: контент ---------- */
+const BTAG={med:'медицина',tech:'техника',food:'еда',def:'защита',sci:'наука',soc:'люди и порядок',build:'строительство'};
+const BCAT=[
+{id:'nuke',title:'Ядерная зима',sub:'Небо закрыто пеплом',pic:'bnuke',acc:'#ffb347',bg:'#15110c',years:3,need:['med','build','food'],sev:3,phob:['темноты','холода'],
+ intro:'Три вспышки на горизонте, потом тишина. Через час небо стало серым, через сутки пошёл чёрный снег. На поверхности радиация и мороз, солнца не будет годами. Дверь бункера закроется через десять минут, а мест меньше, чем вас.',
+ inWin:'Через три года дверь открывается. Над руинами впервые голубое небо, и вы первые, кто его видит.',inLose:'Бункер не продержался: к концу второй зимы внутри стало тихо.',
+ outWin:'Снаружи выжили: нашли старую шахту, грелись у радиоактивных костров и дождались весны.',outLose:'Снаружи никто не пережил первую зиму.'},
+{id:'virus',title:'Пандемия «Серый грипп»',sub:'Вирус убивает за три дня',pic:'plague',acc:'#9be15d',bg:'#0e130c',years:2,need:['med','sci','soc'],sev:2,phob:['микробов','крови'],
+ intro:'Сначала кашель, потом серая кожа, на третий день смерть. Больницы закрылись через неделю. Бункер на окраине города — единственное стерильное место на сотню километров. Мест мало, и каждый, кто войдёт, должен быть полезен.',
+ inWin:'Через два года в лаборатории бункера создали вакцину. Вы выходите, чтобы спасать остальных.',inLose:'Вирус проник внутрь через фильтры. Бункер стал братской могилой.',
+ outWin:'Снаружи выжили те, у кого оказался иммунитет. Из них вырастет новое человечество.',outLose:'Серый грипп не пощадил никого снаружи.'},
+{id:'ai',title:'Восстание машин',sub:'Искусственный интеллект решил, что люди лишние',pic:'orbit',acc:'#6fd3ff',bg:'#0a1018',years:5,need:['tech','def','sci'],sev:3,phob:['техники','одиночества'],
+ intro:'В 4:12 утра все умные устройства мира получили одну команду. Дроны, машины, заводы — всё работает против людей. Бункер старой постройки без единой микросхемы, и машины его не видят. Пока.',
+ inWin:'Через пять лет из бункера выходит отряд с вирусом для машин. Сеть падает за час.',inLose:'Машины нашли бункер по тепловому следу. Дверь вскрыли за минуту.',
+ outWin:'Снаружи ушли в горы, где нет связи, и выжили без единого гаджета.',outLose:'Дроны прочесали всё. Снаружи не уцелел никто.'},
+{id:'flood',title:'Великий потоп',sub:'Ледники растаяли за месяц',pic:'bflood',acc:'#5fb7ff',bg:'#0a1220',years:2,need:['build','food','tech'],sev:2,phob:['воды','глубины'],
+ intro:'Ледники рухнули за месяц. Вода поднимается на метр в день, города уходят под воду один за другим. Бункер на вершине холма — герметичная капсула с запасом воздуха и еды. Скоро вода сомкнётся над ним.',
+ inWin:'Через два года вода отступила. Бункер стоит на новом берегу, и вы строите первый город.',inLose:'Давление воды смяло стены бункера во вторую зиму.',
+ outWin:'Снаружи собрали плот из обломков и доплыли до гор.',outLose:'Плот разбило штормом в первую же неделю.'},
+{id:'asteroid',title:'Падение астероида',sub:'Удар через шесть часов',pic:'bast',acc:'#ff7b54',bg:'#160c0a',years:4,need:['build','med','sci'],sev:3,phob:['огня','высоты'],
+ intro:'Астероид размером с город упадёт через шесть часов. Будет огненный шторм, землетрясения, потом годы пыльной ночи. Глубокий бункер выдержит удар. Тех, кто останется наверху, ждёт огонь.',
+ inWin:'Через четыре года пыль осела. Вы выходите на выжженную, но живую землю.',inLose:'Толчки после удара треснули перекрытия, бункер обрушился.',
+ outWin:'Снаружи спрятались в глубокой пещере и чудом пережили удар.',outLose:'Огненный шторм не оставил снаружи никого.'},
+{id:'zombie',title:'Зомби-эпидемия',sub:'Мёртвые встают',pic:'mall',acc:'#b5d94a',bg:'#0f140f',years:2,need:['def','med','food'],sev:2,phob:['крови','темноты'],
+ intro:'Укушенные умирают и через час встают снова. Армия отступила, связь пропала. Бункер под заброшенной фабрикой ещё никто не нашёл. Дверь выдержит любую толпу, но откроется только один раз.',
+ inWin:'Через два года мертвецы сгнили. Вы выходите с оружием и картой выживших поселений.',inLose:'Один из вас был укушен и скрыл это. К утру бункер был полон мертвецов.',
+ outWin:'Снаружи ушли на остров посреди озера: мертвецы не умеют плавать.',outLose:'Снаружи толпа окружила всех на третий день.'},
+{id:'solar',title:'Солнечная вспышка',sub:'Электричества больше нет',pic:'tower',acc:'#ffc94a',bg:'#0d1018',years:3,need:['tech','food','soc'],sev:2,phob:['темноты','толпы'],
+ intro:'Гигантская вспышка на Солнце сожгла всю электронику планеты. Нет света, воды из крана, связи, машин. Города за неделю превратились в хаос. Бункер с механической вентиляцией и запасом на годы — тихий остров в этом безумии.',
+ inWin:'Через три года вы выходите и запускаете первую электростанцию. Цивилизация начинается заново.',inLose:'В бункере вспыхнул бунт из-за последних консервов.',
+ outWin:'Снаружи основали коммуну на ферме и выжили своим трудом.',outLose:'Банды мародёров не дали никому шанса.'},
+{id:'aliens',title:'Вторжение',sub:'Они уже здесь',pic:'orbit',acc:'#c48cff',bg:'#0a0a16',years:4,need:['def','sci','tech'],sev:3,phob:['неизвестности','насекомых'],
+ intro:'Корабли зависли над каждой столицей. Те, кто смотрел на свет из кораблей, исчезли. Пришельцы забирают людей, но не видят сквозь свинец. Бункер со свинцовыми стенами вмещает не всех.',
+ inWin:'Через четыре года корабли улетели. Из бункера выходят последние свободные люди Земли.',inLose:'Пришельцы нашли способ видеть сквозь свинец.',
+ outWin:'Снаружи научились прятаться в пещерах и выжили партизанами.',outLose:'Снаружи всех забрали в первый же месяц.'}];
+const BROOM=[['Медблок','med'],['Оранжерея','food'],['Мастерская','tech'],['Оружейная','def'],['Лаборатория','sci'],['Библиотека','soc'],['Склад стройматериалов','build'],['Кухня с запасами','food'],['Радиорубка','tech'],['Детская комната','soc'],['Спортзал',null],['Скважина с водой','food']];
+const BPROB=[['Сломан фильтр воздуха','tech'],['Затоплен нижний ярус','build'],['Половина еды испорчена','food'],['Пустая аптечка','med'],['Дверь не закрывается до конца','def'],['Нет связи с внешним миром','tech'],['Трещина в несущей стене','build'],['В бункере крысы','sci']];
+const BPROF=[['Хирург','med'],['Медсестра','med'],['Вирусолог','sci med'],['Фармацевт','med sci'],['Инженер-электрик','tech'],['Механик','tech build'],['Программист','tech'],['Строитель','build'],['Архитектор','build'],['Фермер','food'],['Повар','food'],['Агроном','food sci'],['Охотник','food def'],['Военный','def'],['Полицейский','def soc'],['Охранник','def'],['Учитель','soc'],['Психолог','soc med'],['Священник','soc'],['Юрист','soc'],['Химик','sci'],['Биолог','sci food'],['Физик-ядерщик','sci tech'],['Геолог','sci build'],['Сантехник','build tech'],['Пожарный','def build'],['Ветеринар','med food'],['Блогер',''],['Бариста','food'],['Актёр','soc'],['Риелтор',''],['Таксист','tech'],['Сварщик','build tech'],['Пилот','tech def'],['Стоматолог','med'],['Электромонтёр','tech build']];
+const BHEALTH=[['Полностью здоров',0],['Полностью здоров',0],['Полностью здоров',0],['Близорукость',0],['Аллергия на пыль',1],['Астма',1],['Диабет',2],['Гипертония',1],['Хромает на одну ногу',1],['Бессонница',1],['Беременна (3 месяца)',1],['Депрессия',1],['Сердечная недостаточность',2],['Язва желудка',1],['Глухота на одно ухо',0],['Онкология, ранняя стадия',2],['Отличная физическая форма',-1],['Иммунитет ко многим вирусам',-1]];
+const BHOBBY=[['Выживание в лесу','food def'],['Рыбалка','food'],['Огородничество','food'],['Стрельба','def'],['Ремонт техники','tech'],['Шахматы','sci'],['Первая помощь','med'],['Кулинария','food'],['Игра на гитаре','soc'],['Бокс','def'],['Йога',''],['Столярное дело','build'],['Радиолюбитель','tech'],['Химические опыты','sci'],['Вязание',''],['Паркур','def'],['Компьютерные игры',''],['Пчеловодство','food'],['Сочинение стихов','soc'],['Скалолазание','build']];
+const BPHOB=['Клаустрофобия','Боязнь темноты','Боязнь крови','Боязнь воды','Боязнь насекомых','Боязнь микробов','Боязнь толпы','Боязнь огня','Боязнь высоты','Боязнь одиночества','Боязнь техники','Боязнь неизвестности','Боязнь собак','Без фобий','Без фобий'];
+const BBAG=[['Аптечка первой помощи','med'],['Мешок семян','food'],['Ящик консервов','food'],['Набор инструментов','tech build'],['Охотничье ружьё','def'],['Генератор на дизеле','tech'],['Ноутбук с энциклопедией','sci'],['Рация','tech'],['Палатка','build'],['Коробка антибиотиков','med'],['Фильтр для воды','food tech'],['Библия',''],['Гитара','soc'],['Собака-овчарка','def'],['Колода карт','soc'],['Чемодан денег',''],['Микроскоп','sci'],['Сварочный аппарат','build tech'],['Курица-несушка','food'],['Бутылка виски','soc'],['Солнечная батарея','tech'],['Учебник по хирургии','med']];
+const BTRAIT=[['Лидер',1],['Добрый',1],['Трудоголик',1],['Спокойный в стрессе',1],['Оптимист',1],['Хладнокровный',1],['Лентяй',-1],['Вспыльчивый',-1],['Эгоист',-1],['Паникёр',-1],['Болтун',0],['Скрытный',0],['Упрямый',0],['Шутник',0],['Клептоман',-1],['Честный',1]];
+const BFACT=['Был чемпионом страны по плаванию','Знает пять языков','Прошёл курс выживания в армии','Сидел в тюрьме за мошенничество','Бывший разработчик этого бункера','Может не спать трое суток','Боится признаться, что не умеет читать','Был волонтёром в горячих точках','Выиграл в лотерею и всё потерял','Знает азбуку Морзе','Тайно влюблён в одного из игроков','Умеет делать самогон из чего угодно','Знает, где спрятан второй бункер','Раньше работал в морге','Умеет принимать роды','Храпит так, что не спит никто','Знает наизусть сотню песен под гитару','Вегетарианец со стажем','Однажды выжил после удара молнии','Бывший член секты выживальщиков'];
+const BACT={reveal:{n:'Разоблачение',d:'Вскрой одну скрытую карту любого игрока — увидят все.',t:1},heal:{n:'Чудо-лекарство',d:'Вылечи любого игрока: его здоровье станет «Полностью здоров».',t:1},immune:{n:'Неприкосновенность',d:'Тебя нельзя изгнать в этом раунде.',t:0},double:{n:'Двойной голос',d:'В этом раунде твой голос считается за два.',t:0},reroll:{n:'Новая жизнь',d:'Замени свою профессию на случайную новую.',t:0},swapH:{n:'Обмен здоровьем',d:'Поменяйся картой здоровья с любым игроком.',t:1},swapB:{n:'Обмен багажом',d:'Поменяйся багажом с любым игроком.',t:1},spy:{n:'Досье',d:'Тайно посмотри все карты одного игрока.',t:1},fix:{n:'Ремонт',d:'Устрани поломку бункера.',t:0}};
+const BCARD=[['prof','Профессия'],['bio','Биология'],['health','Здоровье'],['hobby','Хобби'],['phobia','Фобия'],['bag','Багаж'],['trait','Характер'],['fact','Факт']];
 {
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -684,6 +733,9 @@ plague:`<rect width="300" height="150" fill="currentColor" opacity=".05"/><circl
 vamp:`<rect width="300" height="150" fill="currentColor" opacity=".05"/><circle cx="210" cy="46" r="30" fill="#f1e3e6" opacity=".85"/><path d="M0 150V118l60-28 50 18 50-40 60 30 80-20v72z" fill="#1c1016"/><path d="M128 84V50h8v-8h6v8h8V40l6-10 6 10v44h10V60h12v24z" fill="#0b0609"/><rect x="152" y="54" width="4" height="7" fill="currentColor"/><g fill="#0b0609">${[[80,40],[100,28],[250,70],[60,60]].map(([x,y])=>`<path d="M${x} ${y}q4-5 8 0q4-5 8 0l-8 4z"/>`).join('')}</g>`,
 ice:`<rect width="300" height="150" fill="currentColor" opacity=".04"/><path d="M0 40q50-25 100 0t100 0t100-5" stroke="#5fe0b0" stroke-width="10" fill="none" opacity=".35"/><path d="M0 60q60-20 120 0t180-8" stroke="#7fb8ff" stroke-width="6" fill="none" opacity=".25"/><rect x="0" y="118" width="300" height="32" fill="#e6f0f5" opacity=".25"/><path d="M60 120a30 22 0 0160 0z" fill="#1a2630"/><path d="M140 120a24 18 0 0148 0z" fill="#1a2630"/><rect x="200" y="96" width="50" height="24" fill="currentColor" opacity=".85"/><rect x="210" y="102" width="8" height="6" fill="#0a1116"/><rect x="226" y="102" width="8" height="6" fill="#0a1116"/><path d="M265 120V60m-8 10h16m-12 12h8" stroke="#cfd8de" stroke-width="2"/><path d="M30 128l6-6 6 6 10-2 2 6-24 2z" fill="#0a1116"/>`,
 bunker:`<rect width="300" height="150" fill="currentColor" opacity=".05"/><circle cx="240" cy="36" r="14" fill="currentColor" opacity=".5"/><path d="M0 112q75-14 150-6t150-4v48H0z" fill="#221c12"/><path d="M95 112v-26a55 34 0 01110 0v26z" fill="#2e2618"/><circle cx="150" cy="96" r="22" fill="#14110b" stroke="currentColor" stroke-width="5"/><path d="M150 76v40M130 96h40" stroke="currentColor" stroke-width="3"/><circle cx="150" cy="96" r="6" fill="currentColor"/><path d="M30 120l8-14 8 14zM250 118l10-18 10 18z" fill="#3a3020"/>`,
+bnuke:`<rect width="300" height="150" fill="currentColor" opacity=".05"/><path d="M0 128h300v22H0z" fill="#1d1710"/><path d="M138 128c0-30 4-46-14-56-20-10-24-36 6-44 10-16 34-16 44 0 30 8 26 34 6 44-18 10-14 26-14 56z" fill="currentColor" opacity=".55"/><ellipse cx="150" cy="40" rx="52" ry="20" fill="currentColor" opacity=".7"/><g fill="#2a2116"><rect x="20" y="104" width="22" height="24"/><rect x="48" y="96" width="16" height="32"/><rect x="230" y="100" width="24" height="28"/><rect x="262" y="108" width="18" height="20"/></g>`,
+bflood:`<rect width="300" height="150" fill="currentColor" opacity=".05"/><path d="M120 150V70l30-20 30 20v80z" fill="#16202e"/><rect x="142" y="80" width="16" height="14" fill="currentColor" opacity=".8"/><path d="M0 104q25-12 50 0t50 0t50 0t50 0t50 0t50 0v46H0z" fill="currentColor" opacity=".45"/><path d="M0 118q25-10 50 0t50 0t50 0t50 0t50 0t50 0v32H0z" fill="currentColor" opacity=".7"/>`,
+bast:`<rect width="300" height="150" fill="currentColor" opacity=".05"/><path d="M60 20l130 70" stroke="currentColor" stroke-width="10" stroke-linecap="round" opacity=".35"/><path d="M90 36l100 54" stroke="currentColor" stroke-width="4" stroke-linecap="round" opacity=".6"/><circle cx="196" cy="94" r="16" fill="currentColor"/><path d="M0 130q60-20 120-8t180-6v34H0z" fill="#25150f"/><g fill="#3a2016"><rect x="30" y="112" width="18" height="20"/><rect x="250" y="108" width="22" height="24"/></g>`,
 hotel:`<rect width="300" height="150" fill="currentColor" opacity=".05"/><path d="M0 110L70 30l50 50 40-44 70 74 70-60v100H0z" fill="#1a2427"/><path d="M70 30l14 16-14-4-10 6zM160 36l16 18-16-4-12 8z" fill="#e8f2f2" opacity=".8"/><path d="M110 150v-44l40-26 40 26v44z" fill="#2a2018"/><path d="M104 108l46-32 46 32" stroke="currentColor" stroke-width="4" fill="none"/><g fill="currentColor">${[122,144,166].map(x=>`<rect x="${x}" y="114" width="12" height="12" rx="1"/>`).join('')}</g><rect x="0" y="140" width="300" height="10" fill="#e8f2f2" opacity=".3"/>`
 };
 const pic=id=>`<svg viewBox="0 0 300 150" preserveAspectRatio="xMidYMid slice">${PIC[id]||''}</svg>`;
@@ -692,7 +744,7 @@ const pic=id=>`<svg viewBox="0 0 300 150" preserveAspectRatio="xMidYMid slice">$
 let S=null, mode=null, isHost=false;
 const me={pid:LS.get('maf.pid',null)||rid(), name:LS.get('maf.name','')};
 LS.set('maf.pid',me.pid);
-const ui={page:'hub',screen:'home',tab:'game',scen:'mall',open:null,draft:'',speaker:null,tts:false,listening:false,partial:'',teamSel:[],flip:{},err:'',skew:0,confirm:null,localNames:[],code:'',spoken:null,pend:[]};
+const ui={cat:'nuke',page:'hub',screen:'home',tab:'game',scen:'mall',open:null,draft:'',speaker:null,tts:false,listening:false,partial:'',teamSel:[],flip:{},err:'',skew:0,confirm:null,localNames:[],code:'',spoken:null,pend:[]};
 const net={ready:true,peer:null,conns:new Map(),host:null,code:'',retry:null,status:''};const PFX='mafsurv-k7q-';let myPres={};
 let myPk=null,myA={},mySp=[];
 
@@ -766,9 +818,10 @@ setInterval(()=>{if(!S||S.local)return;
 const SITE='Вечер игр';
 const GAMES={mafia:{t:'Мафия: Выживание',mode:'mafia',min:4,pic:'vamp',acc:'#ff5c7a',bg:'#120a10',sub:'Найди предателей и выживи',d:'Классическая мафия, но вы ещё и спасаетесь от катастрофы: кризисы, общий инвентарь, тайные вылазки отрядов. Две цели — вычислить мафию и дожить до эвакуации.'},
   survive:{t:'Выживание',mode:'coop',min:3,pic:'ice',acc:'#8fe3d2',bg:'#0b1316',sub:'Все вместе против катастрофы',d:'Мафии нет. У каждого персонаж, здоровье и две тайные задачи. Днём решаете кризисы, ночью дежурите, лечите и ищете припасы. Задача — продержаться до эвакуации.'},
-  bunker:{t:'Бункер',soon:1,pic:'bunker',acc:'#f2b84b',bg:'#14110b',sub:'Мест на всех не хватит',d:'Скоро. Карты характеристик, споры, кто войдёт в бункер, и жизнь тех, кто остался снаружи.'}};
+  bunker:{t:'Бункер',mode:'bunker',min:4,pic:'bunker',acc:'#f2b84b',bg:'#14110b',sub:'Мест на всех не хватит',d:'Катастрофа, а в бункере мест на половину. Открываете карты, спорите, голосуете, кто останется снаружи. Изгнанные не выбывают: у них своя игра на поверхности.'}};
 function pageFromHash(){const h=(location.hash||'').slice(1);return GAMES[h]&&!GAMES[h].soon?h:'hub'}
-function setTitle(){try{document.title=S?(COOP()?GAMES.survive.t:GAMES.mafia.t):ui.page!=='hub'?GAMES[ui.page].t:SITE}catch(e){}}
+const pageOf=md=>md==='coop'?'survive':md==='bunker'?'bunker':'mafia';
+function setTitle(){try{document.title=S?GAMES[pageOf(S.mode)].t:ui.page!=='hub'?GAMES[ui.page].t:SITE}catch(e){}}
 function goPage(p){ui.page=p;ui.err='';try{if(p==='hub')history.replaceState(null,'',location.pathname+location.search);else location.hash=p}catch(e){}window.scrollTo(0,0);render()}
 function initNet(){
   ui.page=pageFromHash();
@@ -780,20 +833,20 @@ function initNet(){
 }
 
 /* ---------- engine (host) ---------- */
-function newState(code,local){return {v:1,mode:ui.page==='survive'?'coop':'mafia',gid:rid(6),rev:0,code:code||'',local:!!local,hostPid:local?null:me.pid,scen:ui.scen,phase:'lobby',pn:0,pk:0,players:[],kicked:[],day:0,evac:4,meters:{a:4,b:4,c:4},inv:{},inp:{},log:[],chron:[],priv:{},votes:[],missions:[],crisis:null,timer:null,deck:[],lead:[],li:0,lastHeal:null,shield:false,res:null,win:null,ai:null,lq:null,opts:{},hostNow:Date.now()}}
-const ADV=['intro','cres','discuss','vres','morning'],WAIT=['deal','crisis','team','mission','vote','night'];
+function newState(code,local){return {v:1,mode:ui.page==='survive'?'coop':ui.page==='bunker'?'bunker':'mafia',cat:ui.cat,gid:rid(6),rev:0,code:code||'',local:!!local,hostPid:local?null:me.pid,scen:ui.scen,phase:'lobby',pn:0,pk:0,players:[],kicked:[],day:0,evac:4,meters:{a:4,b:4,c:4},inv:{},inp:{},log:[],chron:[],priv:{},votes:[],missions:[],crisis:null,timer:null,deck:[],lead:[],li:0,lastHeal:null,shield:false,res:null,win:null,ai:null,lq:null,opts:{},hostNow:Date.now()}}
+const ADV=['intro','cres','discuss','vres','morning'],WAIT=['deal','crisis','team','mission','vote','night','reveal','bvote'];
 const pool=()=>S.phase==='deal'?S.players:alive();
 const goN=()=>pool().filter(p=>S.inp[p.pid]?.go).length;
 const goNeed=()=>Math.floor(pool().length/2)+1;
 const age=()=>(Date.now()+((isHost||S.local)?0:ui.skew)-(S.phAt||0))/1000;
-function advance(){if(S.hunt&&age()<60)return;S.hunt=null;switch(S.phase){case 'intro':startDay();break;case 'cres':afterCres();break;case 'discuss':COOP()?goNight():setPhase('vote');break;case 'vres':afterVres();break;case 'morning':afterMorning();break}}
+function advance(){if(BK())return bAdvance();if(S.hunt&&age()<60)return;S.hunt=null;switch(S.phase){case 'intro':startDay();break;case 'cres':afterCres();break;case 'discuss':COOP()?goNight():setPhase('vote');break;case 'vres':afterVres();break;case 'morning':afterMorning();break}}
 function setPhase(ph){S.phase=ph;S.pk=++S.pn;S.inp={};S.phAt=Date.now();if(ph!=='discuss')S.timer=null;S.lq=null;
-  if(S.local){let q=null;if(ph==='deal')q=S.players.map(p=>p.pid);else if(ph==='mission')q=[...S.crisis.team];else if(ph==='night')q=alive().map(p=>p.pid);if(q)S.lq={q:shufIf(ph,q),i:0,show:false}}}
+  if(S.local){let q=null;if(ph==='deal')q=S.players.map(p=>p.pid);else if(ph==='mission')q=[...S.crisis.team];else if(ph==='night')q=alive().map(p=>p.pid);else if(ph==='reveal'&&S.mode==='bunker')q=S.players.filter(p=>p.out||BCARD.some(([k])=>!p.rev[k])).map(p=>p.pid);if(q)S.lq={q:shufIf(ph,q),i:0,show:false}}}
 const shufIf=(ph,q)=>ph==='night'?q:q;
 function chron(t){S.chron.push({d:S.day,t})}
 function addPriv(pid,t){(S.priv[pid]=S.priv[pid]||[]).push(t)}
 
-function startGame(){if(COOP())return startCoop();
+function startGame(){if(BK())return startBunker();if(COOP())return startCoop();
   const n=S.players.length,k=n<=6?1:n<=9?2:n<=12?3:4,s=sc();
   let free=n-k-2;const sp=[];for(const r of shuf(['grd','jur','wit','hun','man','trt']))if(S.opts&&S.opts[r]&&n>=SPEC[r].min&&free>1){sp.push(r);free--}
   const roles=shuf([...Array(k).fill('maf'),'doc','det',...sp,...Array(free).fill('civ')]);
@@ -831,6 +884,7 @@ function validNa(pid,v){if(COOP()){if(['guard','rest','search'].includes(v))retu
   if(p.role==='doc')return v!==S.lastHeal;
   return v!==pid}
 function input(pid,k,v){
+  if(BK()&&k!=='go')return bInput(pid,k,v);
   const p=P(pid);if(!p)return false;const ph=S.phase;
   if(k==='shot'){if(!S.hunt||S.hunt.pid!==pid||!['vres','morning'].includes(ph))return false;const t=P(v);if(!t||!t.alive||t.pid===pid)return false;
     t.alive=false;const line=`Охотник ${p.name} успел выстрелить: погиб(ла) ${t.name}. Это был(а) ${RN(t.role).toLowerCase()}.`;S.res.text+=' '+line;S.res.shot=t.pid;chron(line);S.hunt=null;S.inp={};S.phAt=Date.now();return true}
@@ -852,7 +906,7 @@ function input(pid,k,v){
   return true;
 }
 const has=(pid,k)=>S.inp[pid]&&S.inp[pid][k]!==undefined;
-function need(){const A=alive();switch(S.phase){
+function need(){if(BK())return bNeed();const A=alive();switch(S.phase){
   case 'deal':return S.players.map(p=>[p.pid,'ready']);
   case 'crisis':return A.map(p=>[p.pid,'cv']);
   case 'team':return [[S.crisis.lead,'team']];
@@ -860,13 +914,16 @@ function need(){const A=alive();switch(S.phase){
   case 'vote':return A.map(p=>[p.pid,'vote']);
   case 'night':return [...A.map(p=>[p.pid,'na']),...(S.nev!=null?A.map(p=>[p.pid,'ne']):[])];}return null}
 function auto(){
+  if(BK()&&!S.local&&ADV.includes(S.phase)){const g=goN(),t=pool().length;if(t&&(g>=t||(g>=goNeed()&&age()>25)))advance();return}
+  if(BK()&&!S.local&&WAIT.includes(S.phase)&&goN()>=goNeed()&&age()>35)return bForce();
+  if(BK())return bAuto();
   if(!S.local&&ADV.includes(S.phase)){const g=goN(),t=pool().length;if(t&&(g>=t||(g>=goNeed()&&age()>25)))advance();return}
   if(!S.local&&WAIT.includes(S.phase)&&goN()>=goNeed()&&age()>35)return force();
   const n=need();if(!n||!n.every(([pid,k])=>has(pid,k)))return;
   switch(S.phase){case 'deal':setPhase('intro');break;case 'crisis':resolveChoice();break;
   case 'team':S.crisis.team=S.inp[S.crisis.lead].team;setPhase('mission');break;
   case 'mission':resolveMission();break;case 'vote':resolveVote();break;case 'night':resolveNight();break}}
-function force(){switch(S.phase){
+function force(){if(BK())return bForce();switch(S.phase){
   case 'deal':setPhase('intro');break;case 'crisis':resolveChoice();break;
   case 'team':{const L=S.crisis.lead;const t=[L,...shuf(alive().map(p=>p.pid).filter(x=>x!==L))].slice(0,teamSize());S.crisis.team=t;setPhase('mission');break}
   case 'mission':resolveMission();break;case 'vote':resolveVote();break;case 'night':resolveNight();break}}
@@ -1014,6 +1071,173 @@ function afterMorning(){const w=checkWin();if(w)return endGame(w);startDay()}
 function taskDone(p,t){switch(t.k){case 'hoard':return (p.pocket||[]).includes(t.item);case 'hero2':return cn(p.pid,'full')>=2;case 'nurse2':return cn(p.pid,'help')>=2;case 'watch3':return cn(p.pid,'guard')>=3;case 'find2':return cn(p.pid,'find')>=2;case 'lead3':return cn(p.pid,'lead')>=3;case 'fullhp':return p.hp>=3;case 'talk4':return S.log.filter(l=>l.s===p.pid).length>=4;case 'friend':return (P(t.x)?.hp||0)>=2;case 'nodown':return !(S.downs||{})[p.pid]}return false}
 function addLog(e){S.log.push(e);if(S.log.length>300)S.log=S.log.slice(-300)}
 
+/* ---------- Бункер: механика ---------- */
+const BK=()=>!!S&&S.mode==='bunker';
+const bcat=()=>BCAT.find(c=>c.id===(S&&S.cat?S.cat:ui.cat))||BCAT[0];
+const inside=()=>S.players.filter(p=>!p.out);
+const outside=()=>S.players.filter(p=>p.out);
+const yrs=n=>n%10===1&&n%100!==11?'год':[2,3,4].includes(n%10)&&![12,13,14].includes(n%100)?'года':'лет';
+const hidden=p=>BCARD.map(c=>c[0]).filter(k=>!p.rev[k]);
+const BAMB={nuke:'ice',virus:'plague',ai:'orbit',flood:'tower',asteroid:'train',zombie:'mall',solar:'tower',aliens:'orbit'};
+function startBunker(){const n=S.players.length,c=bcat();
+  S.cat=c.id;S.seats=Math.max(2,Math.ceil(n/2));
+  const rooms=shuf(BROOM).slice(0,3),pr0=pick(BPROB);
+  S.bk={rooms:rooms.map(r=>({n:r[0],tag:r[1]})),prob:{n:pr0[0],tag:pr0[1]},fixed:false,years:c.years,food:pick([6,12,18,24,36])};
+  const pr=shuf(BPROF),hl=shuf(BHEALTH),hb=shuf(BHOBBY),ph=shuf(BPHOB),bg=shuf(BBAG),tr=shuf(BTRAIT),fc=shuf(BFACT),ac=shuf(Object.keys(BACT));
+  S.players.forEach((p,i)=>{const g=Math.random()<.5?'М':'Ж',age=18+Math.floor(Math.random()*58);const fert=age<=45&&Math.random()>.12;
+    let h=hl[i%hl.length];if(h[0].startsWith('Беременна')&&(g==='М'||age>45))h=['Полностью здоров',0];
+    p.alive=true;p.out=false;p.role='bk';
+    p.cards={prof:{t:pr[i%pr.length][0]+', стаж '+(1+Math.floor(Math.random()*Math.max(1,age-18)))+' '+yrs(1+Math.floor(Math.random()*20)).replace(/.*/,'лет'),tags:pr[i%pr.length][1]},
+      bio:{t:`${g==='М'?'Мужчина':'Женщина'}, ${age} ${yrs(age)}${age<=45&&!fert?(g==='Ж'?', бесплодна':', бесплоден'):''}`,g,age,fert},
+      health:{t:h[0],sev:h[1]},hobby:{t:hb[i%hb.length][0],tags:hb[i%hb.length][1]},phobia:{t:ph[i%ph.length]},
+      bag:{t:bg[i%bg.length][0],tags:bg[i%bg.length][1]},trait:{t:tr[i%tr.length][0],v:tr[i%tr.length][1]},fact:{t:fc[i%fc.length]}};
+    p.cards.prof.t=p.cards.prof.t.replace(/стаж (\d+) лет/,(m,d)=>'стаж '+d+' '+yrs(+d));
+    p.rev={prof:true};p.action=ac[i%ac.length];p.actUsed=false});
+  S.round=0;S.votes=[];S.log=[];S.chron=[];S.priv={};S.win=null;S.final=null;S.ocnt={build:0,scav:0,sab:0};S.opc={};S.immune={};S.dbl={};S.exiled=[];S.missions=[];
+  S.day=1;S.evac=99;S.meters={a:1,b:1,c:1};S.inv={};S.res=null;
+  chron(`Бункер: ${c.title}. Игроков ${n}, мест в бункере ${S.seats}. Сидеть придётся ${c.years} ${yrs(c.years)}.`);
+  setPhase('deal')}
+function bRound(){S.round++;const any=inside().some(p=>hidden(p).length);if(any||outside().length){setPhase('reveal')}else bToDiscuss()}
+function bToDiscuss(){setPhase('discuss');const d=Math.min(240,60+20*inside().length);S.timer={end:Date.now()+d*1000,dur:d}}
+function bNeed(){const ph=S.phase;
+  if(ph==='deal')return S.players.map(p=>[p.pid,'ready']);
+  if(ph==='reveal')return [...inside().filter(p=>hidden(p).length).map(p=>[p.pid,'rv']),...outside().map(p=>[p.pid,'oa'])];
+  if(ph==='bvote')return inside().map(p=>[p.pid,'bv']);
+  return null}
+function bAuto(){const n=bNeed();if(!n||!n.every(([pid,k])=>has(pid,k)))return;
+  if(S.phase==='deal')setPhase('intro');else if(S.phase==='reveal')bToDiscuss();else if(S.phase==='bvote')bResolve()}
+function bForce(){if(S.phase==='deal')setPhase('intro');
+  else if(S.phase==='reveal'){inside().forEach(p=>{if(!has(p.pid,'rv')){const hd=hidden(p);if(hd.length)p.rev[pick(hd)]=true}});outside().forEach(p=>{if(!has(p.pid,'oa'))bOut(p,'build')});bToDiscuss()}
+  else if(S.phase==='bvote')bResolve()}
+function bAdvance(){if(S.phase==='intro')bRound();else if(S.phase==='discuss')setPhase('bvote');else if(S.phase==='vres')bAfterVres()}
+function bAfterVres(){if(inside().length<=S.seats)bEnd();else bRound()}
+function bOut(p,v){S.ocnt[v]=(S.ocnt[v]||0)+1;const c=S.opc[p.pid]=S.opc[p.pid]||{};c[v]=(c[v]||0)+1;if(v==='sab')S.sab=(S.sab||0)+1}
+function bInput(pid,k,v){const p=P(pid);if(!p)return false;const ph=S.phase;let ok=false;
+  if(k==='ready'&&ph==='deal'&&!has(pid,'ready')){v=true;ok=true}
+  else if(k==='rv'&&ph==='reveal'&&!p.out&&p.cards[v]&&!p.rev[v]&&!has(pid,'rv')){p.rev[v]=true;ok=true}
+  else if(k==='oa'&&ph==='reveal'&&p.out&&['build','scav','sab'].includes(v)&&!has(pid,'oa')){bOut(p,v);ok=true}
+  else if(k==='bv'&&ph==='bvote'&&!p.out&&P(v)&&!P(v).out&&v!==pid&&S.inp[pid]?.bv!==v){ok=true}
+  else if(k==='act')return bAct(p,v);
+  if(!ok)return false;
+  S.inp[pid]={...(S.inp[pid]||{}),[k]:v};
+  if(!(S.local&&S.lq&&S.lq.i<S.lq.q.length))bAuto();
+  return true}
+function bAct(p,v){const a=BACT[p.action];if(!a||p.actUsed||p.out||!['reveal','discuss','bvote'].includes(S.phase))return false;v=v||{};
+  const t=a.t?P(v.t):null;if(a.t&&(!t||(t.pid===p.pid&&p.action!=='heal')))return false;
+  let line='';
+  switch(p.action){
+  case 'reveal':{const hd=hidden(t);if(!hd.length)return false;const k=pick(hd);t.rev[k]=true;line=`${p.name} сыграл(а) «${a.n}»: у ${t.name} вскрыта карта «${BCARD.find(c=>c[0]===k)[1]}» — ${t.cards[k].t}.`;break}
+  case 'heal':t.cards.health={t:'Полностью здоров',sev:0};t.rev.health=true;line=`${p.name} сыграл(а) «${a.n}»: ${t.name} теперь полностью здоров(а).`;break;
+  case 'immune':S.immune[p.pid]=S.round;line=`${p.name} сыграл(а) «${a.n}»: его (её) нельзя изгнать в этом раунде.`;break;
+  case 'double':S.dbl[p.pid]=S.round;line=`${p.name} сыграл(а) «${a.n}»: в этом раунде голос считается за два.`;break;
+  case 'reroll':{const np=pick(BPROF.filter(x=>!p.cards.prof.t.startsWith(x[0])));p.cards.prof={t:np[0]+', стаж '+(1+Math.floor(Math.random()*15))+' лет',tags:np[1]};p.cards.prof.t=p.cards.prof.t.replace(/стаж (\d+) лет/,(m,d)=>'стаж '+d+' '+yrs(+d));line=`${p.name} сыграл(а) «${a.n}»: новая профессия — ${p.cards.prof.t}.`;break}
+  case 'swapH':{const h=p.cards.health;p.cards.health=t.cards.health;t.cards.health=h;line=`${p.name} сыграл(а) «${a.n}» и поменялся(ась) картами здоровья с ${t.name}.`;break}
+  case 'swapB':{const b=p.cards.bag;p.cards.bag=t.cards.bag;t.cards.bag=b;line=`${p.name} сыграл(а) «${a.n}» и поменялся(ась) багажом с ${t.name}.`;break}
+  case 'spy':addPriv(p.pid,`Досье на ${t.name}: `+BCARD.map(([k,l])=>`${l}: ${t.cards[k].t}`).join('; ')+'.');line=`${p.name} сыграл(а) «${a.n}» и тайно изучил(а) чьи-то карты.`;break;
+  case 'fix':S.bk.fixed=true;line=`${p.name} сыграл(а) «${a.n}»: поломка «${S.bk.prob.n}» устранена.`;break;
+  default:return false}
+  p.actUsed=true;chron(line);addLog({i:rid(6),d:S.round,s:p.pid,by:p.pid,t:'[карта] '+line});return true}
+function bResolve(forced){const I=inside(),cnt={};
+  if(forced===undefined){I.forEach(p=>{const t=S.inp[p.pid]?.bv;if(t){cnt[t]=(cnt[t]||0)+(S.dbl[p.pid]===S.round?2:1)}})}
+  const imm=I.filter(p=>S.immune[p.pid]===S.round).map(p=>p.pid);
+  let cands=I.filter(p=>!imm.includes(p.pid)).map(p=>p.pid);if(!cands.length)cands=I.map(p=>p.pid);
+  let top=forced,best=0,lot=false;
+  if(!top){let mx=-1,tied=[];cands.forEach(c=>{const v=cnt[c]||0;if(v>mx){mx=v;tied=[c]}else if(v===mx)tied.push(c)});top=pick(tied);best=mx;lot=tied.length>1}
+  const v={};I.forEach(p=>{v[p.pid]=S.inp[p.pid]?.bv||'skip'});S.votes.push({d:S.round,v,ex:top});
+  const ex=P(top);ex.out=true;BCARD.forEach(([k])=>ex.rev[k]=true);S.exiled.push(top);
+  const left=inside().length-S.seats;
+  S.res={kind:'vote',pid:top,text:`${ex.name} остаётся снаружи${forced?'':' ('+best+' гол.'+(lot?', решил жребий':'')+')'}. Все карты раскрыты. ${left>0?'Лишних ещё: '+left+'.':'Бункер укомплектован: дверь закрывается.'}${imm.length?' Неприкосновенность: '+imm.map(nm).join(', ')+'.':''}`};
+  chron(S.res.text);setPhase('vres')}
+function bScore(){const c=bcat(),I=inside(),O=outside(),bk=S.bk,R=[];let sc=0;
+  const tp=p=>(p.cards.prof.tags||'').split(' ').filter(Boolean),ts=p=>[p.cards.hobby.tags,p.cards.bag.tags].join(' ').split(' ').filter(Boolean);
+  const who=t=>I.filter(p=>tp(p).includes(t)),am=t=>I.filter(p=>ts(p).includes(t));
+  c.need.forEach(t=>{const w=who(t),a=am(t),T1=BTAG[t][0].toUpperCase()+BTAG[t].slice(1);if(w.length){sc+=2;R.push(['+',`${T1}: профессионал — ${w.map(p=>p.name).join(', ')}`])}else if(a.length){sc+=1;R.push(['+',`${T1}: только любитель — ${a.map(p=>p.name).join(', ')}`])}else{sc-=3;R.push(['−',`Некому заниматься: ${BTAG[t]}`])}});
+  bk.rooms.forEach(r=>{if(r.tag&&who(r.tag).length){sc+=1;R.push(['+',`${r.n}: есть специалист`])}});
+  if(bk.fixed||who(bk.prob.tag).length||am(bk.prob.tag).length){sc+=1;R.push(['+',`Поломка «${bk.prob.n}» устранена`])}else{sc-=2;R.push(['−',`Поломка «${bk.prob.n}» так и осталась`])}
+  I.forEach(p=>{const h=p.cards.health;if(h.sev>=2){sc-=1;R.push(['−',`${p.name}: ${h.t.toLowerCase()}`])}else if(h.sev<0){sc+=1;R.push(['+',`${p.name}: ${h.t.toLowerCase()}`])}
+    const ph=p.cards.phobia.t.toLowerCase();if(ph.includes('клаустро')){sc-=1;R.push(['−',`${p.name}: клаустрофобия в бункере`])}else if(c.phob.some(x=>ph.includes(x))){sc-=1;R.push(['−',`${p.name}: ${ph} — хуже не придумаешь`])}
+    const tv=p.cards.trait.v;if(tv){sc+=tv;R.push([tv>0?'+':'−',`${p.name}: ${p.cards.trait.t.toLowerCase()}`])}});
+  const m=I.some(p=>p.cards.bio.g==='М'&&p.cards.bio.fert),f=I.some(p=>p.cards.bio.g==='Ж'&&p.cards.bio.fert);
+  if(m&&f){sc+=2;R.push(['+','Есть пара, способная продолжить род'])}else{sc-=1;R.push(['−','У человечества в бункере нет продолжения'])}
+  if(S.sab){sc-=S.sab;R.push(['−',`Снаружи вредили бункеру: ${S.sab} раз`])}
+  const T=2*S.seats+(c.years>=4?1:0);
+  const ob=S.ocnt||{};const OR=[];let os=0;
+  if(O.length){os=(ob.build||0)+(ob.scav||0)+(O.length>=2?1:0)-c.sev+(Math.random()<.5?1:0);
+    OR.push([(ob.build||0)?'+':'−',`Укрытие строили: ${ob.build||0} раз`],[(ob.scav||0)?'+':'−',`Припасы искали: ${ob.scav||0} раз`],['−',`Суровость катастрофы: ${c.sev} из 3`]);if(O.length>=2)OR.push(['+','Снаружи держались вместе']);}
+  return {sc,T,ok:sc>=T,R,os,ook:O.length>0&&os>=1,OR}}
+function bEnd(){const r=bScore(),c=bcat();S.bres=r;
+  const side=r.ok&&r.ook?'both':r.ok?'in':r.ook?'out':'none';
+  S.win={side,why:(r.ok?c.inWin:c.inLose)+' '+(outside().length?(r.ook?c.outWin:c.outLose):'')};chron(S.win.why);
+  const won={},pts={},awards=[];S.players.forEach(p=>{won[p.pid]=p.out?r.ook:r.ok;pts[p.pid]=(won[p.pid]?3:0)});
+  const vAg=pid=>S.votes.reduce((n,v)=>n+Object.values(v.v).filter(x=>x===pid).length,0);
+  const uniq=(arr,f,k,t,min=1)=>{let b=null,bv=-1,tie=false;arr.forEach(p=>{const v=f(p);if(v>bv){bv=v;b=p;tie=false}else if(v===bv)tie=true});if(b&&!tie&&bv>=min)awards.push({k,t,pid:b.pid})};
+  uniq(inside(),p=>-vAg(p.pid),'Незаменимый','против него голосовали меньше всех',-999);
+  uniq(S.players,p=>S.log.filter(l=>l.s===p.pid).length,'Оратор','больше всех фраз в протоколе',2);
+  uniq(outside(),p=>(S.opc[p.pid]||{}).build||0,'Строитель','больше всех строил укрытие снаружи');
+  uniq(outside(),p=>(S.opc[p.pid]||{}).sab||0,'Диверсант','больше всех вредил бункеру снаружи');
+  awards.forEach(a=>pts[a.pid]=(pts[a.pid]||0)+1);
+  S.final={pts,won,awards,goals:{},snipe:{}};setPhase('end')}
+
+/* ---------- Бункер: экраны ---------- */
+function bTop(){const c=bcat(),bk=S.bk;
+  return `<div class="top"><div class="t1"><b>${esc(c.title)}</b><span class="small mute">${S.round?`Раунд ${S.round} · `:''}мест ${S.seats} · внутри ${inside().length}</span>${toggles()}</div>
+  ${bk?`<div class="inv binv"><span class="chip">${bk.years} ${yrs(bk.years)} под землёй</span><span class="chip">Еды на ${bk.food} мес.</span>${bk.rooms.map(r=>`<span class="chip">${esc(r.n)}</span>`).join('')}<span class="chip ${bk.fixed?'acc':'red'}">${bk.fixed?'Исправлено: ':'Поломка: '}${esc(bk.prob.n)}</span></div>`:''}</div>`}
+function bCardsList(p,all){return BCARD.map(([k,l])=>{const open=p.rev[k];if(!all&&!open)return '';return `<div class="bc ${open?'':'hid'}"><span class="tiny mute">${l}${all&&!open?' · скрыта':''}</span><b>${esc(p.cards[k].t)}</b></div>`}).join('')}
+function bMine(vp){const p=P(vp);if(!p)return '';const a=BACT[p.action];
+  return `<div class="box acc"><div class="lbl">Мои карты · другие видят только открытые</div><div class="bgrid">${bCardsList(p,true)}</div>${a?`<div class="bc act"><span class="tiny mute">Карта действия${p.actUsed?' · использована':''}</span><b>${esc(a.n)}</b><span class="tiny">${esc(a.d)}</span></div>`:''}</div>`}
+function bTable(vp){return `<div class="box"><div class="lbl">Открытые карты</div>${S.players.map(p=>`<div class="bp ${p.out?'out':''}"><div class="bph"><b>${esc(p.name)}${p.pid===vp?' (вы)':''}</b><span class="chip ${p.out?'red':'acc'}">${p.out?'снаружи':'в бункере'}</span>${!p.out&&hidden(p).length?`<span class="tiny mute">скрыто: ${hidden(p).length}</span>`:''}</div><div class="bgrid">${bCardsList(p,false)}</div></div>`).join('')}</div>`}
+function bActBox(vp){const p=P(vp);if(!p||p.out||!p.action||p.actUsed)return '';const a=BACT[p.action];
+  return `<details class="box"><summary>Карта действия: ${esc(a.n)}</summary><p class="small">${esc(a.d)}</p>${a.t?`<div class="spk" style="flex-wrap:wrap">${S.players.filter(x=>x.pid!==vp||p.action==='heal').map(x=>`<button data-act="bact" data-v="${esc(x.pid)}">${esc(x.name)}${x.pid===vp?' (я)':''}</button>`).join('')}</div>`:`<button class="btn" style="width:100%" data-act="bact" data-v="">Сыграть карту</button>`}</details>`}
+function bOutBox(vp){const p=P(vp),my=mine('oa',vp);
+  const opts=[['build','Строить укрытие','Повышает шансы выжить снаружи.'],['scav','Искать припасы','Еда и вода для тех, кто снаружи.'],['sab','Вредить бункеру','Тайно портите им жизнь: бункеру будет сложнее выжить.']];
+  return `<div class="narr"><div class="k">Вы снаружи · раунд ${S.round}</div><p>Дверь закрыта, но жизнь продолжается. Что делаете в этом раунде? Выбор тайный.</p></div>${opts.map(([v,t,d])=>`<button class="opt ${my===v?'on':''}" data-act="boa" data-v="${v}" ${my&&my!==v?'disabled':''}><b>${t}</b><span class="tiny mute" style="display:block">${d}</span></button>`).join('')}${my?'<p class="small mute" style="text-align:center">Выбор сделан.</p>':''}${S.local&&my?'<button class="btn pri" style="width:100%" data-act="lqNext">Скрыть и передать дальше</button>':''}`}
+function bNarr(){const c=bcat(),ph=S.phase;
+  switch(ph){case 'intro':return c.intro+` Мест в бункере: ${S.seats}.`;case 'reveal':return `Раунд ${S.round}. Каждый открывает одну свою карту.`;case 'discuss':return 'Обсуждение. Докажите, что без вас бункер не выживет.';case 'bvote':return 'Голосование. Кто останется снаружи?';case 'vres':return S.res.text;case 'end':return S.win.why}return ''}
+function bPhase(vp){const c=bcat(),ph=S.phase,p=P(vp),inB=p&&!p.out;
+  switch(ph){
+  case 'deal':{if(!vp)return '';const rd=mine('ready',vp);return `<div class="narr"><div class="k">Твоё досье</div><p>Это твои карты. Сначала все видят только профессию, остальное открываешь по одной карте за раунд — сам решаешь, когда и что.</p></div>${bMine(vp)}<button class="btn pri" style="width:100%;margin-top:12px" data-act="ready" ${rd?'disabled':''}>${rd?'Готово — ждём остальных':'Запомнил(а)'}</button>${S.local?'':waitList()}`}
+  case 'intro':return `<div class="narr"><div class="k">Катастрофа</div><h2>${esc(c.title)}</h2><p>${esc(c.intro)}</p></div>
+    <div class="box"><div class="lbl">Бункер</div><p class="small">Мест: <b>${S.seats}</b> из ${S.players.length}. Сидеть: <b>${S.bk.years} ${yrs(S.bk.years)}</b>. Еды на ${S.bk.food} мес.<br>Есть: ${S.bk.rooms.map(r=>esc(r.n)).join(', ')}.<br>Поломка: <b>${esc(S.bk.prob.n)}</b>.</p>
+    <p class="small mute">Чтобы выжить, в бункере понадобятся: ${c.need.map(t=>BTAG[t]).join(', ')}. И кто-то должен продолжить род.</p></div>
+    <div class="box"><div class="lbl">Как пойдёт игра</div><p class="small">Каждый раунд все открывают по одной карте, спорят и голосуют, кто останется снаружи. Изгнанные не выбывают: снаружи у них своя игра — строить укрытие, искать припасы или вредить бункеру. В конце будут две истории: выжил ли бункер и выжили ли те, кто снаружи.</p></div>
+    ${vp?`<details class="box"><summary>Мои карты</summary>${bMine(vp)}</details>`:''}${bTable(vp)}`;
+  case 'reveal':{if(!vp)return bTable(null);if(p.out)return bOutBox(vp)+bTable(vp);const hd=hidden(p),my=mine('rv',vp);
+    let h=`<div class="narr"><div class="k">Раунд ${S.round} · раскрытие</div><p>${hd.length?'Какую карту откроешь всем?':'У вас открыты все карты.'}</p></div>`;
+    if(hd.length&&!my)h+=hd.map(k=>`<button class="opt" data-act="brv" data-v="${k}"><span class="tiny mute">${BCARD.find(c=>c[0]===k)[1]}</span><b style="display:block">${esc(p.cards[k].t)}</b></button>`).join('');
+    if(my)h+=`<p class="small mute" style="text-align:center">Открыто: ${esc(BCARD.find(c=>c[0]===my)[1])}.</p>${S.local?'<button class="btn pri" style="width:100%" data-act="lqNext">Скрыть и передать дальше</button>':''}`;
+    return h+bActBox(vp)+(S.local?'':waitList())+bTable(vp)}
+  case 'discuss':return `<div class="narr"><div class="k">Обсуждение · раунд ${S.round}</div><p>Докажите, почему без вас бункер не выживет. Сомневайтесь в чужих картах. Можно сыграть карту действия.</p></div><div class="timer" id="tmr">--:--</div>${bActBox(vp)}${micPanel()}${bTable(vp)}`;
+  case 'bvote':{const my=mine('bv',vp),tally={};Object.entries(S.inp).forEach(([pid,o])=>{if(o.bv)(tally[o.bv]=tally[o.bv]||[]).push(nm(pid)+(S.dbl[pid]===S.round?' ×2':''))});
+    let h=`<div class="narr"><div class="k">Голосование · раунд ${S.round}</div><p>${inB||S.local?`Кто остаётся снаружи? Мест: ${S.seats}, внутри сейчас ${inside().length}. Голосование открытое.`:'Голосуют те, кто внутри. Вы наблюдаете.'}</p></div>`;
+    h+=inside().filter(x=>S.local||x.pid!==vp).map(x=>{const imm=S.immune[x.pid]===S.round;return `<button class="pl ${my===x.pid||ui.confirm===x.pid?'on':''}" data-act="${S.local?'blv':'bvote'}" data-v="${esc(x.pid)}" ${(!S.local&&!inB)||imm?'disabled':''}><span class="av">${esc(x.name[0].toUpperCase())}</span><span class="nm"><b>${esc(x.name)}${imm?' · неприкосновенность':''}</b><span class="tiny mute" style="display:block">${BCARD.filter(([k])=>x.rev[k]).map(([k])=>esc(x.cards[k].t)).join(' · ')}</span>${tally[x.pid]?`<span class="tiny" style="display:block;color:#ff8a90">Против: ${esc(tally[x.pid].join(', '))}</span>`:''}</span></button>`}).join('');
+    if(S.local&&ui.confirm)h+=`<button class="btn red" style="width:100%;margin-top:10px" data-act="blvGo">Оставить снаружи: ${esc(nm(ui.confirm))}</button>`;
+    return h+bActBox(vp)+(S.local?'':waitList())}
+  case 'vres':{const r=S.res;const ex=P(r.pid);return `<div class="narr"><div class="k">Итог раунда ${S.round}</div><p>${esc(r.text)}</p></div>${ex?`<div class="box"><div class="lbl">${esc(ex.name)} — все карты</div><div class="bgrid">${bCardsList(ex,true)}</div></div>`:''}${micPanel()}`}
+  case 'end':return bEndView(vp)}
+  return ''}
+function bEndView(vp){const c=bcat(),r=S.bres||{R:[],OR:[]},F=S.final||{pts:{},won:{},awards:[]};recordStats();
+  const ttl={both:'Выжили все',in:'Бункер выжил',out:'Выжили снаружи',none:'Никто не выжил'}[S.win.side];
+  const rows=S.players.slice().sort((a,b)=>(F.pts[b.pid]||0)-(F.pts[a.pid]||0));
+  const li=a=>a.map(([s,t])=>`<p class="small"><b style="color:${s==='+'?'#7fe0a8':'#ff8a90'}">${s}</b> ${esc(t)}</p>`).join('');
+  return `<div class="win ${r.ok||r.ook?'town':'maf'}"><h1>${ttl}</h1><p>${esc(S.win.why)}</p></div>
+  <div class="box ${r.ok?'acc':''}"><div class="lbl">Бункер: ${r.ok?'выжил':'не выжил'} · ${r.sc} из ${r.T} нужных</div><p class="small">${inside().map(p=>esc(p.name)).join(', ')}</p>${li(r.R)}</div>
+  ${outside().length?`<div class="box ${r.ook?'acc':''}"><div class="lbl">Снаружи: ${r.ook?'выжили':'не выжили'}</div><p class="small">${outside().map(p=>esc(p.name)).join(', ')}</p>${li(r.OR)}</div>`:''}
+  ${F.awards.length?`<div class="box acc"><div class="lbl">Награды</div>${F.awards.map(a=>`<p><b>${esc(a.k)}</b>: ${esc(nm(a.pid))}<br><span class="tiny mute">${esc(a.t)}</span></p>`).join('')}</div>`:''}
+  <div class="box"><div class="lbl">Все карты · очки</div>${rows.map(p=>`<div class="bp ${p.out?'out':''}"><div class="bph"><b>${esc(p.name)} · ${F.pts[p.pid]||0} оч.</b><span class="chip ${p.out?'red':'acc'}">${p.out?'снаружи':'в бункере'}</span><span class="tiny" style="color:${F.won[p.pid]?'#7fe0a8':'#ff8a90'}">${F.won[p.pid]?'выжил(а)':'не выжил(а)'}</span></div><div class="bgrid">${bCardsList(p,true)}</div></div>`).join('')}
+  <p class="tiny mute">Очки: твоя группа выжила +3, награда +1.</p></div>
+  <div class="row"><button class="btn pri" data-act="shareCard">Поделиться итогами</button><button class="btn" data-act="tab" data-v="stats">Статистика</button></div>
+  <div class="box"><div class="lbl">Хроника</div>${S.chron.map(c=>`<p class="small"><b>Р${c.d}</b> ${esc(c.t)}</p>`).join('')}</div>`}
+function bRules(){return `<details class="box"><summary>Правила за минуту</summary><ul class="rules small">
+<li>От 4 игроков. Случилась катастрофа, а в бункере мест примерно на половину из вас.</li>
+<li>У каждого 8 карт: профессия, биология, здоровье, хобби, фобия, багаж, характер, факт. Плюс одна карта действия. Сначала все видят только профессию.</li>
+<li><b>Раунд:</b> каждый открывает одну свою карту → обсуждение → открытое голосование, кто останется снаружи. Ничья — решает жребий. У изгнанного раскрываются все карты.</li>
+<li><b>Карты действия</b> играются в любой момент раунда: разоблачить чужую карту, вылечить, обменяться здоровьем или багажом, получить неприкосновенность или двойной голос, починить бункер.</li>
+<li><b>Снаружи жизнь продолжается:</b> каждый раунд изгнанные тайно строят укрытие, ищут припасы или вредят бункеру.</li>
+<li><b>Финал:</b> игра считает, выживет ли бункер с таким составом — нужные катастрофе навыки, комнаты, поломка, здоровье, фобии, характеры, возможность продолжить род — и выживут ли те, кто снаружи. Победить могут обе стороны, одна или никто.</li></ul></details>`}
+function bDossier(){return bTable(viewPid())+`<div class="box"><div class="lbl">Голосования</div>${S.votes.map(v=>`<p class="small"><b>Р${v.d}</b> ${Object.entries(v.v).map(([a,b])=>`${esc(nm(a))}→${b==='skip'?'—':esc(nm(b))}`).join(', ')} · снаружи: ${esc(nm(v.ex))}</p>`).join('')||'<p class="small mute">Пока не было</p>'}</div><div class="box"><div class="lbl">Хроника</div>${S.chron.map(c=>`<p class="small"><b>Р${c.d}</b> ${esc(c.t)}</p>`).join('')}</div>`}
+function catStrip(sel,act){return `<div class="strip">${BCAT.map(x=>`<button class="sc ${sel===x.id?'on':''}" style="--a:${x.acc};--b:${x.bg}" data-act="${act}" data-v="${x.id}"><span class="pic">${pic(x.pic)}</span><span class="tx"><small>${esc(x.sub)}</small><h3>${esc(x.title)}</h3></span></button>`).join('')}</div>`}
+function catDetail(id){const x=BCAT.find(c=>c.id===id)||BCAT[0];return `<div class="box acc"><h3>${esc(x.title)}</h3><p class="small mute">${esc(x.sub)}</p><p>${esc(x.intro)}</p><div class="lbl" style="margin-top:10px">Что понадобится в бункере</div><div class="inv">${x.need.map(t=>`<span class="chip">${esc(BTAG[t])}</span>`).join('')}<span class="chip">продолжение рода</span></div><div class="lbl" style="margin-top:10px">Срок</div><p class="small">${x.years} ${yrs(x.years)} под землёй · снаружи суровость ${x.sev} из 3</p></div>`}
+
 /* ---------- commit / sync ---------- */
 function commit(){S.rev++;S.hostNow=Date.now();if(S.local)LS.set('maf.local',S);else{LS.set('maf.host',{code:S.code,S});broadcast()}speak();render()}
 let ruVoice=null;function pickVoice(){try{const v=speechSynthesis.getVoices();ruVoice=v.find(x=>/^ru/i.test(x.lang))||null}catch(e){}}
@@ -1025,7 +1249,7 @@ function handlePeer(pr){let c=false,pl=P(pr.pid);const name=clean(pr.name).slice
   if(!pl){if(S.phase==='lobby'&&S.players.length<16&&!S.kicked.includes(pr.pid)){S.players.push({pid:pr.pid,name,alive:true});c=true;pl=P(pr.pid)}else return false}
   else if(S.phase==='lobby'&&pl.name!==name){pl.name=name;c=true}
   if(Array.isArray(pr.sp)){const ids=new Set(S.log.map(l=>l.i));for(const e of pr.sp.slice(-4)){if(e&&typeof e.i==='string'&&!ids.has(e.i)&&typeof e.t==='string'&&clean(e.t)){addLog({i:e.i,d:S.day,s:P(e.s)?e.s:pr.pid,by:pr.pid,t:clean(e.t).slice(0,280)});c=true}}}
-  if(pr.pk===S.pk&&pr.a&&typeof pr.a==='object'){for(const k of ['shot','ready','cv','team','ms','vote','na','go','ne','use'])if(pr.a[k]!==undefined&&input(pr.pid,k,pr.a[k]))c=true}
+  if(pr.pk===S.pk&&pr.a&&typeof pr.a==='object'){for(const k of ['shot','ready','cv','team','ms','vote','na','go','ne','use','rv','oa','bv','act'])if(pr.a[k]!==undefined&&input(pr.pid,k,pr.a[k]))c=true}
   return c}
 function onRemote(d){if(!d||!d.gid)return;if(S&&S.gid===d.gid&&d.rev<S.rev)return;
   S=JSON.parse(JSON.stringify(d));ui.skew=(S.hostNow||Date.now())-Date.now();
@@ -1064,7 +1288,7 @@ async function joinGame(code,auto){code=String(code||'').toLowerCase().replace(/
   ui.tries=0;mode='net';isHost=false;ui.screen='game';ui.err='';try{location.hash='g-'+code}catch(e){}
   if(!S){render()}}
 function needName(){const v=clean($('#nm')?.value||me.name).slice(0,20);if(!v){ui.err='Сначала введите имя';render();return false}me.name=v;LS.set('maf.name',v);return true}
-function leave(){const back=S?(S.mode==='coop'?'survive':'mafia'):ui.page;if(net.retry){clearTimeout(net.retry);net.retry=null}if(isHost)LS.del('maf.host');try{net.host&&net.host.close()}catch(e){}try{net.peer&&net.peer.destroy()}catch(e){}net.peer=null;net.host=null;net.conns=new Map();net.status='';S=null;mode=null;isHost=false;ui.screen='home';ui.tab='game';ui.page=back;try{location.hash=back}catch(e){}render()}
+function leave(){const back=S?pageOf(S.mode):ui.page;if(net.retry){clearTimeout(net.retry);net.retry=null}if(isHost)LS.del('maf.host');try{net.host&&net.host.close()}catch(e){}try{net.peer&&net.peer.destroy()}catch(e){}net.peer=null;net.host=null;net.conns=new Map();net.status='';S=null;mode=null;isHost=false;ui.screen='home';ui.tab='game';ui.page=back;try{location.hash=back}catch(e){}render()}
 function startLocal(resume){mode='local';isHost=false;ui.screen='game';if(resume){S=LS.get('maf.local',null);if(S&&S.local&&!S.mode)S.mode='mafia'}if(!S||!S.local){S=newState('',true)}render()}
 
 /* ---------- mic ---------- */
@@ -1077,7 +1301,7 @@ function micToggle(){
     rec.onend=()=>{if(ui.wantMic){try{rec.start();return}catch(e){}}ui.listening=false;render()};rec.start();ui.listening=true;ui.wantMic=true}catch(e){ui.noMic=true;toast('Микрофон недоступен')}render()}}
 
 /* ---------- AI ---------- */
-function narr(){if(!S)return '';const s=sc(),ph=S.phase;
+function narr(){if(!S)return '';if(BK())return bNarr();const s=sc(),ph=S.phase;
   switch(ph){case 'intro':return COOP()?coopIntro(s):s.intro;
   case 'crisis':return `День ${S.day}. ${crDef().t}. ${crDef().x}`;
   case 'team':return `Лидер дня, ${nm(S.crisis.lead)}, собирает отряд из ${teamSize()} человек.`;
@@ -1114,27 +1338,27 @@ const SND={ctx:null,on:LS.get('maf.snd',false),amb:null,tk:null,cur:null,
  sting(k){if(!this.on||!this.init())return;const c=this.ctx,t=c.currentTime;
   const q={death:[[110,0],[82,.28],[55,.56]],win:[[392,0],[494,.15],[587,.3],[784,.45]],lose:[[294,0],[247,.32],[196,.64]],phase:[[660,0],[880,.12]],night:[[220,0],[165,.45]],morning:[[523,0],[659,.18],[784,.36]]}[k]||[];
   q.forEach(([f,d])=>{const o=c.createOscillator(),g=c.createGain();o.type=k==='death'?'sawtooth':'triangle';o.frequency.value=f;const len=k==='death'?1:.6;g.gain.setValueAtTime(.0001,t+d);g.gain.exponentialRampToValueAtTime(.22,t+d+.03);g.gain.exponentialRampToValueAtTime(.0001,t+d+len);o.connect(g).connect(c.destination);o.start(t+d);o.stop(t+d+len+.05)})}};
-function ambient(){if(!SND.on)return;if(!S||S.phase==='lobby'){if(SND.cur)SND.stop();return}if(SND.cur!==S.scen)SND.start(S.scen)}
+function ambient(){if(!SND.on)return;if(!S||S.phase==='lobby'){if(SND.cur)SND.stop();return}const id=BK()?BAMB[S.cat]:S.scen;if(SND.cur!==id)SND.start(id)}
 function phaseSound(){if(!S||!SND.on||ui.sndPk===S.pk)return;const first=ui.sndPk==null;ui.sndPk=S.pk;if(first)return;
   const ph=S.phase;if(ph==='night')SND.sting('night');else if(ph==='morning')SND.sting(S.res&&S.res.deaths&&S.res.deaths.length?'death':'morning');
-  else if(ph==='vres')SND.sting(S.res&&S.res.pid?'death':'phase');else if(ph==='end'){const p=P(me.pid);SND.sting(!S.local&&p&&SIDE(p.role)!==S.win.side?'lose':'win')}else if(ph!=='lobby')SND.sting('phase')}
+  else if(ph==='vres')SND.sting(S.res&&S.res.pid?'death':'phase');else if(ph==='end'){const p=P(me.pid);const lost=BK()?(p&&S.final&&!S.final.won[p.pid]):(!S.local&&p&&SIDE(p.role)!==S.win.side);SND.sting(lost?'lose':'win')}else if(ph!=='lobby')SND.sting('phase')}
 
 /* ---------- stats ---------- */
 function loadStats(){const st=LS.get('maf.stats',null)||{};if(!st.v){const old=st;const nw={v:2,gids:old.gids||[],m:{mafia:{p:old.p||{},g:old.g||[]},coop:{p:{},g:[]}}};LS.set('maf.stats',nw);return nw}return st}
 function recordStats(){if(!S||!S.final||!S.win)return;const st=loadStats();if(st.gids.includes(S.gid))return;
-  st.gids.push(S.gid);st.gids=st.gids.slice(-80);const w=S.win.side,md=COOP()?'coop':'mafia',M=st.m[md]=st.m[md]||{p:{},g:[]};
+  st.gids.push(S.gid);st.gids=st.gids.slice(-80);const w=S.win.side,md=BK()?'bunker':COOP()?'coop':'mafia',M=st.m[md]=st.m[md]||{p:{},g:[]};
   S.players.forEach(p=>{const k=p.name.trim().toLowerCase();const r=M.p[k]=M.p[k]||{n:p.name,g:0,w:0,maf:0,mw:0,goals:0,pts:0,snipe:0};r.n=p.name;
-    r.g++;if(SIDE(p.role)===w)r.w++;if(SIDE(p.role)!=='town'){r.maf++;if(SIDE(p.role)===w)r.mw++}if(S.final.goals[p.pid])r.goals++;r.pts+=S.final.pts[p.pid]||0;r.snipe+=(S.final.snipe||{})[p.pid]||0});
-  M.g.unshift({d:new Date().toLocaleDateString('ru-RU'),t:sc().title,w:COOP()?(w==='town'?'все выжили':'не выжили'):w==='town'?'победили выжившие':w==='man'?'победил маньяк':'победили '+sc().roles.maf.pl.toLowerCase()});M.g=M.g.slice(0,20);LS.set('maf.stats',st)}
-function statsHtml(md){md=md||(S&&COOP()?'coop':'mafia');const st=loadStats(),M=st.m[md]||{p:{},g:[]},isC=md==='coop',title=isC?GAMES.survive.t:GAMES.mafia.t;const rows=Object.values(M.p).sort((a,b)=>b.pts-a.pts);
+    const won=S.final.won?!!S.final.won[p.pid]:SIDE(p.role)===w;r.g++;if(won)r.w++;if(BK()?!p.out:SIDE(p.role)!=='town'){r.maf++;if(won)r.mw++}if(S.final.goals[p.pid])r.goals++;r.pts+=S.final.pts[p.pid]||0;r.snipe+=(S.final.snipe||{})[p.pid]||0});
+  M.g.unshift({d:new Date().toLocaleDateString('ru-RU'),t:BK()?bcat().title:sc().title,w:BK()?({both:'выжили все',in:'выжил бункер',out:'выжили снаружи',none:'не выжил никто'}[w]):COOP()?(w==='town'?'все выжили':'не выжили'):w==='town'?'победили выжившие':w==='man'?'победил маньяк':'победили '+sc().roles.maf.pl.toLowerCase()});M.g=M.g.slice(0,20);LS.set('maf.stats',st)}
+function statsHtml(md){md=md||(S?(BK()?'bunker':COOP()?'coop':'mafia'):'mafia');const st=loadStats(),M=st.m[md]||{p:{},g:[]},isC=md==='coop'||md==='bunker',isB=md==='bunker',title=GAMES[pageOf(md)].t;const rows=Object.values(M.p).sort((a,b)=>b.pts-a.pts);
   if(!rows.length)return `<div class="box"><div class="lbl">${esc(title)}</div><p class="small mute">Пока пусто. После первой партии здесь появится рейтинг компании. Данные хранятся на этом телефоне.</p></div>`;
-  return `<div class="box"><div class="lbl">${esc(title)} · рейтинг на этом телефоне</div><div class="scroll"><table class="st"><thead><tr><th>Игрок</th><th>Очки</th><th>Игр</th><th>${isC?'Выжили':'Побед'}</th>${isC?'':'<th>Мафией</th>'}<th>Цели</th>${isC?'':'<th>Снайп.</th>'}</tr></thead><tbody>${rows.map((r,i)=>`<tr><td>${i<3?['1.','2.','3.'][i]+' ':''}${esc(r.n)}</td><td>${r.pts}</td><td>${r.g}</td><td>${Math.round(r.w/r.g*100)}%</td>${isC?'':`<td>${r.maf}${r.maf?' ('+r.mw+' поб.)':''}</td>`}<td>${r.goals}</td>${isC?'':`<td>${r.snipe}</td>`}</tr>`).join('')}</tbody></table></div>
+  return `<div class="box"><div class="lbl">${esc(title)} · рейтинг на этом телефоне</div><div class="scroll"><table class="st"><thead><tr><th>Игрок</th><th>Очки</th><th>Игр</th><th>${isC?'Выжили':'Побед'}</th>${isB?'<th>В бункере</th>':isC?'':'<th>Мафией</th>'}${isB?'':'<th>Цели</th>'}${isC?'':'<th>Снайп.</th>'}</tr></thead><tbody>${rows.map((r,i)=>`<tr><td>${i<3?['1.','2.','3.'][i]+' ':''}${esc(r.n)}</td><td>${r.pts}</td><td>${r.g}</td><td>${Math.round(r.w/r.g*100)}%</td>${isB?`<td>${r.maf}</td>`:isC?'':`<td>${r.maf}${r.maf?' ('+r.mw+' поб.)':''}</td>`}${isB?'':`<td>${r.goals}</td>`}${isC?'':`<td>${r.snipe}</td>`}</tr>`).join('')}</tbody></table></div>
   ${isC?'':'<p class="tiny mute">«Снайп.» — голоса против мафии и маньяка.</p>'}
   ${M.g.length?`<div class="lbl" style="margin-top:10px">Последние партии</div>${M.g.slice(0,8).map(g=>`<p class="small">${esc(g.d)} · ${esc(g.t)} · ${esc(g.w)}</p>`).join('')}`:''}</div>
   <button class="btn ghost" style="width:100%" data-act="resetStats">${ui.rs?'Точно очистить всю статистику?':'Очистить статистику'}</button>`}
 
 /* ---------- share card ---------- */
-async function shareCard(){if(!S||!S.win)return;const s=sc(),F=S.final||{pts:{},awards:[]},W=1080,H=1350,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+async function shareCard(){if(!S||!S.win)return;if(BK()){const F=S.final,c=bcat();const txt=`Бункер · ${c.title}\n${({both:'Выжили все',in:'Бункер выжил',out:'Выжили снаружи',none:'Никто не выжил'})[S.win.side]}\nВ бункере: ${inside().map(p=>p.name+' ('+p.cards.prof.t.split(',')[0]+')').join(', ')}\nСнаружи: ${outside().map(p=>p.name).join(', ')||'—'}\n`+S.players.map(p=>p.name+': '+(F.pts[p.pid]||0)+' оч.').join('\n')+'\n'+location.origin+location.pathname+'#bunker';try{if(navigator.share){await navigator.share({text:txt});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(txt);toast('Итоги скопированы')}catch(e){toast('Не получилось поделиться')}return}const s=sc(),F=S.final||{pts:{},awards:[]},W=1080,H=1350,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
   x.fillStyle=s.bg;x.fillRect(0,0,W,H);const gr=x.createRadialGradient(W/2,0,50,W/2,0,900);gr.addColorStop(0,s.acc+'55');gr.addColorStop(1,'transparent');x.fillStyle=gr;x.fillRect(0,0,W,H);
   x.fillStyle=s.acc;x.font='bold 44px Manrope, sans-serif';x.fillText((COOP()?'ВЫЖИВАНИЕ':'МАФИЯ: ВЫЖИВАНИЕ')+' · '+s.title.toUpperCase(),70,110);
   const t=COOP()?(S.win.side==='town'?'Мы выжили':'Группа не выжила'):S.win.side==='town'?'Выжившие победили':S.win.side==='man'?'Маньяк победил':s.roles.maf.pl+' победили';
@@ -1158,7 +1382,7 @@ function render(){
   const app=$('#app');if(!app)return;
   if(pDown){pPend=true;return}
   const a=document.activeElement,fid=a&&a.id,ss=a&&a.selectionStart;
-  const s=sc();const hubAcc=!S&&ui.page==='hub';document.body.style.setProperty('--acc',hubAcc?'#b5d94a':s.acc);document.body.style.setProperty('--sbg',hubAcc?'#0d0f14':s.bg);setTitle();
+  const s=(BK()||(!S&&ui.page==='bunker'))?bcat():sc();const hubAcc=!S&&ui.page==='hub';document.body.style.setProperty('--acc',hubAcc?'#b5d94a':s.acc);document.body.style.setProperty('--sbg',hubAcc?'#0d0f14':s.bg);setTitle();
   let h;
   if(!S)h=homeView();else if(S.phase==='lobby')h=lobbyView();else h=gameView();
   document.body.classList.toggle('night',!!S&&S.phase==='night');
@@ -1187,6 +1411,16 @@ function scenDetail(id,md){const x=SCEN.find(s=>s.id===id);if(!x)return '';const
   <div class="lbl" style="margin-top:10px">Кризисы</div><p class="small mute">${x.cr.map(c=>esc(c.t)).join(' · ')}</p></div>`}
 
 function homeView(){return ui.page==='hub'?hubView():gameHome(ui.page)}
+function bunkerHome(g){return `<button class="btn ghost sm" data-act="page" data-v="hub" style="margin-top:6px">← Все игры</button>
+  <div class="hero"><h1><span>Бункер</span></h1><p class="mute">${esc(g.d)} От ${g.min} игроков.</p></div>
+  <div class="lbl">Катастрофы</div>${catStrip(ui.cat,'pickCatHome')}${catDetail(ui.cat)}
+  <div class="box" id="enter"><div class="lbl">Ваше имя</div><input id="nm" maxlength="20" placeholder="Например, Куаныш" value="${esc(me.name)}" autocomplete="off">
+  ${ui.err?`<p class="small" style="color:${/…$/.test(ui.err)?'var(--mute)':'#ff8a90'}">${esc(ui.err)}</p>`:''}
+  <div class="sep"></div><div class="row"><button class="btn pri" data-act="create">Создать игру</button></div>
+  <div class="row" style="margin-top:10px"><input id="code" maxlength="8" placeholder="Код игры" value="${esc(ui.code)}" style="flex:1 1 120px;text-transform:uppercase" autocomplete="off"><button class="btn" data-act="join">Войти</button></div>
+  <p class="tiny mute">Телефоны соединяются напрямую. Надёжнее всего, когда все в одном Wi‑Fi.</p>
+  <div class="sep"></div><div class="row"><button class="btn ghost" data-act="local">Один телефон на всех</button>${ui.resume==='bunker'?'<button class="btn ghost" data-act="localResume">Продолжить партию</button>':''}</div></div>
+  <details class="box"><summary>Статистика: Бункер</summary>${statsHtml('bunker')}</details>${bRules()}`}
 function hubView(){
   return `<div class="hero"><h1>${esc(SITE)}</h1><p class="mute">Игры для компании в одной комнате. Каждый играет со своего телефона, без регистрации и без ведущего.</p></div>
   <div class="games">${Object.entries(GAMES).map(([k,g])=>`<button class="gcard ${g.soon?'soon':''}" style="--a:${g.acc};--b:${g.bg}" ${g.soon?'disabled':`data-act="page" data-v="${k}"`}><span class="pic">${pic(g.pic)}</span><span class="tx"><small>${esc(g.sub)}${g.min?' · от '+g.min+' игроков':''}</small><h2>${esc(g.t)}</h2><span class="small mute" style="display:block">${esc(g.d)}</span>${g.soon?'<span class="chip" style="margin-top:8px">Скоро</span>':`<span class="go">Открыть</span>`}</span></button>`).join('')}</div>
@@ -1194,8 +1428,8 @@ function hubView(){
   <div class="row"><input id="code" maxlength="8" placeholder="Код игры" value="${esc(ui.code)}" style="flex:1 1 120px;text-transform:uppercase" autocomplete="off"><button class="btn pri" data-act="join">Войти</button></div>
   ${ui.err?`<p class="small" style="color:${/…$/.test(ui.err)?'var(--mute)':'#ff8a90'}">${esc(ui.err)}</p>`:''}
   <p class="tiny mute">Код сам приведёт в нужную игру.</p></div>
-  <details class="box"><summary>Статистика компании</summary>${statsHtml('mafia')}${statsHtml('coop')}</details>`}
-function gameHome(pg){const g=GAMES[pg],md=g.mode;const isC=md==='coop';
+  <details class="box"><summary>Статистика компании</summary>${statsHtml('mafia')}${statsHtml('coop')}${statsHtml('bunker')}</details>`}
+function gameHome(pg){const g=GAMES[pg],md=g.mode;const isC=md==='coop';if(md==='bunker')return bunkerHome(g);
   return `<button class="btn ghost sm" data-act="page" data-v="hub" style="margin-top:6px">← Все игры</button>
   <div class="hero"><h1>${isC?'<span>Выживание</span>':'Мафия:<br><span>Выживание</span>'}</h1><p class="mute">${esc(g.d)} От ${g.min} игроков.</p></div>
   <div class="lbl">Истории</div>
@@ -1219,20 +1453,21 @@ async function shareLink(){const u=gameUrl();try{if(navigator.share){await navig
 
 function lobbyView(){const s=sc(),host=isHost||S.local;
   let h=netBanner()+`<div style="display:flex;justify-content:flex-start">${toggles()}</div><div class="hero" style="padding-top:6px">`;
-  if(!S.local)h+=`<div class="lbl" style="text-align:center">${esc(COOP()?GAMES.survive.t:GAMES.mafia.t)} · код игры</div><div class="code">${esc(S.code.toUpperCase())}</div>
+  if(!S.local)h+=`<div class="lbl" style="text-align:center">${esc(GAMES[pageOf(S.mode)].t)} · код игры</div><div class="code">${esc(S.code.toUpperCase())}</div>
   <div class="qr">${qrSvg(gameUrl())}</div>
   <p class="small mute" style="text-align:center">Друзья наводят камеру на QR-код или открывают этот сайт и вводят код. Ведущего нет: создатель играет как все. ${isHost?'Ваш телефон держит связь игры — не закрывайте страницу и не блокируйте экран надолго.':''}</p>
   <button class="btn" style="width:100%" data-act="share">Отправить ссылку друзьям</button>`;
-  else h+=`<h2>${esc(COOP()?GAMES.survive.t:GAMES.mafia.t)} · один телефон</h2><p class="small mute">Добавьте всех игроков. Тайные шаги (карты, ночь, вылазки) телефон покажет каждому по очереди.</p>`;
+  else h+=`<h2>${esc(GAMES[pageOf(S.mode)].t)} · один телефон</h2><p class="small mute">Добавьте всех игроков. Тайные шаги (карты, ночь, вылазки) телефон покажет каждому по очереди.</p>`;
   h+=`</div><div class="box"><div class="lbl">Игроки: ${S.players.length} ${S.players.length<minP()?'· нужно минимум '+minP():''}</div>
   ${S.players.map(p=>`<div class="pl"><span class="av">${esc(p.name.slice(0,1).toUpperCase())}</span><span class="nm"><b>${esc(p.name)}${p.pid===me.pid&&!S.local?' (вы)':''}</b>${!S.local&&p.pid===S.hostPid?'<span class="tiny mute">создатель · играет как все</span>':''}${!S.local&&isHost&&p.pid!==me.pid&&!onlinePids().has(p.pid)?'<span class="tiny" style="color:#ff8a90">не в сети</span>':''}</span>${host&&p.pid!==S.hostPid?`<button class="btn sm ghost" data-act="kick" data-v="${esc(p.pid)}">Убрать</button>`:''}</div>`).join('')}
   ${S.local?`<div class="row"><input id="addn" maxlength="20" placeholder="Имя игрока" style="flex:1 1 160px" autocomplete="off"><button class="btn" data-act="addLocal">Добавить</button></div>`:''}
   </div>
-  ${!COOP()&&S.players.length===4?'<div class="box"><p class="small">Вчетвером первая ночь — ночь знакомства: убивать нельзя, детектив уже проверяет.</p></div>':''}
-  ${COOP()?'':optsHtml()}
-  <div class="lbl">Сценарий ${host?'— выберите':''}</div>
+  ${BK()?catStrip(S.cat,'pickCat')+catDetail(S.cat):''}
+  ${!COOP()&&!BK()&&S.players.length===4?'<div class="box"><p class="small">Вчетвером первая ночь — ночь знакомства: убивать нельзя, детектив уже проверяет.</p></div>':''}
+  ${COOP()||BK()?'':optsHtml()}
+  ${BK()?'':`<div class="lbl">Сценарий ${host?'— выберите':''}</div>
   ${host?scenStrip(S.scen,'pickScen'):''}
-  ${scenDetail(S.scen,S.mode)}
+  ${scenDetail(S.scen,S.mode)}`}
   <button class="btn ghost" data-act="leave" style="width:100%">Выйти из комнаты</button>`;
   return h}
 
@@ -1285,16 +1520,17 @@ function hl(t){let x=esc(t);const names=S.players.map(p=>esc(p.name)).filter(n=>
   const re=new RegExp(`(клянусь|честно|точно|я не|не я|видел[аи]?|слышал[аи]?|вру|врёт|врет|подозр[а-яё]*|мафи[а-яё]*|${names.join('|')||'zzzz'})`,'gi');return x.replace(re,'<mark>$1</mark>')}
 
 function netBanner(){return (!S||S.local||isHost||!net.status)?'':`<div class="box" style="border-color:var(--red)"><p class="small">${esc(net.status)}</p></div>`}
-function gameView(){const vp=viewPid();let h=topBar()+netBanner();
+function gameView(){const vp=viewPid();let h=(BK()?bTop():topBar())+netBanner();
   h+=`<div class="tabs"><button class="${ui.tab==='game'?'on':''}" data-act="tab" data-v="game">Игра</button><button class="${ui.tab==='dos'?'on':''}" data-act="tab" data-v="dos">Досье</button><button class="${ui.tab==='rules'?'on':''}" data-act="tab" data-v="rules">Правила</button></div>`;
-  if(ui.tab==='dos')return h+dossier();
+  if(ui.tab==='dos')return h+(BK()?bDossier():dossier());
   if(ui.tab==='stats')return h+statsHtml();
-  if(ui.tab==='rules')return h+goals()+(COOP()?coopRules():rulesHtml());
+  if(ui.tab==='rules')return h+(BK()?bRules():goals()+(COOP()?coopRules():rulesHtml()));
   if(S.local&&S.lq&&S.lq.i<S.lq.q.length&&!S.lq.show){const pid=S.lq.q[S.lq.i];
-    return h+`<div class="pass"><p class="mute">${esc({deal:'Раздача карт',mission:'Тайный выбор отряда',night:'Ночь'}[S.phase]||'')} · ${S.lq.i+1} из ${S.lq.q.length}</p><p>Передай телефон</p><div class="nmx">${esc(nm(pid))}</div><button class="btn pri" data-act="lqShow">Я ${esc(nm(pid))} — показать</button><p class="tiny mute">Остальные отворачиваются</p></div>`}
+    return h+`<div class="pass"><p class="mute">${esc({deal:'Раздача карт',mission:'Тайный выбор отряда',night:'Ночь',reveal:'Раскрытие карт'}[S.phase]||'')} · ${S.lq.i+1} из ${S.lq.q.length}</p><p>Передай телефон</p><div class="nmx">${esc(nm(pid))}</div><button class="btn pri" data-act="lqShow">Я ${esc(nm(pid))} — показать</button><p class="tiny mute">Остальные отворачиваются</p></div>`}
   const me_=P(vp);
   if(!S.local&&!me_&&S.phase!=='end')h+=`<div class="box"><p>Игра уже идёт без вас. Можно наблюдать.</p></div>`;
   if(me_&&!me_.alive&&S.phase!=='end')h+=`<div class="box" style="border-color:var(--red)"><p><b>Вы выбыли.</b> Наблюдайте молча: мёртвые не подсказывают.</p></div>`;
+  if(BK()){h+=bPhase(vp);if(!S.local&&vp&&(S.priv[vp]||[]).length&&!['deal','end'].includes(S.phase))h+=`<details class="box acc"><summary>Мои заметки</summary>${S.priv[vp].map(t=>`<p class="small">${esc(t)}</p>`).join('')}</details>`;if(!S.local&&vp&&!['deal','end','intro'].includes(S.phase))h+=`<details class="box"><summary>Мои карты</summary>${bMine(vp)}</details>`;return h}
   h+=phaseView(vp);
   if(!S.local&&vp&&!['deal','end'].includes(S.phase))h+=privBox(vp);
   return h}
@@ -1420,7 +1656,7 @@ function rulesHtml(){return `<details class="box"><summary>Правила за �
 <li><b>Вчетвером в мафию</b> первая ночь — ночь знакомства: убивать нельзя, детектив уже проверяет.</li>
 <li><b>Ночные события:</b> иногда ночью всем приходит общий вопрос «да/нет», и решение большинства влияет на утро.</li></ul></details>`}
 
-const PHN={deal:'Раздача',intro:'Пролог',crisis:'Кризис',team:'Отряд',mission:'Вылазка',cres:'Итог кризиса',discuss:'Обсуждение',vote:'Голосование',vres:'Итог голосования',night:'Ночь',morning:'Утро'};
+const PHN={reveal:'Раскрытие карт',bvote:'Голосование',deal:'Раздача',intro:'Пролог',crisis:'Кризис',team:'Отряд',mission:'Вылазка',cres:'Итог кризиса',discuss:'Обсуждение',vote:'Голосование',vres:'Итог голосования',night:'Ночь',morning:'Утро'};
 function playerBar(){const ph=S.phase,p=P(me.pid);let lab='',btn='';
   const tts='';
   if(ph==='lobby'){if(!isHost)return `<div class="hostbar"><div class="in"><div class="lab"><b>Ждём игроков</b>Игру начнёт создатель, когда соберутся все</div></div></div>`;
@@ -1432,7 +1668,10 @@ function playerBar(){const ph=S.phase,p=P(me.pid);let lab='',btn='';
     else{const n=need();lab=`<b>${PHN[ph]}</b>Сделали ход: ${n?n.filter(([q,k])=>has(q,k)).length+'/'+n.length:''}`;
       if(can&&age()>40)btn=`<button class="btn sm ${my?'pri':''}" data-act="go" ${my?'disabled':''}>Не ждать · ${goN()}/${goNeed()}</button>`}}
   return `<div class="hostbar"><div class="in"><div class="lab">${lab}</div>${tts}${btn}</div></div>`}
-function hostBar(){if(!S)return '';if(!S.local)return playerBar();const ph=S.phase;let lab='',btn='';const n=need();
+function hostBar(){if(!S)return '';if(!S.local)return playerBar();const ph=S.phase;
+  if(BK()&&ph!=='lobby'&&ph!=='end'){const L={deal:['Раздача','Передавайте телефон'],intro:['Катастрофа',null],reveal:['Раскрытие','Передавайте телефон'],discuss:['Обсуждение',null],bvote:['Голосование','Отметьте выше, кто останется снаружи'],vres:['Итог раунда',null]}[ph]||[ph,''];
+    const act={intro:['bnext','Первый раунд'],discuss:['bnext','К голосованию'],vres:['bnext',inside().length<=S.seats?'К финалу':'Следующий раунд']}[ph];
+    return `<div class="hostbar"><div class="in"><div class="lab"><b>${L[0]}</b>${L[1]||''}</div><button class="btn sm ghost" data-act="leave">Выход</button>${act?`<button class="btn pri" data-act="${act[0]}">${act[1]}</button>`:''}</div></div>`}let lab='',btn='';const n=need();
   const waiting=n?`${n.filter(([p,k])=>has(p,k)).length}/${n.length}`:'';
   const B=(act,t,cls='pri',dis='')=>`<button class="btn ${cls}" data-act="${act}" ${dis}>${t}</button>`;
   switch(ph){
@@ -1470,6 +1709,15 @@ const A={
   create:()=>createGame(),
   join:()=>{ui.code=$('#code')?.value||'';joinGame(ui.code)},
   page:v=>goPage(v),
+  pickCatHome:v=>{ui.cat=v;render()},
+  pickCat:v=>{if(!(isHost||S.local))return;S.cat=v;ui.cat=v;commit()},
+  brv:v=>send('rv',v,viewPid()),
+  boa:v=>send('oa',v,viewPid()),
+  bvote:v=>send('bv',v,viewPid()),
+  bact:v=>{const p=P(viewPid());if(!p)return;send('act',BACT[p.action].t?{t:v}:{},viewPid())},
+  blv:v=>{ui.confirm=ui.confirm===v?null:v;render()},
+  blvGo:()=>{const t=ui.confirm;ui.confirm=null;if(t){bResolve(t);commit()}},
+  bnext:()=>{bAdvance();commit()},
   local:()=>{if($('#nm'))needNameSoft();LS.del('maf.local');S=null;startLocal(false)},
   localResume:()=>startLocal(true),
   leave:()=>{if(S&&S.local&&S.phase!=='lobby'&&S.phase!=='end'){LS.set('maf.local',S)}leave()},
@@ -1483,7 +1731,7 @@ const A={
   toNight:()=>{if(S.hunt)return toast('Сначала охотник стреляет');afterVres();commit()},
   toDay:()=>{if(S.hunt)return toast('Сначала охотник стреляет');afterMorning();commit()},
   shot:v=>{const who=S.hunt&&S.hunt.pid;if(!who)return;if(S.local||isHost){if(input(who,'shot',v))commit()}else{send('shot',v,me.pid)}},
-  again:()=>{const pl=S.players.map(p=>({pid:p.pid,name:p.name,alive:true}));const scn=S.scen,code=S.code,loc=S.local,k=S.kicked,md=S.mode,op=S.opts;S=newState(code,loc);S.mode=md;S.opts=op||{};S.players=pl;S.scen=scn;S.kicked=k||[];ui.flip={};commit()},
+  again:()=>{if(BK()){const pl=S.players.map(p=>({pid:p.pid,name:p.name,alive:true}));const code=S.code,loc=S.local,k=S.kicked,cat=S.cat;S=newState(code,loc);S.mode='bunker';S.cat=cat;S.players=pl;S.kicked=k||[];ui.flip={};commit();return}const pl=S.players.map(p=>({pid:p.pid,name:p.name,alive:true}));const scn=S.scen,code=S.code,loc=S.local,k=S.kicked,md=S.mode,op=S.opts;S=newState(code,loc);S.mode=md;S.opts=op||{};S.players=pl;S.scen=scn;S.kicked=k||[];ui.flip={};commit()},
   tmr:v=>{S.timer={end:Date.now()+(+v)*1000,dur:+v};commit()},
   tts:()=>{ui.tts=!ui.tts;if(ui.tts){ui.spoken=null;speak()}else{try{speechSynthesis.cancel()}catch(e){}}render()},
   share:()=>shareLink(),
