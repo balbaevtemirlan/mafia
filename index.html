@@ -695,7 +695,9 @@ const P=pid=>S&&S.players.find(p=>p.pid===pid);
 const alive=()=>S.players.filter(p=>p.alive);
 const nm=pid=>P(pid)?.name||'—';
 const crDef=()=>sc().cr[S.crisis.i];
-const teamSize=()=>alive().length<=6?2:3;
+const teamSize=()=>Math.max(1,Math.min(alive().length,alive().length<=6?2:3));
+const COOP=()=>S&&S.mode==='coop';
+const minP=()=>COOP()?3:4;
 const SPEC={grd:{n:'Телохранитель',min:6,d:'Каждую ночь закрываешь собой одного игрока, но не себя. Если на него нападут, погибнешь ты, а он выживет.'},
 jur:{n:'Журналист',min:6,d:'Один раз за игру ночью расследуешь игрока, и утром всем публикуется, из мафии он или нет. Потом просто наблюдаешь.'},
 man:{n:'Маньяк',min:7,d:'Ты сам за себя. Каждую ночь убиваешь одного. Побеждаешь, если в живых останетесь двое или ты один. В отряде можешь сорвать дело.'},
@@ -705,8 +707,12 @@ const RD=r=>((sc().roles[r]||SPEC[r]||{}).d)||'';
 const ENEMY=r=>r==='maf'||r==='man';
 const CANSAB=r=>r==='maf'||r==='man'||r==='trt';
 const SIDE=r=>(r==='maf'||r==='trt')?'maf':r==='man'?'man':'town';
-const POCKET={sh:{n:'Оберег',d:'Используй ночью: этой ночью тебя невозможно убить.'},sp:{n:'Жучок',d:'Используй ночью на игроке: утром узнаешь, кого он выбрал этой ночью.'},vt:{n:'Апелляция',d:'Срабатывает сама: если тебя изгонят голосованием, ты останешься. Один раз.'}};
+const POCKET={bn:{n:'Бинты',d:'Используй ночью на игроке: +2 здоровья, может поднять потерявшего сознание.'},rp:{n:'Сухпаёк',d:'Используй ночью: +1 к самой низкой шкале.'},sh:{n:'Оберег',d:'Используй ночью: этой ночью тебя невозможно убить.'},sp:{n:'Жучок',d:'Используй ночью на игроке: утром узнаешь, кого он выбрал этой ночью.'},vt:{n:'Апелляция',d:'Срабатывает сама: если тебя изгонят голосованием, ты останешься. Один раз.'}};
 const GOALS=[{k:'exile',x:1,t:x=>`Добейся, чтобы изгнали игрока ${x}`},{k:'protect',x:1,t:x=>`Сделай так, чтобы ${x} дожил(а) до конца игры`},{k:'team2',t:()=>'Побывай в отрядах хотя бы 2 раза'},{k:'noskip',t:()=>'Ни разу не воздерживайся на голосовании'},{k:'survive',t:()=>'Доживи до конца игры'},{k:'talk3',t:()=>'Скажи в протокол минимум 3 фразы'},{k:'hit2',t:()=>'Дважды проголосуй против того, кого в итоге изгнали'},{k:'items2',t:()=>'Добейся, чтобы общие предметы потратили хотя бы 2 раза'}];
+SPEC.surv={n:'Выживший',min:0,d:''};
+const PERK={med:{n:'Медик',d:'Когда помогаешь другому ночью, он получает +2 здоровья вместо +1.'},scav:{n:'Добытчик',d:'Ночные поиски чаще удачны и никогда не ранят тебя.'},guard:{n:'Страж',d:'Твоё ночное дежурство считается за двоих.'},eng:{n:'Инженер',d:'Вылазки с твоим участием удаются чаще.'},talk:{n:'Переговорщик',d:'При ничьей в выборе решения кризиса решает твой голос, а не лидера.'}};
+const THREAT={mall:'мертвецы у баррикад',tower:'мародёры в подъезде',train:'волки и мороз',orbit:'разгерметизация',plague:'мор и крысы',hotel:'холод и обвалы',vamp:'нечисть у порогов',ice:'нечто во тьме коридоров'};
+const CTASK=[{k:'hoard',t:()=>'Сохрани предмет из своего кармана до конца игры, не используя его',hoard:1},{k:'hero2',t:()=>'Выложись полностью хотя бы в 2 вылазках'},{k:'nurse2',t:()=>'Помоги другим игрокам ночью хотя бы 2 раза'},{k:'watch3',t:()=>'Отдежурь хотя бы 3 ночи'},{k:'find2',t:()=>'Найди в ночных поисках хотя бы 2 вещи'},{k:'lead3',t:()=>'Добейся, чтобы группа 3 раза выбрала решение, за которое голосовал ты'},{k:'fullhp',t:()=>'Закончи игру с полным здоровьем'},{k:'talk4',t:()=>'Скажи в протокол хотя бы 4 фразы, отыгрывая персонажа'},{k:'friend',x:1,t:x=>`Сделай так, чтобы ${x} закончил(а) игру с 2+ здоровья`},{k:'nodown',t:()=>'Ни разу не потеряй сознание'}];
 const NEV=[
  {t:'Стук в дверь',x:'Посреди ночи стучат. Голос за дверью просит впустить и обещает поделиться припасами. Открыть?',yes:()=>Math.random()<.5?{b:2,r:'Гость не обманул и поделился запасами.'}:{c:-2,r:'Гость оказался мародёром и сбежал с вещами.'},no:{r:'Стук стих. Никто не открыл.'}},
  {t:'Дежурство',x:'Кому-то надо не спать до утра. Дежурим по очереди?',yes:()=>({c:1,a:-1,r:'Всю ночь дежурили: спокойнее, но устали и потратили больше.'}),no:{c:-1,r:'Никто не дежурил. Ночь была жуткой.'}},
@@ -764,21 +770,21 @@ const pool=()=>S.phase==='deal'?S.players:alive();
 const goN=()=>pool().filter(p=>S.inp[p.pid]?.go).length;
 const goNeed=()=>Math.floor(pool().length/2)+1;
 const age=()=>(Date.now()+((isHost||S.local)?0:ui.skew)-(S.phAt||0))/1000;
-function advance(){switch(S.phase){case 'intro':startDay();break;case 'cres':afterCres();break;case 'discuss':setPhase('vote');break;case 'vres':afterVres();break;case 'morning':afterMorning();break}}
+function advance(){switch(S.phase){case 'intro':startDay();break;case 'cres':afterCres();break;case 'discuss':COOP()?goNight():setPhase('vote');break;case 'vres':afterVres();break;case 'morning':afterMorning();break}}
 function setPhase(ph){S.phase=ph;S.pk=++S.pn;S.inp={};S.phAt=Date.now();if(ph!=='discuss')S.timer=null;S.lq=null;
   if(S.local){let q=null;if(ph==='deal')q=S.players.map(p=>p.pid);else if(ph==='mission')q=[...S.crisis.team];else if(ph==='night')q=alive().map(p=>p.pid);if(q)S.lq={q:shufIf(ph,q),i:0,show:false}}}
 const shufIf=(ph,q)=>ph==='night'?q:q;
 function chron(t){S.chron.push({d:S.day,t})}
 function addPriv(pid,t){(S.priv[pid]=S.priv[pid]||[]).push(t)}
 
-function startGame(){
+function startGame(){if(COOP())return startCoop();
   const n=S.players.length,k=n<=6?1:n<=9?2:n<=12?3:4,s=sc();
   let free=n-k-2;const sp=[];for(const r of ['grd','jur','man','trt'])if(S.opts&&S.opts[r]&&n>=SPEC[r].min&&free>1){sp.push(r);free--}
   const roles=shuf([...Array(k).fill('maf'),'doc','det',...sp,...Array(free).fill('civ')]);
   const chars=shuf(s.chars);
   S.players.forEach((p,i)=>{p.role=roles[i];p.alive=true;const c=chars[i%chars.length];p.ch=c[0];p.chd=c[1];p.pocket=[]});
   const gl=shuf(GOALS);S.players.forEach((p,i)=>{const g=gl[i%gl.length];let x=null;if(g.x){const o=S.players.filter(q=>q.pid!==p.pid);x=pick(o).pid}p.goal={k:g.k,x,t:g.t(x?nm(x):'')}});
-  shuf(S.players).slice(0,Math.ceil(n/4)).forEach(p=>p.pocket.push(pick(Object.keys(POCKET))));
+  shuf(S.players).slice(0,Math.ceil(n/4)).forEach(p=>p.pocket.push(pick(['sh','sp','vt'])));S.calm=n<=4;S.cnt={};
   S.evac=n<=6?4:n<=9?5:6;S.day=1;S.meters={a:4,b:4,c:4};
   S.inv={};shuf(['i1','i2','i3','i4']).slice(0,2).forEach(i=>S.inv[i]=1);
   S.deck=shuf(s.cr.map((_,i)=>i));S.lead=shuf(S.players.map(p=>p.pid));S.li=0;S.nevDeck=shuf(NEV.map((_,i)=>i));S.nev=null;
@@ -786,10 +792,22 @@ function startGame(){
   chron('Игра началась: '+s.title+'. Игроков: '+n+', '+s.roles.maf.gen+' среди них: '+k+(sp.length?'. Особые роли: '+sp.map(r=>SPEC[r].n).join(', '):'')+'.');
   setPhase('deal');
 }
+function startCoop(){const n=S.players.length,s=sc();const chars=shuf(s.chars),perks=shuf(Object.keys(PERK));
+  S.players.forEach((p,i)=>{p.role='surv';p.alive=true;p.hp=3;const c=chars[i%chars.length];p.ch=c[0];p.chd=c[1];p.perk=perks[i%perks.length];p.pocket=[]});
+  shuf(S.players).slice(0,Math.ceil(n/2)).forEach(p=>p.pocket.push(pick(['sh','bn','rp'])));
+  S.players.forEach(p=>{const pool=shuf(CTASK.filter(t=>!(t.hoard&&!p.pocket.length)&&!(t.x&&n<2)));const ts=pool.slice(0,2).map(g=>{let x=null;if(g.x){x=pick(S.players.filter(q=>q.pid!==p.pid)).pid}return {k:g.k,x,t:g.t(x?nm(x):''),item:g.hoard?p.pocket[0]:null}});p.tasks=ts;p.goal={t:ts.map(t=>t.t).join('; ')}});
+  S.evac=n<=5?4:5;S.day=1;S.meters={a:4,b:4,c:4};S.inv={};shuf(['i1','i2','i3','i4']).slice(0,2).forEach(i=>S.inv[i]=1);
+  S.deck=shuf(s.cr.map((_,i)=>i));S.lead=shuf(S.players.map(p=>p.pid));S.li=0;S.nevDeck=shuf(NEV.map((_,i)=>i));S.nev=null;
+  S.log=[];S.chron=[];S.priv={};S.votes=[];S.missions=[];S.win=null;S.res=null;S.shield=false;S.exiled=[];S.used=0;S.final=null;S.cnt={};S.downs={};
+  chron('Выживание: '+s.title+'. Без мафии: все вместе, у каждого свои задачи. Игроков: '+n+'. Эвакуация на утро после дня '+S.evac+'.');
+  setPhase('deal')}
+const CN=(pid,k,d=1)=>{S.cnt=S.cnt||{};const c=S.cnt[pid]=S.cnt[pid]||{};c[k]=(c[k]||0)+d};
+const cn=(pid,k)=>((S.cnt||{})[pid]||{})[k]||0;
 function leader(){const L=S.lead;for(let j=0;j<L.length;j++){const pid=L[(S.li+j)%L.length];if(P(pid)?.alive)return pid}return alive()[0]?.pid}
 function startDay(){S.crisis={i:S.deck[(S.day-1)%S.deck.length],ch:null,team:[],res:null,lead:leader(),tally:{}};S.li++;setPhase('crisis')}
 
-function validNa(pid,v){const p=P(pid),t=P(v);if(!t||!t.alive)return false;
+function validNa(pid,v){if(COOP()){if(['guard','rest','search'].includes(v))return true;if(typeof v==='string'&&v.startsWith('h:')){const t=P(v.slice(2));return !!t&&t.pid!==pid}return false}
+  const p=P(pid),t=P(v);if(!t||!t.alive)return false;
   if(p.role==='maf')return t.role!=='maf';
   if(p.role==='doc')return v!==S.lastHeal;
   return v!==pid}
@@ -800,9 +818,10 @@ function input(pid,k,v){
   if(!ok)return false;
   if(k==='ready')v=true;
   if(k==='cv'){v=+v;const o=crDef().o[v];if(!o||(o.need&&!(S.inv[o.need]>0)))return false}
-  if(k==='ms'){v=v==='s'&&CANSAB(p.role)?'s':'h'}
+  if(k==='ms'){v=v==='s'&&(COOP()||CANSAB(p.role))?'s':'h'}
+  if(k==='vote'&&COOP())return false;
   if(k==='ne'){if(S.nev==null)return false;v=v==='y'?'y':'n'}
-  if(k==='use'){if(!v||!POCKET[v.id]||v.id==='vt'||!(p.pocket||[]).includes(v.id))return false;if(v.id==='sp'&&!(P(v.t)?.alive&&v.t!==pid))return false;v={id:v.id,t:v.id==='sp'?v.t:null}}
+  if(k==='use'){if(!v||!POCKET[v.id]||v.id==='vt'||!(p.pocket||[]).includes(v.id))return false;if(v.id==='sp'&&!(P(v.t)?.alive&&v.t!==pid))return false;if(v.id==='bn'&&!P(v.t))return false;v={id:v.id,t:(v.id==='sp'||v.id==='bn')?v.t:null}}
   if(k==='team'){if(!Array.isArray(v)||v.length!==teamSize()||new Set(v).size!==v.length||v.some(x=>!P(x)?.alive))return false}
   if(k==='vote'&&v!=='skip'&&!(P(v)?.alive&&v!==pid))return false;
   if(k==='na'&&!validNa(pid,v))return false;
@@ -836,8 +855,10 @@ function fxApply(fx){const s=sc(),out=[];
   if(fx.it){const it=fx.it==='rand'?pick(['i1','i2','i3','i4']):fx.it;S.inv[it]=(S.inv[it]||0)+1;out.push('Найдено: '+s.items[it])}
   if(fx.evac){S.evac=Math.max(S.day,S.evac+fx.evac);out.push('Эвакуация: день '+S.evac)}
   if(fx.shield){S.shield=true;out.push('Этой ночью убийства не будет')}
-  if(fx.clue){out.push('Улика: '+makeClue())}
-  if(fx.peek){const L=S.crisis.lead,o=alive().filter(p=>p.pid!==L);if(o.length){const t=pick(o);addPriv(L,`День ${S.day}: ${t.name} — ${t.role==='maf'?s.roles.maf.n:'не '+s.roles.maf.n.toLowerCase()}.`);out.push(`Лидер ${nm(L)} тайно узнал правду об одном игроке`)}}
+  if(fx.clue&&COOP()){const lk=MK.slice().sort((a,b)=>S.meters[a]-S.meters[b])[0];S.meters[lk]=Math.min(6,S.meters[lk]+1);out.push('Полезная находка: '+s.m[MK.indexOf(lk)][0]+' +1')}
+  else if(fx.clue){out.push('Улика: '+makeClue())}
+  if(fx.peek&&COOP()){const L=S.crisis.lead;const it=pick(['sh','bn','rp']);const lp=P(L);if(lp){(lp.pocket=lp.pocket||[]).push(it);addPriv(L,`День ${S.day}: ты нашёл(ла) «${POCKET[it].n}».`);out.push('Лидер что-то нашёл и спрятал в карман')}}
+  else if(fx.peek){const L=S.crisis.lead,o=alive().filter(p=>p.pid!==L);if(o.length){const t=pick(o);addPriv(L,`День ${S.day}: ${t.name} — ${t.role==='maf'?s.roles.maf.n:'не '+s.roles.maf.n.toLowerCase()}.`);out.push(`Лидер ${nm(L)} тайно узнал правду об одном игроке`)}}
   return out}
 function makeClue(){const s=sc(),A=shuf(alive());if(A.length<2)return 'следов нет';let x=A[0],y=A[1];
   if(Math.random()<.5){const m=A.find(p=>p.role==='maf'),t=A.find(p=>p.role!=='maf');if(m&&t)[x,y]=shuf([m,t])}
@@ -846,7 +867,8 @@ function makeClue(){const s=sc(),A=shuf(alive());if(A.length<2)return 'след�
 function resolveChoice(){const cr=crDef(),cnt={};
   alive().forEach(p=>{const v=S.inp[p.pid]?.cv;if(v!==undefined)cnt[v]=(cnt[v]||0)+1});
   let best=0,bi=[];for(const [i,c] of Object.entries(cnt)){if(c>best){best=c;bi=[+i]}else if(c===best)bi.push(+i)}
-  let ch;if(!bi.length)ch=cr.o.findIndex(o=>!o.need||S.inv[o.need]>0);else if(bi.length===1)ch=bi[0];else{const lv=S.inp[S.crisis.lead]?.cv;ch=bi.includes(lv)?lv:bi[0]}
+  let ch;if(!bi.length)ch=cr.o.findIndex(o=>!o.need||S.inv[o.need]>0);else if(bi.length===1)ch=bi[0];else{const tk=COOP()?alive().find(p=>p.perk==='talk'&&bi.includes(S.inp[p.pid]?.cv)):null;const lv=tk?S.inp[tk.pid].cv:S.inp[S.crisis.lead]?.cv;ch=bi.includes(lv)?lv:bi[0]}
+  alive().forEach(p=>{if(S.inp[p.pid]?.cv===ch)CN(p.pid,'lead')});
   pickOption(ch,cnt)}
 function pickOption(ch,cnt){const o=crDef().o[ch];S.crisis.ch=ch;S.crisis.tally=cnt||{};
   if(o.need){S.inv[o.need]=Math.max(0,(S.inv[o.need]||0)-1);S.used=(S.used||0)+1}
@@ -855,9 +877,48 @@ function finishCrisis(fx,sab){const o=crDef().o[S.crisis.ch];const eff=fxApply(f
   S.crisis.res={ok:sab===null?null:sab===0,sab,r:fx.r||'',eff};
   chron(`${crDef().t}: «${o.t}». ${fx.r||''}${sab!==null?' Саботажей: '+sab+'.':''}${eff.filter(e=>/^Улика|^Найдено|^Этой ночью/.test(e)).map(e=>' '+e).join('')}`);
   setPhase('cres')}
-function resolveMission(){const o=crDef().o[S.crisis.ch];const sab=S.crisis.team.filter(x=>S.inp[x]?.ms==='s').length;
+function resolveMission(){if(COOP())return coopMission();const o=crDef().o[S.crisis.ch];const sab=S.crisis.team.filter(x=>S.inp[x]?.ms==='s').length;
   S.missions.push({d:S.day,team:[...S.crisis.team],sab});finishCrisis(sab===0?o.ok:o.no,sab);
   if(sab===0&&Math.random()<.6){const lp=P(pick(S.crisis.team));const it=pick(Object.keys(POCKET));(lp.pocket=lp.pocket||[]).push(it);addPriv(lp.pid,`День ${S.day}: в вылазке ты нашёл(ла) «${POCKET[it].n}». ${POCKET[it].d}`);S.crisis.res.eff.push('Кто-то из отряда нашёл предмет и спрятал в карман');chron('Кто-то из отряда нашёл предмет и спрятал в карман.')}}
+function coopMission(){const o=crDef().o[S.crisis.ch],T=S.crisis.team;const full=T.filter(x=>S.inp[x]?.ms!=='s');
+  full.forEach(x=>CN(x,'full'));const eng=T.some(x=>P(x).perk==='eng');
+  const ok=full.length>=Math.ceil(T.length/2)&&Math.random()<(eng?.9:.75);
+  S.missions.push({d:S.day,team:[...T],full:full.length,ok});finishCrisis(ok?o.ok:o.no,null);
+  S.crisis.res.full=full.length;S.crisis.res.okc=ok;
+  if(!ok){full.forEach(x=>hurt(x,1));if(full.length)S.crisis.res.eff.push('Выложившиеся получили ранения: −1 здоровья ('+full.map(nm).join(', ')+')')}
+  else if(Math.random()<.5&&full.length){const lp=P(pick(full));const it=pick(['sh','bn','rp']);lp.pocket.push(it);addPriv(lp.pid,`День ${S.day}: в вылазке ты нашёл(ла) «${POCKET[it].n}». ${POCKET[it].d}`);S.crisis.res.eff.push('Кто-то из отряда нашёл предмет и спрятал в карман')}}
+function hurt(pid,d){const p=P(pid);if(!p||!p.alive)return;p.hp=Math.max(0,(p.hp||0)-d);if(p.hp===0){p.alive=false;S.downs=S.downs||{};S.downs[pid]=(S.downs[pid]||0)+1}}
+function heal(pid,d){const p=P(pid);if(!p)return;const was=p.alive;p.hp=Math.min(3,(p.hp||0)+d);if(p.hp>0)p.alive=true;return !was&&p.alive}
+function goNight(){S.nev=null;if(Math.random()<.55){if(!S.nevDeck||!S.nevDeck.length)S.nevDeck=shuf(NEV.map((_,i)=>i));S.nev=S.nevDeck.pop()}setPhase('night')}
+function coopNight(){const s=sc(),A=alive(),na=pid=>S.inp[pid]?.na||null,lines=[];
+  const charm=[];A.forEach(p=>{const u=S.inp[p.pid]?.use;if(!u)return;const i=p.pocket.indexOf(u.id);if(i<0)return;p.pocket.splice(i,1);
+    if(u.id==='sh')charm.push(p.pid);if(u.id==='bn'&&u.t){const rv=heal(u.t,2);lines.push(`${p.name} перевязал(а) ${nm(u.t)}${rv?' и привёл(а) в сознание':''}.`)}
+    if(u.id==='rp'){const lk=MK.slice().sort((a,b)=>S.meters[a]-S.meters[b])[0];S.meters[lk]=Math.min(6,S.meters[lk]+1);lines.push(`Кто-то вскрыл сухпаёк: ${s.m[MK.indexOf(lk)][0]} +1.`)}});
+  let guards=0;const gList=[];
+  A.forEach(p=>{const v=na(p.pid);if(!v)return;
+    if(v==='guard'){guards+=p.perk==='guard'?2:1;gList.push(p.pid);CN(p.pid,'guard')}
+    else if(v==='rest'){heal(p.pid,1);CN(p.pid,'rest')}
+    else if(v==='search'){const luck=Math.random()<(p.perk==='scav'?.85:.6);if(luck){CN(p.pid,'find');const r=Math.random();if(r<.4){const it=pick(['i1','i2','i3','i4']);S.inv[it]=(S.inv[it]||0)+1;lines.push(`${p.name} нашёл(ла) в поисках: ${s.items[it]}.`)}else if(r<.75){const k=pick(MK);S.meters[k]=Math.min(6,S.meters[k]+1);lines.push(`${p.name} принёс(ла) припасы: ${s.m[MK.indexOf(k)][0]} +1.`)}else{const it=pick(['sh','bn','rp']);p.pocket.push(it);addPriv(p.pid,`Ночь ${S.day}: в поисках ты нашёл(ла) «${POCKET[it].n}». ${POCKET[it].d}`);lines.push(`${p.name} вернулся(ась) из поисков с чем-то в кармане.`)}}
+      else if(p.perk!=='scav'){hurt(p.pid,1);lines.push(`${p.name} поранился(ась) в поисках: −1 здоровья.`)}else lines.push(`${p.name} ничего не нашёл(ла).`)}
+    else if(v.startsWith('h:')){const t=v.slice(2);const rv=heal(t,p.perk==='med'?2:1);CN(p.pid,'help');if(rv)lines.push(`${p.name} привёл(а) в сознание ${nm(t)}.`)}});
+  const str=1+Math.floor((S.day-1)/2)+(S.players.length>=6?1:0)+(Math.random()<.4?1:0);const thr=THREAT[s.id]||'опасность';
+  if(S.shield){lines.push(`Ночью подступили ${thr}, но вы были под защитой.`)}
+  else if(guards>=str){lines.push(`Ночью подступили ${thr} (сила ${str}). Дежурные (${gList.map(nm).join(', ')}) отбились, никто не пострадал.`)}
+  else{const def=str-guards;const pool=alive().filter(p=>!gList.includes(p.pid)&&!charm.includes(p.pid));const vic=pool.length?pick(pool):null;
+    if(vic){hurt(vic.pid,Math.min(2,def));lines.push(`Ночью подступили ${thr} (сила ${str}, дежурили: ${guards}). Пострадал(а) ${vic.name}: −${Math.min(2,def)} здоровья${vic.alive?'':', без сознания'}.`)}
+    else lines.push(`Ночью подступили ${thr}, но обереги всех уберегли.`);
+    if(def>=2){const k=pick(MK);S.meters[k]=Math.max(0,S.meters[k]-1);lines.push(`Ущерб: ${s.m[MK.indexOf(k)][0]} −1.`)}}
+  S.shield=false;
+  const di=Math.floor(Math.random()*3),dk=MK[di];S.meters[dk]=Math.max(0,S.meters[dk]-1);lines.push(s.decay[di]+` ${s.m[di][0]} −1.`);
+  S.day++;
+  if(S.nev!=null){const ev=NEV[S.nev];const y=A.filter(p=>S.inp[p.pid]?.ne==='y').length,nn=A.filter(p=>S.inp[p.pid]?.ne==='n').length;const yes=y>nn;const fx=yes?ev.yes():ev.no;const eff=fxApply(fx);lines.push(`${ev.t}: ${yes?'решили «да»':'решили «нет»'} (${y}:${nn}). ${fx.r||''}${eff.length?' '+eff.join(', ')+'.':''}`);S.nev=null}
+  S.res={kind:'night',deaths:[],text:lines.join(' ')};chron(lines.join(' '));
+  const w=checkCoop(true);if(w)return endGame(w);
+  setPhase('morning')}
+function checkCoop(atMorning){const s=sc();for(let i=0;i<3;i++)if(S.meters[MK[i]]<=0)return {side:'lost',why:`«${s.m[i][0]}» на нуле: группа не выжила. Эвакуация опоздала.`};
+  if(!alive().length)return {side:'lost',why:'Все потеряли сознание. Спасать было некого.'};
+  if(atMorning&&S.day>S.evac)return {side:'town',why:({mall:'Над крышей зависает вертолёт. Все, кто остался, поднимаются на борт.',tower:'В шесть утра вспыхивают окна: дали свет. Вы продержались.',train:'Вдали вспыхивают огни снегоочистителя. Поезд трогается к Астане.',orbit:'Корабль спасения пристыкован. Экипаж летит домой.',plague:'Ворота открываются, въезжает обоз с хлебом и лекарями.',hotel:'Над ущельем стрекочет вертолёт спасателей. Вы выжили.',vamp:'Первый луч солнца падает на площадь. Ночь кончилась, вы живы.',ice:'Буря стихает, садится самолёт. Станция пережила полярную ночь.'})[s.id]||'Помощь прибыла: группа выжила!'};
+  return null}
 function resolveVote(){const A=alive(),v={};A.forEach(p=>v[p.pid]=S.inp[p.pid]?.vote??'skip');
   const rec={d:S.day,v,ex:null};S.votes.push(rec);const cnt={};Object.values(v).forEach(t=>cnt[t]=(cnt[t]||0)+1);
   let top=null,best=0,tie=false;for(const [k,c] of Object.entries(cnt)){if(k==='skip')continue;if(c>best){best=c;top=k;tie=false}else if(c===best)tie=true}
@@ -867,7 +928,7 @@ function resolveVote(){const A=alive(),v={};A.forEach(p=>v[p.pid]=S.inp[p.pid]?.
     if(vi>=0){p.pocket.splice(vi,1);S.res={kind:'vote',pid:null,text:`${p.name} должен(на) был(а) уйти (${best} гол.), но предъявил(а) апелляцию и остаётся в игре.`}}
     else{p.alive=false;rec.ex=top;S.exiled.push(top);S.res={kind:'vote',pid:top,role:p.role,text:`${p.name} изгнан(а) голосованием (${best} гол.). Это был(а) ${RN(p.role).toLowerCase()}.`}}}
   chron(S.res.text);setPhase('vres')}
-function resolveNight(){const s=sc(),A=alive(),M=A.filter(p=>p.role==='maf'),na=pid=>S.inp[pid]?.na||null,R1=r=>A.find(p=>p.role===r);
+function resolveNight(){if(COOP())return coopNight();const s=sc(),A=alive(),M=A.filter(p=>p.role==='maf'),na=pid=>S.inp[pid]?.na||null,R1=r=>A.find(p=>p.role===r);
   const cnt={};M.forEach(p=>{const v=na(p.pid);if(v)cnt[v]=(cnt[v]||0)+1});
   let tg=null,best=0;const first=na(M[0]?.pid);for(const [k,c] of Object.entries(cnt)){if(c>best||(c===best&&k===first)){best=c;tg=k}}
   const doc=R1('doc'),det=R1('det'),grd=R1('grd'),jur=R1('jur'),man=R1('man');
@@ -879,7 +940,8 @@ function resolveNight(){const s=sc(),A=alive(),M=A.filter(p=>p.role==='maf'),na=
   if(jur&&!S.jUsed){const t=na(jur.pid);if(t){S.jUsed=true;lines.push(`Журналист опубликовал расследование: ${nm(t)} — ${P(t).role==='maf'?'из мафии!':'не из мафии.'}`)}}
   const sus={};A.filter(p=>p.role==='civ'||p.role==='trt'||(p.role==='jur'&&S.jUsed)).forEach(p=>{const v=na(p.pid);if(v)sus[v]=(sus[v]||0)+1});
   let st=null,sb=0;for(const [k,c] of Object.entries(sus))if(c>sb){sb=c;st=k}
-  const atk=[];if(tg)atk.push(tg);if(man){const mt=na(man.pid);if(mt)atk.push(mt)}
+  const atk=[];const calm=S.calm&&S.day===1;if(calm)lines.push('Первая ночь знакомства: все присматривались друг к другу, убивать было нельзя.');
+  if(tg&&!calm)atk.push(tg);if(man&&!calm){const mt=na(man.pid);if(mt)atk.push(mt)}
   const deaths=[];let saved=0,shielded=0,charmed=0,guarded=0;
   for(let v of atk){if(S.shield){shielded++;continue}if(v===heal){saved++;continue}if(charm.includes(v)){charmed++;continue}
     if(grd&&guardT===v&&grd.pid!==v){v=grd.pid;guarded++}if(!deaths.includes(v))deaths.push(v)}
@@ -889,14 +951,14 @@ function resolveNight(){const s=sc(),A=alive(),M=A.filter(p=>p.role==='maf'),na=
   if(saved)lines.push(`На кого-то напали, но ${s.roles.doc.n.toLowerCase()} успел(а) спасти.`);
   if(charmed)lines.push('Чей-то оберег отвёл смерть.');
   if(shielded)lines.push('Ночные дежурства сработали: нападение сорвано.');
-  if(!deaths.length&&!saved&&!charmed&&!shielded)lines.push('Ночь прошла тихо. Все живы.');
+  if(!deaths.length&&!saved&&!charmed&&!shielded&&!calm)lines.push('Ночь прошла тихо. Все живы.');
   const di=Math.floor(Math.random()*3),dk=MK[di];S.meters[dk]=Math.max(0,S.meters[dk]-1);
   S.day++;
   lines.push(s.decay[di]+` ${s.m[di][0]} −1.`);
   let nevRes=null;if(S.nev!=null){const ev=NEV[S.nev];const y=A.filter(p=>S.inp[p.pid]?.ne==='y').length,nn=A.filter(p=>S.inp[p.pid]?.ne==='n').length;const yes=y>nn;const fx=yes?ev.yes():ev.no;const eff=fxApply(fx);nevRes={t:ev.t,yes,y,n:nn,r:fx.r||'',eff};lines.push(`${ev.t}: ${yes?'решили «да»':'решили «нет»'} (${y}:${nn}). ${fx.r||''}${eff.length?' '+eff.join(', ')+'.':''}`);S.nev=null}
   S.res={kind:'night',killed:deaths[0]||null,deaths,saved,text:lines.join(' '),sus:st?{pid:st,n:sb}:null,nev:nevRes};
   chron(lines.join(' '));setPhase('morning')}
-function checkWin(){const s=sc(),A=alive(),m=A.filter(p=>p.role==='maf').length,k=A.filter(p=>p.role==='man').length;
+function checkWin(){if(COOP())return checkCoop(false);const s=sc(),A=alive(),m=A.filter(p=>p.role==='maf').length,k=A.filter(p=>p.role==='man').length;
   for(let i=0;i<3;i++)if(S.meters[MK[i]]<=0)return {side:'maf',why:`«${s.m[i][0]}» на нуле: выжить не удалось. ${s.win.maf}`};
   if(k>0&&A.length<=2)return {side:'man',why:'Маньяк остался среди последних выживших. Никто не дождался эвакуации, кроме него.'};
   if(m===0&&k===0)return {side:'town',why:s.win.town};
@@ -904,16 +966,19 @@ function checkWin(){const s=sc(),A=alive(),m=A.filter(p=>p.role==='maf').length,
   return null}
 function endGame(w){S.win=w;chron(w.why);S.final=computeFinal();setPhase('end')}
 function afterCres(){const w=checkWin();if(w)return endGame(w);setPhase('discuss');const d=Math.min(240,60+25*alive().length);S.timer={end:Date.now()+d*1000,dur:d}}
-function afterVres(){let w=checkWin();const A=alive();
+function afterVres(){if(COOP())return goNight();let w=checkWin();const A=alive();
   if(!w&&S.day>=S.evac){if(A.some(p=>p.role==='maf'))w={side:'maf',why:`Эвакуация прибыла, и ${sc().roles.maf.pl.toLowerCase()} спокойно поднялись на борт вместе со всеми. ${sc().win.maf}`};else if(A.some(p=>p.role==='man'))w={side:'man',why:'Эвакуация прибыла. Маньяк поднялся на борт вместе со всеми, и никто его не узнал.'}}
-  if(w)return endGame(w);
-  S.nev=null;if(Math.random()<.55){if(!S.nevDeck||!S.nevDeck.length)S.nevDeck=shuf(NEV.map((_,i)=>i));S.nev=S.nevDeck.pop()}
-  setPhase('night')}
+  if(w)return endGame(w);goNight()}
+function coopFinal(){const won=S.win.side==='town',pts={},goals={},tasks={},awards=[];
+  S.players.forEach(p=>{const td=(p.tasks||[]).map(t=>taskDone(p,t));tasks[p.pid]=td;goals[p.pid]=td.length&&td.every(Boolean);pts[p.pid]=(won?3:0)+td.filter(Boolean).length*2+(p.alive?1:0)});
+  const best=(f,k,t)=>{let b=null,bv=0,tie=false;S.players.forEach(p=>{const v=f(p);if(v>bv){bv=v;b=p;tie=false}else if(v===bv&&v>0)tie=true});if(b&&!tie)awards.push({k,t,pid:b.pid})};
+  best(p=>cn(p.pid,'full'),'Герой','чаще всех выкладывался(ась) в вылазках');best(p=>cn(p.pid,'help'),'Ангел-хранитель','больше всех помогал(а) другим ночью');best(p=>cn(p.pid,'find'),'Добытчик','больше всех находок');best(p=>cn(p.pid,'guard'),'Страж','больше всех ночных дежурств');best(p=>S.log.filter(l=>l.s===p.pid).length,'Душа компании','больше всех отыгрывал(а) персонажа в протоколе');
+  awards.forEach(a=>pts[a.pid]=(pts[a.pid]||0)+1);return {pts,goals,tasks,awards,snipe:{}}}
 function goalDone(p){const g=p.goal;if(!g)return false;const myV=S.votes.filter(v=>v.v[p.pid]!==undefined);
   switch(g.k){case 'exile':return S.exiled.includes(g.x);case 'protect':return !!P(g.x)?.alive;case 'team2':return S.missions.filter(m=>m.team.includes(p.pid)).length>=2;
   case 'noskip':return myV.length>0&&myV.every(v=>v.v[p.pid]!=='skip');case 'survive':return p.alive;case 'talk3':return S.log.filter(l=>l.s===p.pid).length>=3;
   case 'hit2':return S.votes.filter(v=>v.ex&&v.v[p.pid]===v.ex).length>=2;case 'items2':return (S.used||0)>=2}return false}
-function computeFinal(){const w=S.win.side,pts={},goals={},awards=[];
+function computeFinal(){if(COOP())return coopFinal();const w=S.win.side,pts={},goals={},awards=[];
   const vAg=pid=>S.votes.reduce((n,v)=>n+Object.values(v.v).filter(x=>x===pid).length,0);
   const snipe=pid=>S.votes.filter(v=>{const t=v.v[pid];return t&&t!=='skip'&&ENEMY(P(t)?.role)}).length;
   S.players.forEach(p=>{goals[p.pid]=goalDone(p);pts[p.pid]=(SIDE(p.role)===w?3:0)+(goals[p.pid]?2:0)+(p.alive?1:0)});
@@ -925,6 +990,7 @@ function computeFinal(){const w=S.win.side,pts={},goals={},awards=[];
   awards.forEach(a=>pts[a.pid]=(pts[a.pid]||0)+1);
   return {pts,goals,awards,snipe:Object.fromEntries(S.players.map(p=>[p.pid,snipe(p.pid)]))}}
 function afterMorning(){const w=checkWin();if(w)return endGame(w);startDay()}
+function taskDone(p,t){switch(t.k){case 'hoard':return (p.pocket||[]).includes(t.item);case 'hero2':return cn(p.pid,'full')>=2;case 'nurse2':return cn(p.pid,'help')>=2;case 'watch3':return cn(p.pid,'guard')>=3;case 'find2':return cn(p.pid,'find')>=2;case 'lead3':return cn(p.pid,'lead')>=3;case 'fullhp':return p.hp>=3;case 'talk4':return S.log.filter(l=>l.s===p.pid).length>=4;case 'friend':return (P(t.x)?.hp||0)>=2;case 'nodown':return !(S.downs||{})[p.pid]}return false}
 function addLog(e){S.log.push(e);if(S.log.length>300)S.log=S.log.slice(-300)}
 
 /* ---------- commit / sync ---------- */
@@ -994,19 +1060,20 @@ function narr(){if(!S)return '';const s=sc(),ph=S.phase;
   switch(ph){case 'intro':return s.intro;
   case 'crisis':return `День ${S.day}. ${crDef().t}. ${crDef().x}`;
   case 'team':return `Лидер дня, ${nm(S.crisis.lead)}, собирает отряд из ${teamSize()} человек.`;
-  case 'mission':return `Отряд уходит: ${S.crisis.team.map(nm).join(', ')}. Каждый тайно решает, помочь или подвести.`;
+  case 'mission':return `Отряд уходит: ${S.crisis.team.map(nm).join(', ')}. ${COOP()?'Каждый тайно решает: выложиться или беречь себя.':'Каждый тайно решает, помочь или подвести.'}`;
   case 'cres':return [S.crisis.res.r,S.crisis.res.sab!==null?`Саботажей: ${S.crisis.res.sab}.`:''].join(' ');
-  case 'discuss':return `Обсуждение. Кто из вас ${s.roles.maf.n.toLowerCase()}?`;
+  case 'discuss':return COOP()?'Обсуждение. Решите, кто ночью дежурит, кто лечит, кто ищет припасы.':`Обсуждение. Кто из вас ${s.roles.maf.n.toLowerCase()}?`;
   case 'vote':return 'Голосование. Кого изгоняем?';
   case 'vres':return S.res.text;
-  case 'night':return `Ночь. Все закрывают глаза и берут телефоны. ${s.roles.maf.pl} выбирают жертву.`;
+  case 'night':return COOP()?'Ночь. Каждый выбирает, чем занят до утра.':`Ночь. Все закрывают глаза и берут телефоны. ${s.roles.maf.pl} выбирают жертву.`;
   case 'morning':return `Утро. ${S.res.text}`;
   case 'end':return (S.win.side==='town'?'Победа выживших. ':'Победа мафии. ')+S.win.why}return ''}
 function meters(){const s=sc();return `<div class="meters">${MK.map((k,i)=>`<div class="mt ${S.meters[k]<=1?'low':''}"><div class="mr"><svg><use href="#i-${s.m[i][1]}"/></svg><b>${S.meters[k]}</b><small class="tiny mute">/6</small></div><span>${esc(s.m[i][0])}</span><i style="--w:${S.meters[k]/6*100}%"></i></div>`).join('')}</div>`}
 function invHtml(){const s=sc();const it=Object.entries(S.inv).filter(([,n])=>n>0);return `<div class="inv">${it.length?it.map(([k,n])=>`<span class="chip">${esc(s.items[k])}${n>1?' ×'+n:''}</span>`).join(''):'<span class="tiny mute">Инвентарь пуст</span>'}</div>`}
 function toggles(){return `<span class="tg2"><button class="ib ${SND.on?'on':''}" data-act="snd" aria-label="Атмосферный звук" title="Звук"><svg><use href="#i-snd"/></svg></button>${canTTS()?`<button class="ib ${ui.tts?'on':''}" data-act="tts" aria-label="Голос рассказчика" title="Голос рассказчика"><svg><use href="#i-voice"/></svg></button>`:''}</span>`}
 function topBar(){const s=sc();const left=S.evac-S.day;
-  return `<div class="top"><div class="t1"><b>${esc(s.title)}</b><span class="small mute">${S.day?`День ${S.day} · ${left>0?'эвакуация через '+left+' дн.':'последний день'}`:''}</span>${toggles()}</div>${S.day?meters()+invHtml():''}</div>`}
+  return `<div class="top"><div class="t1"><b>${esc(s.title)}</b><span class="small mute">${S.day?`День ${S.day} · ${left>0?'эвакуация через '+left+' дн.':'последний день'}`:''}</span>${toggles()}</div>${S.day?meters()+invHtml()+(COOP()?hpStrip():''):''}</div>`}
+function hpStrip(){return `<div class="inv">${S.players.map(p=>`<span class="chip ${p.alive?'':'red'}">${esc(p.name)} ${p.alive?'♥'.repeat(p.hp||0)+'<span class="mute">'+'♥'.repeat(3-(p.hp||0))+'</span>':'без сознания'}</span>`).join('')}</div>`}
 function viewPid(){if(S.local)return (S.lq&&S.lq.show&&S.lq.i<S.lq.q.length)?S.lq.q[S.lq.i]:null;
   return me.pid}
 
@@ -1036,23 +1103,23 @@ function recordStats(){if(!S||!S.final||!S.win)return;const st=LS.get('maf.stats
   st.gids.push(S.gid);st.gids=st.gids.slice(-60);const w=S.win.side;
   S.players.forEach(p=>{const k=p.name.trim().toLowerCase();const r=st.p[k]=st.p[k]||{n:p.name,g:0,w:0,maf:0,mw:0,goals:0,pts:0,snipe:0};r.n=p.name;
     r.g++;if(SIDE(p.role)===w)r.w++;if(SIDE(p.role)!=='town'){r.maf++;if(SIDE(p.role)===w)r.mw++}if(S.final.goals[p.pid])r.goals++;r.pts+=S.final.pts[p.pid]||0;r.snipe+=S.final.snipe[p.pid]||0});
-  st.g.unshift({d:new Date().toLocaleDateString('ru-RU'),t:sc().title,w:w==='town'?'выжившие':w==='man'?'маньяк':sc().roles.maf.pl.toLowerCase()});st.g=st.g.slice(0,20);LS.set('maf.stats',st)}
+  st.g.unshift({d:new Date().toLocaleDateString('ru-RU'),t:sc().title+(COOP()?' (выживание)':''),w:COOP()?(w==='town'?'все выжили':'не выжили'):w==='town'?'выжившие':w==='man'?'маньяк':sc().roles.maf.pl.toLowerCase()});st.g=st.g.slice(0,20);LS.set('maf.stats',st)}
 function statsHtml(){const st=LS.get('maf.stats',{p:{},g:[]});const rows=Object.values(st.p).sort((a,b)=>b.pts-a.pts);
   if(!rows.length)return `<div class="box"><div class="lbl">Статистика компании</div><p class="small mute">Пока пусто. После первой партии здесь появится рейтинг: кто сколько выигрывал, сколько раз был мафией и кто лучше всех вычисляет врагов. Данные хранятся на этом телефоне.</p></div>`;
   return `<div class="box"><div class="lbl">Рейтинг компании · хранится на этом телефоне</div><div class="scroll"><table class="st"><thead><tr><th>Игрок</th><th>Очки</th><th>Игр</th><th>Побед</th><th>Мафией</th><th>Цели</th><th>Снайп.</th></tr></thead><tbody>${rows.map((r,i)=>`<tr><td>${i<3?['1.','2.','3.'][i]+' ':''}${esc(r.n)}</td><td>${r.pts}</td><td>${r.g}</td><td>${Math.round(r.w/r.g*100)}%</td><td>${r.maf}${r.maf?' ('+r.mw+' поб.)':''}</td><td>${r.goals}</td><td>${r.snipe}</td></tr>`).join('')}</tbody></table></div>
   <p class="tiny mute">«Снайп.» — голоса против мафии и маньяка.</p></div>
-  ${st.g.length?`<div class="box"><div class="lbl">Последние партии</div>${st.g.map(g=>`<p class="small">${esc(g.d)} · ${esc(g.t)} · победили ${esc(g.w)}</p>`).join('')}</div>`:''}
+  ${st.g.length?`<div class="box"><div class="lbl">Последние партии</div>${st.g.map(g=>`<p class="small">${esc(g.d)} · ${esc(g.t)} · ${/выжил/.test(g.w)?esc(g.w):'победили '+esc(g.w)}</p>`).join('')}</div>`:''}
   <button class="btn ghost" style="width:100%" data-act="resetStats">${ui.rs?'Точно очистить?':'Очистить статистику'}</button>`}
 
 /* ---------- share card ---------- */
 async function shareCard(){if(!S||!S.win)return;const s=sc(),F=S.final||{pts:{},awards:[]},W=1080,H=1350,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
   x.fillStyle=s.bg;x.fillRect(0,0,W,H);const gr=x.createRadialGradient(W/2,0,50,W/2,0,900);gr.addColorStop(0,s.acc+'55');gr.addColorStop(1,'transparent');x.fillStyle=gr;x.fillRect(0,0,W,H);
   x.fillStyle=s.acc;x.font='bold 44px Manrope, sans-serif';x.fillText('МАФИЯ: ВЫЖИВАНИЕ · '+s.title.toUpperCase(),70,110);
-  const t=S.win.side==='town'?'Выжившие победили':S.win.side==='man'?'Маньяк победил':s.roles.maf.pl+' победили';
+  const t=COOP()?(S.win.side==='town'?'Мы выжили':'Группа не выжила'):S.win.side==='town'?'Выжившие победили':S.win.side==='man'?'Маньяк победил':s.roles.maf.pl+' победили';
   x.fillStyle='#fff';x.font='bold 86px "Russo One", sans-serif';x.fillText(t,70,230);
   x.font='34px Manrope, sans-serif';x.fillStyle='#cfd3da';x.fillText('Дней: '+S.day+' · игроков: '+S.players.length,70,290);
   let y=380;x.font='bold 36px Manrope, sans-serif';x.fillStyle=s.acc;x.fillText('Кто был кем',70,y);y+=56;
-  S.players.slice().sort((a,b)=>(F.pts[b.pid]||0)-(F.pts[a.pid]||0)).slice(0,12).forEach(p=>{x.fillStyle=SIDE(p.role)!=='town'?'#ff6b78':'#fff';x.font='34px Manrope, sans-serif';x.fillText(`${p.name} — ${RN(p.role)}${p.alive?'':' †'}`,70,y);x.fillStyle='#9aa1ad';x.fillText((F.pts[p.pid]||0)+' оч.',880,y);y+=50});
+  S.players.slice().sort((a,b)=>(F.pts[b.pid]||0)-(F.pts[a.pid]||0)).slice(0,12).forEach(p=>{x.fillStyle=SIDE(p.role)!=='town'?'#ff6b78':'#fff';x.font='34px Manrope, sans-serif';x.fillText(`${p.name} — ${COOP()?p.ch:RN(p.role)}${p.alive?'':' †'}`,70,y);x.fillStyle='#9aa1ad';x.fillText((F.pts[p.pid]||0)+' оч.',880,y);y+=50});
   if(F.awards.length){y+=30;x.font='bold 36px Manrope, sans-serif';x.fillStyle=s.acc;x.fillText('Награды',70,y);y+=54;F.awards.forEach(a=>{x.font='32px Manrope, sans-serif';x.fillStyle='#fff';x.fillText(`${a.k}: ${nm(a.pid)}`,70,y);y+=46})}
   x.font='28px Manrope, sans-serif';x.fillStyle='#9aa1ad';x.fillText(location.host+location.pathname,70,H-60);
   const txt=`Мафия: Выживание · ${s.title}\n${t}\n`+S.players.map(p=>`${p.name} — ${RN(p.role)} (${F.pts[p.pid]||0} оч.)`).join('\n')+(F.awards.length?'\n'+F.awards.map(a=>`${a.k}: ${nm(a.pid)}`).join('\n'):'')+'\n'+location.origin+location.pathname;
@@ -1091,7 +1158,7 @@ function scenDetail(id){const x=SCEN.find(s=>s.id===id);if(!x)return '';const r=
   <div class="lbl" style="margin-top:10px">Кризисы</div><p class="small mute">${x.cr.map(c=>esc(c.t)).join(' · ')}</p></div>`}
 
 function homeView(){
-  return `<div class="hero"><h1>Мафия:<br><span>Выживание</span></h1><p class="mute">Найдите мафию и выживите вместе. Каждый играет со своего телефона, сидя в одной комнате. Ни регистрации, ни ведущего.</p></div>
+  return `<div class="hero"><h1>Мафия:<br><span>Выживание</span></h1><p class="mute">Найдите мафию и выживите вместе. Каждый играет со своего телефона, сидя в одной комнате. Ни регистрации, ни ведущего. Мафия от 4 игроков, режим чистого выживания от 3.</p></div>
   ${scenStrip(ui.scen,'pickScenHome')}
   ${scenDetail(ui.scen)}
   <div class="box" id="enter"><div class="lbl">Ваше имя</div><input id="nm" maxlength="20" placeholder="Например, Куаныш" value="${esc(me.name)}" autocomplete="off">
@@ -1117,20 +1184,23 @@ function lobbyView(){const s=sc(),host=isHost||S.local;
   <p class="small mute" style="text-align:center">Друзья наводят камеру на QR-код или открывают этот сайт и вводят код. Ведущего нет: создатель играет как все. ${isHost?'Ваш телефон держит связь игры — не закрывайте страницу и не блокируйте экран надолго.':''}</p>
   <button class="btn" style="width:100%" data-act="share">Отправить ссылку друзьям</button>`;
   else h+=`<h2>Один телефон</h2><p class="small mute">Добавьте всех игроков. Тайные шаги (карты, ночь, вылазки) телефон покажет каждому по очереди.</p>`;
-  h+=`</div><div class="box"><div class="lbl">Игроки: ${S.players.length} ${S.players.length<5?'· нужно минимум 5':''}</div>
+  h+=`</div><div class="box"><div class="lbl">Игроки: ${S.players.length} ${S.players.length<minP()?'· нужно минимум '+minP():''}</div>
   ${S.players.map(p=>`<div class="pl"><span class="av">${esc(p.name.slice(0,1).toUpperCase())}</span><span class="nm"><b>${esc(p.name)}${p.pid===me.pid&&!S.local?' (вы)':''}</b>${!S.local&&p.pid===S.hostPid?'<span class="tiny mute">создатель · играет как все</span>':''}${!S.local&&isHost&&p.pid!==me.pid&&!onlinePids().has(p.pid)?'<span class="tiny" style="color:#ff8a90">не в сети</span>':''}</span>${host&&p.pid!==S.hostPid?`<button class="btn sm ghost" data-act="kick" data-v="${esc(p.pid)}">Убрать</button>`:''}</div>`).join('')}
   ${S.local?`<div class="row"><input id="addn" maxlength="20" placeholder="Имя игрока" style="flex:1 1 160px" autocomplete="off"><button class="btn" data-act="addLocal">Добавить</button></div>`:''}
   </div>
-  ${optsHtml()}
+  ${modeHtml()}
+  ${COOP()?'':optsHtml()}
   <div class="lbl">Сценарий ${host?'— выберите':''}</div>
   ${host?scenStrip(S.scen,'pickScen'):''}
   ${scenDetail(S.scen)}
   <button class="btn ghost" data-act="leave" style="width:100%">Выйти из комнаты</button>`;
   return h}
 
+function modeHtml(){const host=isHost||S.local,c=COOP();
+  return `<div class="box"><div class="lbl">Режим ${host?'· выберите':''}</div><div class="grid2"><button class="opt ${!c?'on':''}" ${host?'data-act="mode" data-v="mafia"':'disabled'} style="margin:0"><b>Мафия + выживание</b><span class="tiny mute" style="display:block">Ищете мафию и выживаете. От 4 игроков.</span></button><button class="opt ${c?'on':''}" ${host?'data-act="mode" data-v="coop"':'disabled'} style="margin:0"><b>Чистое выживание</b><span class="tiny mute" style="display:block">Без мафии: все вместе, у каждого свои задачи. От 3 игроков.</span></button></div>${!c&&S.players.length===4?'<p class="tiny mute">Вчетвером первая ночь — ночь знакомства: убивать нельзя.</p>':''}</div>`}
 function optsHtml(){const host=isHost||S.local,n=S.players.length,o=S.opts||{};
   return `<div class="box"><div class="lbl">Особые роли ${host?'· включите по желанию':''}</div>${['grd','jur','man','trt'].map(r=>{const on=!!o[r],ok=n>=SPEC[r].min;return `<button class="opt ${on?'on':''}" ${host?`data-act="opt" data-v="${r}"`:'disabled'} style="margin:8px 0;padding:10px 14px;min-height:0"><b>${esc(SPEC[r].n)}</b> ${on?'<span class="chip acc">включена</span>':''}<span class="tiny mute" style="display:block">${esc(SPEC[r].d)}</span><span class="tiny" style="display:block;color:${ok?'var(--mute)':'#ff8a90'}">от ${SPEC[r].min} игроков${on&&!ok?' — сейчас не войдёт в раздачу':''}</span></button>`}).join('')}<p class="tiny mute">Особые роли заменяют мирных. Хотя бы один мирный остаётся всегда.</p></div>`}
-function card(pid){const p=P(pid),s=sc(),on=ui.flip[pid],side=SIDE(p.role);
+function card(pid){if(COOP())return coopCard(pid);const p=P(pid),s=sc(),on=ui.flip[pid],side=SIDE(p.role);
   const team=p.role==='maf'?S.players.filter(x=>x.role==='maf'&&x.pid!==pid).map(x=>x.name):[];
   const g={maf:'mask',doc:'cross',det:'eye',civ:'user',grd:'shield',jur:'eye',man:'skull',trt:'mask'}[p.role]||'user';
   const cls={grd:'doc',jur:'det',man:'maf',trt:'maf'}[p.role]||p.role;
@@ -1143,13 +1213,22 @@ function card(pid){const p=P(pid),s=sc(),on=ui.flip[pid],side=SIDE(p.role);
   ${p.goal?`<div class="lbl" style="margin-top:10px">Тайная личная цель (+2 очка)</div><p class="small">${esc(p.goal.t)}</p>`:''}
   ${(p.pocket||[]).length?`<div class="lbl" style="margin-top:10px">В кармане</div><p class="small">${p.pocket.map(i=>`<b>${esc(POCKET[i].n)}</b> — ${esc(POCKET[i].d)}`).join('<br>')}</p>`:''}</div>`}
 
-function goals(){const s=sc();return `<div class="box"><div class="lbl">Две цели выживших</div><p class="small">1. Вычислить и изгнать всех: ${esc(s.roles.maf.gen)}.<br>2. Не дать ни одной шкале упасть до нуля и дотянуть до эвакуации (день ${S.evac}).</p><div class="lbl" style="margin-top:8px">Мафия побеждает, если</div><p class="small">их станет столько же, сколько остальных, если шкала упадёт до нуля или если они доживут до эвакуации.</p>${S.players.some(p=>p.role==='man')?'<div class="lbl" style="margin-top:8px">Маньяк</div><p class="small">Играет сам за себя и побеждает, если останется в последней паре выживших.</p>':''}</div>`}
+function coopCard(pid){const p=P(pid),s=sc(),on=ui.flip[pid],pk=PERK[p.perk]||{n:'',d:''};
+  return `<button class="card ${on?'on':''}" data-act="flip" data-v="${esc(pid)}" aria-label="Карта персонажа"><div class="cin">
+   <div class="cb back"><div class="em">${pic(s.id).replace('preserveAspectRatio="xMidYMid slice"','preserveAspectRatio="xMidYMid meet"')}</div><p>Нажми, чтобы открыть.<br><span class="tiny mute">Задачи держи в секрете</span></p></div>
+   <div class="cb front r-doc"><svg><use href="#i-user"/></svg><h3>${esc(p.ch)}</h3><em>${esc(pk.n)}</em><p>${esc(pk.d)}</p><p class="tiny">${esc(p.chd)}</p></div>
+  </div></button>
+  <div class="legend"><div class="lbl">Тайные личные задачи (+2 очка за каждую)</div>${(p.tasks||[]).map(t=>`<p class="small">${esc(t.t)}</p>`).join('')}
+  ${(p.pocket||[]).length?`<div class="lbl" style="margin-top:10px">В кармане</div><p class="small">${p.pocket.map(i=>`<b>${esc(POCKET[i].n)}</b> — ${esc(POCKET[i].d)}`).join('<br>')}</p>`:''}
+  <p class="tiny mute" style="margin-top:8px">Здоровье: 3. На нуле — без сознания, пока кто-то не поможет.</p></div>`}
+function goals(){if(COOP())return `<div class="box"><div class="lbl">Цель группы</div><p class="small">Продержаться до эвакуации: она придёт утром после дня ${S.evac}. Ни одна шкала не должна упасть до нуля, и хотя бы один из вас должен быть в сознании.</p><div class="lbl" style="margin-top:8px">Ваши личные цели</div><p class="small">У каждого две тайные задачи. Можно помогать группе и при этом тихо гнуть свою линию: беречь предмет, не лезть в вылазки, дежурить чаще других.</p></div>`;const s=sc();return `<div class="box"><div class="lbl">Две цели выживших</div><p class="small">1. Вычислить и изгнать всех: ${esc(s.roles.maf.gen)}.<br>2. Не дать ни одной шкале упасть до нуля и дотянуть до эвакуации (день ${S.evac}).</p><div class="lbl" style="margin-top:8px">Мафия побеждает, если</div><p class="small">их станет столько же, сколько остальных, если шкала упадёт до нуля или если они доживут до эвакуации.</p>${S.players.some(p=>p.role==='man')?'<div class="lbl" style="margin-top:8px">Маньяк</div><p class="small">Играет сам за себя и побеждает, если останется в последней паре выживших.</p>':''}</div>`}
 
 function privBox(vp){const p=P(vp);if(!vp||!p||!p.role)return '';const n=S.priv[vp]||[],pk=p.pocket||[];
+  if(COOP())return `<details class="box acc"><summary>Мои задачи${pk.length?', карман ('+pk.length+')':''}${n.length?', заметки ('+n.length+')':''}</summary><p class="small"><b>${esc(PERK[p.perk]?.n||'')}:</b> ${esc(PERK[p.perk]?.d||'')}</p>${(p.tasks||[]).map(t=>`<p class="small">• ${esc(t.t)}</p>`).join('')}${pk.length?`<p class="small"><b>Карман:</b><br>${pk.map(i=>esc(POCKET[i].n)+' — '+esc(POCKET[i].d)).join('<br>')}</p>`:''}${n.map(t=>`<p class="small">${esc(t)}</p>`).join('')}</details>`;
   return `<details class="box acc"><summary>Моё тайное: роль, цель${pk.length?', карман ('+pk.length+')':''}${n.length?', заметки ('+n.length+')':''}</summary><p class="small"><b>Роль:</b> ${esc(RN(p.role))}</p><p class="small"><b>Личная цель:</b> ${esc(p.goal?.t||'—')}</p>${pk.length?`<p class="small"><b>Карман:</b><br>${pk.map(i=>esc(POCKET[i].n)+' — '+esc(POCKET[i].d)).join('<br>')}</p>`:''}${n.map(t=>`<p class="small">${esc(t)}</p>`).join('')}</details>`}
 function pocketUse(vp){const p=P(vp);if(!p||!p.alive)return '';const pk=(p.pocket||[]).filter(i=>i!=='vt');if(!pk.length)return '';const u=mine('use',vp);
   if(u)return `<div class="box acc"><p class="small">Использовано этой ночью: <b>${esc(POCKET[u.id].n)}</b>${u.t?' на '+esc(nm(u.t)):''}</p></div>`;
-  return `<div class="box"><div class="lbl">Карман · можно использовать до выбора</div>${pk.includes('sh')?`<button class="btn sm" style="width:100%;margin:4px 0" data-act="use" data-v="sh">Оберег: меня этой ночью не убить</button>`:''}${pk.includes('sp')?`<div class="small" style="margin-top:6px">Жучок на игрока:</div><div class="spk">${alive().filter(x=>x.pid!==vp).map(x=>`<button data-act="spy" data-v="${esc(x.pid)}">${esc(x.name)}</button>`).join('')}</div>`:''}</div>`}
+  return `<div class="box"><div class="lbl">Карман · можно использовать до выбора</div>${pk.includes('rp')?`<button class="btn sm" style="width:100%;margin:4px 0" data-act="use" data-v="rp">Сухпаёк: +1 к самой низкой шкале</button>`:''}${pk.includes('bn')?`<div class="small" style="margin-top:6px">Бинты (+2 здоровья) для:</div><div class="spk">${S.players.map(x=>`<button data-act="bnd" data-v="${esc(x.pid)}">${esc(x.name)}${x.pid===vp?' (я)':''}</button>`).join('')}</div>`:''}${pk.includes('sh')?`<button class="btn sm" style="width:100%;margin:4px 0" data-act="use" data-v="sh">Оберег: меня этой ночью не убить</button>`:''}${pk.includes('sp')?`<div class="small" style="margin-top:6px">Жучок на игрока:</div><div class="spk">${alive().filter(x=>x.pid!==vp).map(x=>`<button data-act="spy" data-v="${esc(x.pid)}">${esc(x.name)}</button>`).join('')}</div>`:''}</div>`}
 function nevBox(vp){if(S.nev==null||!P(vp)?.alive)return '';const ev=NEV[S.nev],my=mine('ne',vp);
   return `<div class="box acc"><div class="lbl">Ночное событие · голосуют все тайно</div><h3>${esc(ev.t)}</h3><p class="small">${esc(ev.x)}</p><div class="row"><button class="btn ${my==='y'?'pri':''}" data-act="ne" data-v="y">Да</button><button class="btn ${my==='n'?'pri':''}" data-act="ne" data-v="n">Нет</button></div></div>`}
 
@@ -1202,13 +1281,14 @@ function phaseView(vp){const s=sc(),ph=S.phase,me_=P(vp),al=me_&&me_.alive;
     return h+micPanel()}
   case 'mission':{const T=S.crisis.team;const inT=vp&&T.includes(vp);const my=mine('ms',vp);
     let h=`<div class="narr"><div class="k">Вылазка</div><p>${esc(narr())}</p></div>`;
+    if(COOP()){if(inT){h+=`<p style="text-align:center">Ты в отряде. Выбор тайный.</p><div class="mis"><button class="h ${my==='h'?'on':''}" data-act="ms" data-v="h"><svg><use href="#i-hand"/></svg>Выложиться</button><button class="s ${my==='s'?'on':''}" data-act="ms" data-v="s" style="color:var(--acc)"><svg><use href="#i-shield"/></svg>Беречь себя</button></div><p class="small mute">Вылазка удаётся, если выложится хотя бы половина отряда, но всё равно бывает невезение. Если провалится, выложившиеся теряют 1 здоровья.</p>`;if(S.local&&my)h+=`<button class="btn pri" style="width:100%" data-act="lqNext">Скрыть и передать дальше</button>`}else h+=`<p class="mute">Отряд в деле. Остальные ждут.</p>`;return h+(S.local?'':waitList())}
     if(inT){h+=`<p style="text-align:center">Ты в отряде. Выбор тайный.</p><div class="mis"><button class="h ${my==='h'?'on':''}" data-act="ms" data-v="h"><svg><use href="#i-hand"/></svg>Помочь</button><button class="s ${my==='s'&&CANSAB(me_.role)?'on':''}" data-act="ms" data-v="s"><svg><use href="#i-skull"/></svg>Подвести</button></div>`;
       if(my&&!CANSAB(me_.role))h+=`<p class="small mute" style="text-align:center">Ты из выживших — твой вклад всегда «помочь».</p>`;
       if(S.local&&my)h+=`<button class="btn pri" style="width:100%" data-act="lqNext">Скрыть и передать дальше</button>`}
     else h+=`<p class="mute">Отряд в деле. Остальные ждут.</p>`;
     return h+(S.local?'':waitList())}
-  case 'cres':{const r=S.crisis.res;return `<div class="narr"><div class="k">Итог кризиса</div><p>${esc(r.r)}</p>${r.sab!==null?`<p><b style="color:${r.sab?'#ff8a90':'#7fe0a8'}">Саботажей в отряде: ${r.sab}</b>${r.sab?` — среди ${esc(S.crisis.team.map(nm).join(', '))} есть предатель.`:''}</p>`:''}<div class="inv">${r.eff.map(e=>`<span class="chip acc wrap">${esc(e)}</span>`).join('')}</div></div>${micPanel()}`}
-  case 'discuss':return `<div class="narr"><div class="k">Обсуждение · день ${S.day}</div><p>Кто из вас ${esc(s.roles.maf.n.toLowerCase())}? Оправдывайтесь, обвиняйте, вспоминайте, кто был в отряде.</p></div><div class="timer" id="tmr">--:--</div>${micPanel()}`;
+  case 'cres':{const r=S.crisis.res;return `<div class="narr"><div class="k">Итог кризиса</div><p>${esc(r.r)}</p>${r.full!=null?`<p><b style="color:${r.okc?'#7fe0a8':'#ff8a90'}">${r.okc?'Вылазка удалась':'Вылазка провалилась'}. Выложились полностью: ${r.full} из ${S.crisis.team.length}</b></p>`:''}${r.sab!==null?`<p><b style="color:${r.sab?'#ff8a90':'#7fe0a8'}">Саботажей в отряде: ${r.sab}</b>${r.sab?` — среди ${esc(S.crisis.team.map(nm).join(', '))} есть предатель.`:''}</p>`:''}<div class="inv">${r.eff.map(e=>`<span class="chip acc wrap">${esc(e)}</span>`).join('')}</div></div>${micPanel()}`}
+  case 'discuss':return `<div class="narr"><div class="k">Обсуждение · день ${S.day}</div><p>${COOP()?'Решите, кто ночью дежурит, кто лечит раненых, кто идёт искать припасы. Отыгрывайте своих персонажей: спорьте, торгуйтесь, рассказывайте истории.':`Кто из вас ${esc(s.roles.maf.n.toLowerCase())}? Оправдывайтесь, обвиняйте, вспоминайте, кто был в отряде.`}</p></div><div class="timer" id="tmr">--:--</div>${micPanel()}`;
   case 'vote':{const my=mine('vote',vp),tally={};Object.entries(S.inp).forEach(([pid,o])=>{if(o.vote)(tally[o.vote]=tally[o.vote]||[]).push(nm(pid))});const lastV=S.votes[S.votes.length-1];
     let h=`<div class="narr"><div class="k">Голосование · день ${S.day}</div><p>${S.local?'Голосуйте поднятием рук, затем отметьте, кого изгоняете.':'Голосование открытое — видно, кто за кого. Под каждым — его ключевые слова.'}</p></div>`;
     h+=alive().filter(p=>S.local||p.pid!==vp).map(p=>{const qs=S.log.filter(l=>l.s===p.pid).slice(-2);const lv=lastV&&lastV.v[p.pid];
@@ -1219,6 +1299,7 @@ function phaseView(vp){const s=sc(),ph=S.phase,me_=P(vp),al=me_&&me_.alive;
   case 'vres':{const r=S.res;return `<div class="narr"><div class="k">Итог голосования</div><p>${esc(r.text)}</p></div>${r.pid?`<div class="box" style="text-align:center"><svg width="56" height="56" style="color:${ENEMY(r.role)?'var(--red)':'var(--acc)'}"><use href="#i-${ENEMY(r.role)?'mask':'user'}"/></svg><h3>${esc(nm(r.pid))}</h3><p class="mute">${esc(RN(r.role))}</p></div>`:''}${S.day>=S.evac?'<p class="small mute">Это был последний день перед эвакуацией.</p>':''}${micPanel()}`}
   case 'night':{if(!vp)return `<div class="narr"><div class="k">Ночь</div><p>${esc(narr())}</p></div>`;
     if(!al)return `<div class="narr"><div class="k">Ночь ${S.day}</div><p>Вы выбыли. Закройте глаза.</p></div>`;
+    if(COOP())return coopNightView(vp);
     const my=mine('na',vp),r=me_.role;
     const head={maf:`Выберите жертву. Договоритесь жестами с напарниками.`,doc:`Кого спасаете этой ночью?${S.lastHeal?' Нельзя того же, что вчера.':''}`,det:'Кого проверяете?',civ:'Кого подозреваете? Подозрения огласят утром.',trt:'Кого подозреваете? Подозрения огласят утром. (Ты тайно за мафию.)',grd:'Кого закрываете собой этой ночью?',man:'Кого убиваете этой ночью?',jur:S.jUsed?'Расследование уже опубликовано. Кого подозреваете?':'Кого расследуете? Утром результат опубликуют для всех — один раз за игру.'}[r];
     let h=nevBox(vp)+pocketUse(vp)+`<div class="narr"><div class="k">Ночь ${S.day} · ${esc(RN(r))}</div><p>${esc(head)}</p></div>`;
@@ -1232,6 +1313,12 @@ function phaseView(vp){const s=sc(),ph=S.phase,me_=P(vp),al=me_&&me_.alive;
     return h+(S.local?'':waitList())}
   case 'morning':{const r=S.res;return `<div class="narr"><div class="k">Утро · день ${S.day}</div><p>${esc(r.text)}</p>${r.sus?`<p class="small">Больше всего ночных подозрений у <b>${esc(nm(r.sus.pid))}</b> (${r.sus.n}).</p>`:''}${r.nev&&r.nev.eff.length?`<div class="inv">${r.nev.eff.map(e=>`<span class="chip acc wrap">${esc(e)}</span>`).join('')}</div>`:''}</div>${S.day>=S.evac?'<div class="box acc"><b>Последний день.</b> Эвакуация вечером: если мафия останется среди вас, она улетит вместе со всеми.</div>':''}${micPanel()}`}
   case 'end':{const w=S.win,F=S.final||{pts:{},goals:{},awards:[]};recordStats();
+    if(COOP()){const rows=S.players.slice().sort((a,b)=>(F.pts[b.pid]||0)-(F.pts[a.pid]||0));return `<div class="win ${w.side==='town'?'town':'maf'}"><h1>${w.side==='town'?'Вы выжили':'Группа не выжила'}</h1><p>${esc(w.why)}</p></div>
+    ${F.awards.length?`<div class="box acc"><div class="lbl">Награды</div>${F.awards.map(a=>`<p><b>${esc(a.k)}</b>: ${esc(nm(a.pid))}<br><span class="tiny mute">${esc(a.t)}</span></p>`).join('')}</div>`:''}
+    <div class="box"><div class="lbl">Личные задачи · очки за партию</div>${rows.map(p=>`<div class="pl ${p.alive?'':'dead'}"><span class="av">${esc(p.name[0].toUpperCase())}</span><span class="nm"><b>${esc(p.name)} · ${F.pts[p.pid]||0} оч.</b><span class="tiny mute">${esc(p.ch)} · ${esc(PERK[p.perk]?.n||'')} · ${p.alive?'здоровье '+p.hp+'/3':'без сознания'}</span>${(p.tasks||[]).map((t,i)=>`<span class="tiny" style="display:block;color:${(F.tasks||{})[p.pid]?.[i]?'#7fe0a8':'var(--mute)'}">${(F.tasks||{})[p.pid]?.[i]?'Выполнено':'Не выполнено'}: ${esc(t.t)}</span>`).join('')}</span></div>`).join('')}
+    <p class="tiny mute">Очки: выжили всей группой +3, каждая задача +2, в сознании к концу +1, награда +1.</p></div>
+    <div class="row"><button class="btn pri" data-act="shareCard">Поделиться итогами</button><button class="btn" data-act="tab" data-v="stats">Статистика компании</button></div>
+    <div class="box"><div class="lbl">Хроника</div>${S.chron.map(c=>`<p class="small"><b>Д${c.d}</b> ${esc(c.t)}</p>`).join('')}</div>`}
     const title=w.side==='town'?'Выжившие победили':w.side==='man'?'Маньяк победил':esc(s.roles.maf.pl)+' победили';
     const mySide=P(me.pid)?SIDE(P(me.pid).role):null;const iWon=!S.local&&mySide===w.side;
     const rows=S.players.slice().sort((a,b)=>(F.pts[b.pid]||0)-(F.pts[a.pid]||0));
@@ -1243,7 +1330,17 @@ function phaseView(vp){const s=sc(),ph=S.phase,me_=P(vp),al=me_&&me_.alive;
     <div class="box"><div class="lbl">Хроника</div>${S.chron.map(c=>`<p class="small"><b>Д${c.d}</b> ${esc(c.t)}</p>`).join('')}</div>`}}
   return ''}
 
-function suspectBoard(){if(!S.day)return '';const A=alive();const rows=A.map(p=>{let sc_=0;const why=[];
+function coopNightView(vp){const my=mine('na',vp),me_=P(vp),thr=THREAT[sc().id]||'опасность';
+  const acts=[['guard','Дежурить',`Защищать всех от угрозы (${thr}).${me_.perk==='guard'?' Ты Страж: считаешься за двоих.':''}`],['rest','Отдыхать','+1 к своему здоровью.'],['search','Искать припасы',me_.perk==='scav'?'Ты Добытчик: удача чаще, ранений нет.':'60% найти вещь или припасы, иначе −1 здоровья.']];
+  let h=nevBox(vp)+pocketUse(vp)+`<div class="narr"><div class="k">Ночь ${S.day} · ${esc(me_.ch)} · здоровье ${me_.hp}/3</div><p>Чем займёшься до утра? Чем больше дежурных, тем легче отбиться от угрозы.</p></div>`;
+  h+=acts.map(([v,t,d])=>`<button class="opt ${my===v?'on':''}" data-act="na" data-v="${v}"><b>${t}</b><span class="tiny mute" style="display:block">${esc(d)}</span></button>`).join('');
+  h+=`<div class="box"><div class="lbl">Помочь игроку (+${me_.perk==='med'?2:1} здоровья, поднимает потерявших сознание)</div><div class="spk" style="flex-wrap:wrap">${S.players.filter(p=>p.pid!==vp).map(p=>`<button class="${my==='h:'+p.pid?'on':''}" data-act="na" data-v="h:${esc(p.pid)}">${esc(p.name)} ${p.alive?(p.hp||0)+'/3':'без созн.'}</button>`).join('')}</div></div>`;
+  const doneAll=my&&(S.nev==null||mine('ne',vp));
+  if(my&&!doneAll)h+=`<p class="small" style="text-align:center">Не забудьте ответить на ночное событие выше.</p>`;
+  if(doneAll)h+=`<p class="small mute" style="text-align:center">Выбор принят.</p>`;
+  if(S.local){h+=privBox(vp);if(doneAll)h+=`<button class="btn pri" style="width:100%" data-act="lqNext">Скрыть и передать дальше</button>`}
+  return h+(S.local?'':waitList())}
+function suspectBoard(){if(COOP())return '';if(!S.day)return '';const A=alive();const rows=A.map(p=>{let sc_=0;const why=[];
   const fm=S.missions.filter(m=>m.sab>0&&m.team.includes(p.pid));if(fm.length){sc_+=2*fm.length;why.push('в отряде с саботажем: '+fm.map(m=>'Д'+m.d).join(', '))}
   const okm=S.missions.filter(m=>m.sab===0&&m.team.includes(p.pid)).length;if(okm){sc_-=0.5*okm;why.push('чистых вылазок: '+okm)}
   const re=new RegExp(p.name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'i');const ment=S.log.filter(l=>l.s!==p.pid&&re.test(l.t)).length;if(ment){sc_+=0.5*ment;why.push('упоминали в репликах: '+ment)}
@@ -1253,7 +1350,7 @@ function suspectBoard(){if(!S.day)return '';const A=alive();const rows=A.map(p=>
   return {p,sc:sc_,why}}).sort((a,b)=>b.sc-a.sc);
   return `<div class="box acc"><div class="lbl">Подсказки по фактам</div><p class="tiny mute">Считается из вылазок, голосов и реплик. Ролей не знает, это только наводки.</p>${rows.map(r=>`<p class="small"><b>${esc(r.p.name)}</b> <span class="mute">· ${r.sc>=3?'очень подозрительно':r.sc>=1.5?'подозрительно':'вне подозрений'}</span><br><span class="tiny mute">${esc(r.why.join(' · ')||'фактов пока нет')}</span></p>`).join('')}</div>`}
 function dossier(){const s=sc();let h=suspectBoard();
-  h+=S.players.map(p=>{const qs=S.log.filter(l=>l.s===p.pid);const vs=S.votes.map(v=>v.v[p.pid]!==undefined?`Д${v.d}→${v.v[p.pid]==='skip'?'возд.':nm(v.v[p.pid])}`:null).filter(Boolean);const ms=S.missions.filter(m=>m.team.includes(p.pid)).map(m=>`Д${m.d} (саботажей ${m.sab})`);
+  h+=S.players.map(p=>{const qs=S.log.filter(l=>l.s===p.pid);const vs=S.votes.map(v=>v.v[p.pid]!==undefined?`Д${v.d}→${v.v[p.pid]==='skip'?'возд.':nm(v.v[p.pid])}`:null).filter(Boolean);const ms=S.missions.filter(m=>m.team.includes(p.pid)).map(m=>`Д${m.d} (${m.sab!=null?'саботажей '+m.sab:(m.ok?'удача':'провал')})`);
     return `<details class="box" ${qs.length?'open':''}><summary>${esc(p.name)} <span class="tiny mute" style="margin-left:8px">${esc(p.ch||'')}${p.alive?'':' · выбыл(а): '+esc(RN(p.role))}</span></summary>
     ${vs.length?`<p class="small"><b>Голоса:</b> ${esc(vs.join(', '))}</p>`:''}${ms.length?`<p class="small"><b>Отряды:</b> ${esc(ms.join(', '))}</p>`:''}
     ${qs.length?qs.slice(-10).reverse().map(l=>`<p class="q"><span class="tiny mute">Д${l.d}</span> ${hl(l.t)}</p>`).join(''):'<p class="small mute">Пока ничего не сказал(а) в протокол.</p>'}</details>`}).join('');
@@ -1271,17 +1368,19 @@ function rulesHtml(){return `<details class="box"><summary>Правила за �
 <li><b>Особые роли</b> включаются в лобби: Телохранитель, Журналист, Маньяк (сам за себя), Предатель (тайно за мафию).</li>
 <li><b>Личная цель</b> у каждого на карте, например «добейся изгнания Х». За неё +2 очка в рейтинг, даже если твоя сторона проиграла.</li>
 <li><b>Карман:</b> некоторые находят тайные предметы — Оберег, Жучок, Апелляцию. О них знаешь только ты, так что можно блефовать.</li>
+<li><b>Режим «Чистое выживание»</b> (от 3 игроков): мафии нет. У каждого здоровье, специализация и две тайные задачи. Ночью все выбирают: дежурить, отдыхать, искать припасы или помочь другому. Задача — продержаться до эвакуации.</li>
+<li><b>Вчетвером в мафию</b> первая ночь — ночь знакомства: убивать нельзя, детектив уже проверяет.</li>
 <li><b>Ночные события:</b> иногда ночью всем приходит общий вопрос «да/нет», и решение большинства влияет на утро.</li></ul></details>`}
 
 const PHN={deal:'Раздача',intro:'Пролог',crisis:'Кризис',team:'Отряд',mission:'Вылазка',cres:'Итог кризиса',discuss:'Обсуждение',vote:'Голосование',vres:'Итог голосования',night:'Ночь',morning:'Утро'};
 function playerBar(){const ph=S.phase,p=P(me.pid);let lab='',btn='';
   const tts='';
   if(ph==='lobby'){if(!isHost)return `<div class="hostbar"><div class="in"><div class="lab"><b>Ждём игроков</b>Игру начнёт создатель, когда соберутся все</div></div></div>`;
-    lab=`<b>Вы создатель и тоже игрок</b>${S.players.length<5?'Нужно ещё '+(5-S.players.length):'Все в сборе?'}`;btn=`<button class="btn pri" data-act="start" ${S.players.length<5?'disabled':''}>Раздать карты</button>`}
+    lab=`<b>Вы создатель и тоже игрок</b>${S.players.length<minP()?'Нужно ещё '+(minP()-S.players.length):'Все в сборе?'}`;btn=`<button class="btn pri" data-act="start" ${S.players.length<minP()?'disabled':''}>Раздать карты</button>`}
   else if(ph==='end'){lab='<b>Партия окончена</b>'+(isHost?'Сыграть ещё раз тем же составом':'Новую партию запускает создатель');if(isHost)btn=`<button class="btn pri" data-act="again">Новая игра</button>`}
   else{const can=p&&(ph==='deal'||p.alive),my=mine('go',me.pid);
     if(ADV.includes(ph)){lab=`<b>${PHN[ph]}</b>Идём дальше, когда готовы все (или большинство через 25 с): ${goN()}/${pool().length}`;
-      if(can)btn=`<button class="btn ${my?'':'pri'}" data-act="go" ${my?'disabled':''}>${my?'Жду других':ph==='discuss'?'Готов голосовать':'Дальше'}</button>`}
+      if(can)btn=`<button class="btn ${my?'':'pri'}" data-act="go" ${my?'disabled':''}>${my?'Жду других':ph==='discuss'?(COOP()?'Готов к ночи':'Готов голосовать'):'Дальше'}</button>`}
     else{const n=need();lab=`<b>${PHN[ph]}</b>Сделали ход: ${n?n.filter(([q,k])=>has(q,k)).length+'/'+n.length:''}`;
       if(can&&age()>40)btn=`<button class="btn sm ${my?'pri':''}" data-act="go" ${my?'disabled':''}>Не ждать · ${goN()}/${goNeed()}</button>`}}
   return `<div class="hostbar"><div class="in"><div class="lab">${lab}</div>${tts}${btn}</div></div>`}
@@ -1289,14 +1388,14 @@ function hostBar(){if(!S)return '';if(!S.local)return playerBar();const ph=S.pha
   const waiting=n?`${n.filter(([p,k])=>has(p,k)).length}/${n.length}`:'';
   const B=(act,t,cls='pri',dis='')=>`<button class="btn ${cls}" data-act="${act}" ${dis}>${t}</button>`;
   switch(ph){
-  case 'lobby':lab=`<b>Стол</b>${S.players.length<5?'Нужно ещё '+(5-S.players.length):'Все в сборе?'}`;btn=B('start','Раздать карты','pri',S.players.length<5?'disabled':'');break;
+  case 'lobby':lab=`<b>Стол</b>${S.players.length<minP()?'Нужно ещё '+(minP()-S.players.length):'Все в сборе?'}`;btn=B('start','Раздать карты','pri',S.players.length<minP()?'disabled':'');break;
   case 'deal':lab=`<b>Раздача</b>Открыли карты: ${waiting}`;btn=S.local?'':B('force','Не ждать','');break;
   case 'intro':lab='<b>Пролог</b>Прочитайте вслух';btn=B('day1','Начать день 1');break;
   case 'crisis':lab=S.local?'<b>Кризис</b>Выберите вариант выше':`<b>Кризис</b>Проголосовали: ${waiting}`;btn=S.local?'':B('force','Решить сейчас','');break;
   case 'team':lab='<b>Отряд</b>Ждём выбор лидера';btn=B('force','Случайный отряд','');break;
   case 'mission':lab=`<b>Вылазка</b>Сделали выбор: ${waiting}`;btn=S.local?'':B('force','Не ждать','');break;
   case 'cres':lab='<b>Итог кризиса</b>Дальше — обсуждение';btn=B('toDiscuss','К обсуждению');break;
-  case 'discuss':lab=`<b>Обсуждение</b><span class="row" style="gap:4px;margin-top:4px">${[60,120,180,300].map(t=>`<button class="btn sm ghost" data-act="tmr" data-v="${t}">${t/60} мин</button>`).join('')}</span>`;btn=B('toVote','К голосованию');break;
+  case 'discuss':lab=`<b>Обсуждение</b><span class="row" style="gap:4px;margin-top:4px">${[60,120,180,300].map(t=>`<button class="btn sm ghost" data-act="tmr" data-v="${t}">${t/60} мин</button>`).join('')}</span>`;btn=COOP()?B('toNight','Наступает ночь'):B('toVote','К голосованию');break;
   case 'vote':lab=S.local?'<b>Голосование</b>Отметьте выбор выше':`<b>Голосование</b>Голосов: ${waiting}`;btn=S.local?'':B('force','Подвести итог','');break;
   case 'vres':lab='<b>Итог</b>Город засыпает';btn=B('toNight','Наступает ночь');break;
   case 'night':lab=`<b>Ночь</b>Действия: ${waiting}`;btn=S.local?'':B('force','Не ждать','');break;
@@ -1311,7 +1410,7 @@ setInterval(tick,500);
 setInterval(()=>{if(!S||S.local||!S.phase||['lobby','end'].includes(S.phase))return;
   if(WAIT.includes(S.phase)&&age()>40&&ui.goShown!==S.pk){ui.goShown=S.pk;render()}
   if(!isHost)return;const pk=S.pk;
-  if(S.phase==='discuss'&&S.timer&&Date.now()>S.timer.end)setPhase('vote');else auto();
+  if(S.phase==='discuss'&&S.timer&&Date.now()>S.timer.end)advance();else auto();
   if(S.pk!==pk)commit()},1000);
 async function wake(){try{if(navigator.wakeLock&&isHost)ui.wl=await navigator.wakeLock.request('screen')}catch(e){}}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')wake()});
@@ -1327,7 +1426,8 @@ const A={
   leave:()=>{if(S&&S.local&&S.phase!=='lobby'&&S.phase!=='end'){LS.set('maf.local',S)}leave()},
   addLocal:()=>{const el=$('#addn');const v=clean(el?.value).slice(0,20);if(!v)return;if(S.players.some(p=>p.name.toLowerCase()===v.toLowerCase()))return toast('Такое имя уже есть');S.players.push({pid:rid(),name:v,alive:true});commit();setTimeout(()=>$('#addn')?.focus(),0)},
   kick:v=>{S.players=S.players.filter(p=>p.pid!==v);if(!S.local)S.kicked.push(v);commit()},
-  start:()=>{if(S.players.length<5)return;startGame();commit()},
+  start:()=>{if(S.players.length<minP())return;startGame();commit()},
+  mode:v=>{if(!(isHost||S.local))return;S.mode=v==='coop'?'coop':'mafia';commit()},
   force:()=>{force();commit()},
   day1:()=>{startDay();commit()},
   toDiscuss:()=>{afterCres();commit()},
@@ -1353,6 +1453,7 @@ const A={
   ne:v=>send('ne',v,viewPid()),
   use:v=>send('use',{id:v},viewPid()),
   spy:v=>send('use',{id:'sp',t:v},viewPid()),
+  bnd:v=>send('use',{id:'bn',t:v},viewPid()),
   opt:v=>{if(!(isHost||S.local))return;S.opts=S.opts||{};S.opts[v]=!S.opts[v];commit()},
   snd:()=>{SND.on=!SND.on;LS.set('maf.snd',SND.on);if(SND.on){SND.init();SND.cur=null;ambient()}else SND.stop();render()},
   shareCard:()=>shareCard(),
