@@ -130,6 +130,7 @@ mark{background:color-mix(in srgb,var(--acc) 35%,transparent);color:inherit;bord
 .win{text-align:center;padding:26px 16px;border-radius:20px;margin:12px 0}
 .win.town{background:linear-gradient(160deg,#173d2a,#0f1a14)}.win.maf{background:linear-gradient(160deg,#4a0f17,#160a0c)}
 .st{border-collapse:collapse;width:100%;font-size:14px}.st th,.st td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}.st th:first-child,.st td:first-child{text-align:left}.st th{color:var(--mute);font-weight:600;font-size:13px}.scroll{overflow-x:auto}
+.wrap{position:relative}.credit{position:absolute;top:max(12px,env(safe-area-inset-top));right:16px;font-size:13px;color:var(--mute);background:color-mix(in srgb,var(--acc) 10%,#0b0e13);border:1px solid var(--line);border-radius:999px;padding:5px 12px;z-index:4}
 .qr{width:200px;margin:12px auto;background:#fff;border-radius:12px;padding:6px}.qr svg{display:block;width:100%;height:auto}
 .sep{height:1px;background:var(--line);margin:14px 0}
 details summary{cursor:pointer;font-weight:700;min-height:40px;display:flex;align-items:center}
@@ -1147,7 +1148,8 @@ function render(){
   let h;
   if(!S)h=homeView();else if(S.phase==='lobby')h=lobbyView();else h=gameView();
   document.body.classList.toggle('night',!!S&&S.phase==='night');
-  const html=`<div class="wrap">${h}</div>${S?hostBar():''}`;
+  const credit=(!S||S.phase==='lobby'||S.phase==='end')?'<div class="credit">Сделано Темирланом Балбаевым</div>':'';
+  const html=`<div class="wrap">${credit}${h}</div>${S?hostBar():''}`;
   phaseSound();ambient();
   if(html===lastHtml)return tick();lastHtml=html;app.innerHTML=html;
   if(fid){const el=document.getElementById(fid);if(el){el.focus();try{if(ss!=null)el.setSelectionRange(ss,ss)}catch(e){}}}
@@ -1185,7 +1187,7 @@ async function shareLink(){const u=gameUrl();try{if(navigator.share){await navig
   try{await navigator.clipboard.writeText(u);toast('Ссылка скопирована')}catch(e){toast(u)}}
 
 function lobbyView(){const s=sc(),host=isHost||S.local;
-  let h=netBanner()+`<div style="display:flex;justify-content:flex-end">${toggles()}</div><div class="hero" style="padding-top:6px">`;
+  let h=netBanner()+`<div style="display:flex;justify-content:flex-start">${toggles()}</div><div class="hero" style="padding-top:6px">`;
   if(!S.local)h+=`<div class="lbl" style="text-align:center">Код игры</div><div class="code">${esc(S.code.toUpperCase())}</div>
   <div class="qr">${qrSvg(gameUrl())}</div>
   <p class="small mute" style="text-align:center">Друзья наводят камеру на QR-код или открывают этот сайт и вводят код. Ведущего нет: создатель играет как все. ${isHost?'Ваш телефон держит связь игры — не закрывайте страницу и не блокируйте экран надолго.':''}</p>
