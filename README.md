@@ -5,7 +5,8 @@
 - **Мафия: Выживание** — https://balbaevtemirlan.github.io/mafia/#mafia
 - **Выживание** (без мафии) — https://balbaevtemirlan.github.io/mafia/#survive
 - **Бункер** — https://balbaevtemirlan.github.io/mafia/#bunker
-- Скоро: **Самозванец**, **Мафия: Классика**, **Колония: Стратегия**, **Покер**, **Детектив**, **Побег из комнаты**
+- **Мафия: Классика** — https://balbaevtemirlan.github.io/mafia/#classic
+- Скоро: **Самозванец**, **Колония: Стратегия**, **Покер**, **Детектив**, **Побег из комнаты**
 
 ## Подробности
 
