@@ -144,6 +144,23 @@ details summary{cursor:pointer;font-weight:700;min-height:40px;display:flex;alig
 ul.rules{padding-left:20px}ul.rules li{margin:6px 0}
 @media (prefers-reduced-motion:reduce){.cin,.mt i{transition:none}.micb.on{animation:none}}
 
+/* impostor */
+.ibar{position:relative;height:22px;border-radius:11px;background:#1a2130;overflow:hidden;margin-top:8px}.ibar i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#2ecc71,#7fe0a8);transition:width .5s}.ibar span{position:relative;display:block;text-align:center;font-size:12px;line-height:22px;font-weight:700;color:#e8ffe9;text-shadow:0 1px 2px #000}
+.imap{width:100%;display:block;margin:6px 0 12px}.imap rect{fill:#141a26;stroke:#2a3346;stroke-width:2}.imap text{fill:#8b93a5;font-size:13px;font-weight:700;font-family:Manrope,sans-serif}.imap text.sm{font-size:10px;font-weight:600}
+.imap g.can{cursor:pointer}.imap g.can rect{fill:#1c2a40;stroke:#59d0ff}.imap g.can text{fill:#cfeeff}.imap g.cur rect{fill:#59d0ff;stroke:#bfeaff}.imap g.cur text{fill:#06121e}.imap g.vent{cursor:pointer}.imap g.vent rect{stroke:#ff5a5a;stroke-dasharray:6 4;fill:#2a1414}.imap g.vent text{fill:#ffb3b3}
+.iroom h2{margin:2px 0 8px}.iocc{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)}.iocc b{flex:1}.iocc .av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#22314a;font-weight:800}.iocc.dead{opacity:.45}.iocc.dead b{text-decoration:line-through}
+.btn.kill{background:#e53935;border-color:#e53935;color:#fff}
+.ibody{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;border-radius:10px;background:#3a1212;border:1px solid #7a2020;margin:6px 0;color:#ffd7d7}
+.isab{display:flex;flex-direction:column;gap:6px;padding:12px 14px;border-radius:12px;background:#2a2410;border:1px solid #6a5a20;margin:12px 0}.isab.hot{background:#3a0e0e;border-color:#c0392b;animation:dflick 1s infinite}.isab span{font-size:14px}
+.itk{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06)}.itk.ok{opacity:.5}
+.icard{background:linear-gradient(160deg,#10304a,#0a1622);border:1px solid #2a5a7a;border-radius:18px;padding:24px 18px;margin:14px 0;text-align:center}.icard.imp{background:linear-gradient(160deg,#4a1010,#180606);border-color:#8a2020}.icard h1{font-size:34px;margin:8px 0}.icard .k{font-size:12px;letter-spacing:.15em;text-transform:uppercase;opacity:.7}
+.imeet{background:radial-gradient(circle at 50% 0,#3a1010,#0e0a12 70%);border:1px solid #5a2020;border-radius:16px;padding:20px 16px;text-align:center;margin:12px 0}.imeet .k{color:#ff6b6b;font-size:12px;letter-spacing:.15em;text-transform:uppercase}.imeet h2{margin:6px 0 2px}
+.iej{padding:28px 16px;border-radius:16px;background:#05060a;border:1px solid #2a3346;text-align:center;margin:12px 0}.iej p{font-size:18px;line-height:1.5}
+.itm{padding-top:40px}.ibox{max-width:420px;margin:0 auto;background:#121826;border:1px solid #2a3346;border-radius:18px;padding:20px 16px}.ibox h3{margin:2px 0 10px}
+.iwires{display:flex;justify-content:space-between;gap:30px;margin:12px 0}.iwires>div{display:flex;flex-direction:column;gap:14px;flex:1}.iw{height:30px;border-radius:6px 15px 15px 6px;border:0;background:var(--c);opacity:.9}.iw.r{border-radius:15px 6px 6px 15px}.iw.sel{outline:3px solid #fff}.iw.ok{opacity:.25}
+.iseq{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}.iseq button{height:58px;border-radius:12px;border:1px solid #2a3346;background:#1c2436;color:#e8ecf5;font-size:22px;font-weight:800}.iseq button.ok{background:#1f5a3a;opacity:.6}
+.icode{font-family:'PT Mono',monospace;font-size:38px;letter-spacing:.3em;text-align:center;margin:10px 0;color:#59d0ff}.ikeys{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.ikeys button{height:52px;border-radius:12px;border:1px solid #2a3346;background:#1c2436;color:#e8ecf5;font-size:20px;font-weight:700}
+.ihold{position:relative;width:100%;height:72px;border-radius:16px;border:2px solid #59d0ff;background:#0c1a28;color:#cfeeff;font-size:17px;font-weight:800;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}.ihold span{position:absolute;inset:0 100% 0 0;background:#1f6aa0;transition:right .2s}.ihold.on span{right:0;transition:right 3s linear}.ihold b{position:relative}
 /* escape */
 .etmr{font-family:'PT Mono',monospace;font-size:22px;font-weight:700;color:var(--acc);letter-spacing:.04em}.etmr.low{color:#ff4b4b;animation:dflick 1s infinite}
 .escare{margin:12px 0;padding:12px 14px;border-radius:12px;background:radial-gradient(circle at 0 0,#3a1010,#120808);border:1px solid #4a1a1a;color:#f0caca;font-style:italic;font-size:15px;animation:dflick 5s infinite}
@@ -965,14 +982,14 @@ const SITE='Вечер игр';
 const GAMES={mafia:{t:'Мафия: Выживание',mode:'mafia',min:4,pic:'hmafia',acc:'#ff5c7a',bg:'#120a10',sub:'Найди предателей и выживи',d:'Классическая мафия, но вы ещё и спасаетесь от катастрофы: кризисы, общий инвентарь, тайные вылазки отрядов. Две цели — вычислить мафию и дожить до эвакуации.'},
   survive:{t:'Выживание',mode:'coop',min:3,pic:'hsurv',acc:'#8fe3d2',bg:'#0b1316',sub:'Все вместе против катастрофы',d:'Мафии нет. У каждого персонаж, здоровье и две тайные задачи. Днём решаете кризисы, ночью дежурите, лечите и ищете припасы. Задача — продержаться до эвакуации.'},
   bunker:{t:'Бункер',mode:'bunker',min:4,pic:'bunker',acc:'#f2b84b',bg:'#14110b',sub:'Мест на всех не хватит',d:'Катастрофа, а в бункере мест на половину. Открываете карты, спорите, голосуете, кто останется снаружи. Изгнанные не выбывают: у них своя игра на поверхности.'},
-  impostor:{t:'Самозванец',soon:1,min:4,pic:'himp',acc:'#59d0ff',bg:'#0b1220',sub:'Кто-то на борту не тот, кем кажется',d:'Игра в реальном времени: ходите по отсекам станции, чините системы мини-играми, а самозванец устраняет экипаж и устраивает саботаж. Нашли тело — экстренное собрание.'},
+  impostor:{t:'Самозванец',mode:'imp',min:4,pic:'himp',acc:'#59d0ff',bg:'#0b1220',sub:'Кто-то на борту не тот, кем кажется',d:'Игра в реальном времени на станции из 9 отсеков: ходите по карте, выполняйте мини-задания, а самозванец устраняет экипаж, саботирует реактор и прячется в люках. Нашли тело — собрание и голосование.'},
   classic:{t:'Мафия: Классика',mode:'classic',min:5,pic:'hnoir',acc:'#d4af37',bg:'#0e0c0a',sub:'Город засыпает, просыпается мафия',d:'Классическая мафия без сюжета и шкал: Дон, Комиссар, Доктор, Любовница, Маньяк. Быстрая партия на 20–30 минут.'},
   colony:{t:'Колония: Стратегия',soon:1,min:3,pic:'hcol',acc:'#7ccf6a',bg:'#0f130c',sub:'Строй, торгуй, побеждай',d:'Стратегия на шестиугольном поле: добывайте ресурсы, стройте поселения и дороги, торгуйтесь друг с другом. Первый, кто наберёт 10 очков, побеждает.'},
   poker:{t:'Покер',soon:1,min:2,pic:'hpoker',acc:'#3fbf7f',bg:'#0b1410',sub:'Техасский холдем на игровые фишки',d:'Две закрытые карты на твоём телефоне, общие карты на столе, ставки кнопками. Банк, блайнды и комбинации считаются сами. Только игровые фишки, без денег.'},
   detective:{t:'Детектив',mode:'det',min:2,pic:'hdet',acc:'#d94a4a',bg:'#0d0b0a',sub:'Настоящее дело: документы, допросы, улики',d:'Кооперативное расследование в духе true crime. У каждого на телефоне свои документы: рапорты, дневники, допросы, экспертизы. Запрашиваете улики, взламываете коды, спорите. В конце каждый тайно называет виновного.'},
   escape:{t:'Побег из комнаты',mode:'esc',min:2,pic:'hesc',acc:'#e0a24a',bg:'#0f0d0a',sub:'Сорок минут до полуночи',d:'Кооперативный квест на время. Улики разложены по телефонам: у тебя часы на стене, у друга — записка, без которой они ничего не значат. Коды, механизмы, шифры и последняя дверь.'}};
 function pageFromHash(){const h=(location.hash||'').slice(1);return GAMES[h]&&!GAMES[h].soon?h:'hub'}
-const pageOf=md=>md==='esc'?'escape':md==='det'?'detective':md==='coop'?'survive':md==='bunker'?'bunker':md==='classic'?'classic':'mafia';
+const pageOf=md=>md==='imp'?'impostor':md==='esc'?'escape':md==='det'?'detective':md==='coop'?'survive':md==='bunker'?'bunker':md==='classic'?'classic':'mafia';
 function setTitle(){try{document.title=S?GAMES[pageOf(S.mode)].t:ui.page!=='hub'?GAMES[ui.page].t:SITE}catch(e){}}
 function goPage(p){ui.page=p;ui.err='';try{if(p==='hub')history.replaceState(null,'',location.pathname+location.search);else location.hash=p}catch(e){}window.scrollTo(0,0);render()}
 function initNet(){
@@ -985,20 +1002,20 @@ function initNet(){
 }
 
 /* ---------- engine (host) ---------- */
-function newState(code,local){return {v:1,mode:ui.page==='escape'?'esc':ui.page==='detective'?'det':ui.page==='survive'?'coop':ui.page==='bunker'?'bunker':ui.page==='classic'?'classic':'mafia',cat:ui.cat,copts:{don:true,lov:true,man:false,open:true},gid:rid(6),rev:0,code:code||'',local:!!local,hostPid:local?null:me.pid,scen:ui.scen,phase:'lobby',pn:0,pk:0,players:[],kicked:[],day:0,evac:4,meters:{a:4,b:4,c:4},inv:{},inp:{},log:[],chron:[],priv:{},votes:[],missions:[],crisis:null,timer:null,deck:[],lead:[],li:0,lastHeal:null,shield:false,res:null,win:null,ai:null,lq:null,opts:{},hostNow:Date.now()}}
+function newState(code,local){return {v:1,mode:ui.page==='impostor'?'imp':ui.page==='escape'?'esc':ui.page==='detective'?'det':ui.page==='survive'?'coop':ui.page==='bunker'?'bunker':ui.page==='classic'?'classic':'mafia',cat:ui.cat,copts:{don:true,lov:true,man:false,open:true},gid:rid(6),rev:0,code:code||'',local:!!local,hostPid:local?null:me.pid,scen:ui.scen,phase:'lobby',pn:0,pk:0,players:[],kicked:[],day:0,evac:4,meters:{a:4,b:4,c:4},inv:{},inp:{},log:[],chron:[],priv:{},votes:[],missions:[],crisis:null,timer:null,deck:[],lead:[],li:0,lastHeal:null,shield:false,res:null,win:null,ai:null,lq:null,opts:{},hostNow:Date.now()}}
 const ADV=['intro','cres','discuss','vres','morning','inv','dnight','eintro'],WAIT=['deal','crisis','team','mission','vote','night','reveal','bvote','accuse'];
 const pool=()=>S.phase==='deal'?S.players:alive();
 const goN=()=>pool().filter(p=>S.inp[p.pid]?.go).length;
 const goNeed=()=>Math.floor(pool().length/2)+1;
 const age=()=>(Date.now()+((isHost||S.local)?0:ui.skew)-(S.phAt||0))/1000;
-function advance(){if(ES())return eAdvance();if(DT())return dAdvance();if(CL())return cAdvance();if(BK())return bAdvance();if(S.hunt&&age()<60)return;S.hunt=null;switch(S.phase){case 'intro':startDay();break;case 'cres':afterCres();break;case 'discuss':COOP()?goNight():setPhase('vote');break;case 'vres':afterVres();break;case 'morning':afterMorning();break}}
+function advance(){if(IM())return iForce();if(ES())return eAdvance();if(DT())return dAdvance();if(CL())return cAdvance();if(BK())return bAdvance();if(S.hunt&&age()<60)return;S.hunt=null;switch(S.phase){case 'intro':startDay();break;case 'cres':afterCres();break;case 'discuss':COOP()?goNight():setPhase('vote');break;case 'vres':afterVres();break;case 'morning':afterMorning();break}}
 function setPhase(ph){S.phase=ph;S.pk=++S.pn;S.inp={};S.phAt=Date.now();if(ph!=='discuss')S.timer=null;S.lq=null;
   if(S.local){let q=null;if(ph==='deal')q=S.players.map(p=>p.pid);else if(ph==='mission')q=[...S.crisis.team];else if(ph==='night')q=alive().map(p=>p.pid);else if(ph==='reveal'&&S.mode==='bunker')q=S.players.filter(p=>p.out||BCARD.some(([k])=>!p.rev[k])).map(p=>p.pid);if(q)S.lq={q:shufIf(ph,q),i:0,show:false}}}
 const shufIf=(ph,q)=>ph==='night'?q:q;
 function chron(t){S.chron.push({d:S.day,t})}
 function addPriv(pid,t){(S.priv[pid]=S.priv[pid]||[]).push(t)}
 
-function startGame(){if(ES())return eStart();if(DT())return dStart();if(CL())return cStart();if(BK())return startBunker();if(COOP())return startCoop();
+function startGame(){if(IM())return iStart();if(ES())return eStart();if(DT())return dStart();if(CL())return cStart();if(BK())return startBunker();if(COOP())return startCoop();
   const n=S.players.length,k=n<=6?1:n<=9?2:n<=12?3:4,s=sc();
   let free=n-k-2;const sp=[];for(const r of shuf(['grd','jur','wit','hun','man','trt']))if(S.opts&&S.opts[r]&&n>=SPEC[r].min&&free>1){sp.push(r);free--}
   const roles=shuf([...Array(k).fill('maf'),'doc','det',...sp,...Array(free).fill('civ')]);
@@ -1036,6 +1053,7 @@ function validNa(pid,v){if(COOP()){if(['guard','rest','search'].includes(v))retu
   if(p.role==='doc')return v!==S.lastHeal;
   return v!==pid}
 function input(pid,k,v){
+  if(IM())return iInput(pid,k,v);
   if(BK()&&k!=='go')return bInput(pid,k,v);
   if(CL()&&k!=='go')return cInput(pid,k,v);
   if(DT()&&k!=='go')return dInput(pid,k,v);
@@ -1061,7 +1079,7 @@ function input(pid,k,v){
   return true;
 }
 const has=(pid,k)=>S.inp[pid]&&S.inp[pid][k]!==undefined;
-function need(){if(ES())return null;if(DT())return dNeed();if(CL())return cNeed();if(BK())return bNeed();const A=alive();switch(S.phase){
+function need(){if(ES()||IM())return null;if(DT())return dNeed();if(CL())return cNeed();if(BK())return bNeed();const A=alive();switch(S.phase){
   case 'deal':return S.players.map(p=>[p.pid,'ready']);
   case 'crisis':return A.map(p=>[p.pid,'cv']);
   case 'team':return [[S.crisis.lead,'team']];
@@ -1071,6 +1089,7 @@ function need(){if(ES())return null;if(DT())return dNeed();if(CL())return cNeed(
 function auto(){
   if(DT())return dAuto();
   if(ES())return eAuto();
+  if(IM())return iAuto();
   if(CL())return cAuto();
   if(BK()&&!S.local&&ADV.includes(S.phase)){const g=goN(),t=pool().length;if(t&&(g>=t||(g>=goNeed()&&age()>25)))advance();return}
   if(BK()&&!S.local&&WAIT.includes(S.phase)&&goN()>=goNeed()&&age()>35)return bForce();
@@ -1081,7 +1100,7 @@ function auto(){
   switch(S.phase){case 'deal':setPhase('intro');break;case 'crisis':resolveChoice();break;
   case 'team':S.crisis.team=S.inp[S.crisis.lead].team;setPhase('mission');break;
   case 'mission':resolveMission();break;case 'vote':resolveVote();break;case 'night':resolveNight();break}}
-function force(){if(ES())return eAdvance();if(DT())return S.phase==='accuse'?dFinish():dAdvance();if(CL())return cForce();if(BK())return bForce();switch(S.phase){
+function force(){if(IM())return iForce();if(ES())return eAdvance();if(DT())return S.phase==='accuse'?dFinish():dAdvance();if(CL())return cForce();if(BK())return bForce();switch(S.phase){
   case 'deal':setPhase('intro');break;case 'crisis':resolveChoice();break;
   case 'team':{const L=S.crisis.lead;const t=[L,...shuf(alive().map(p=>p.pid).filter(x=>x!==L))].slice(0,teamSize());S.crisis.team=t;setPhase('mission');break}
   case 'mission':resolveMission();break;case 'vote':resolveVote();break;case 'night':resolveNight();break}}
@@ -1798,7 +1817,172 @@ function escHome(g){return `<button class="btn ghost sm" data-act="page" data-v=
   <details class="box"><summary>Статистика: Побег из комнаты</summary>${statsHtml('esc')}</details>${eRules()}`}
 function eLobby(){return `<div class="dcover"><div class="dstamp">23:20</div><div class="tiny mute">Комната №1</div><h1><span>${esc(ER.title)}</span></h1><p class="small">${esc(ER.sub)}</p></div><div class="box"><p class="small">${S.local?'Один телефон: все улики видны сразу, решайте вместе.':'Улики разложатся по телефонам. Решить загадку можно, только если делиться тем, что видишь.'} Время: ${ER.min} минут.</p></div>`}
 function eShareText(){const F=S.final||{stars:0};return `Побег из комнаты · ${ER.title}\n${S.win.side==='town'?`Выбрались! Осталось ${eFmt(S.esc.leftAt||0)} ${'★'.repeat(F.stars)}`:'Не выбрались до полуночи'}\n`+S.players.map(p=>p.name).join(', ')+'\n'+location.origin+location.pathname+'#escape'}
-if(/[?&]t=1/.test(location.search))window.__T={set:ms=>{S.esc.end=Date.now()+ms;commit()}};
+if(/[?&]t=1/.test(location.search))window.__T={set:ms=>{S.esc.end=Date.now()+ms;commit()},ui,st:()=>S};
+
+/* ---------- Самозванец: станция ---------- */
+const IROOM={rea:['Реактор',10,10],lab:['Лаборатория',125,10],nav:['Навигация',240,10],eng:['Двигатели',10,150],caf:['Столовая',125,150],com:['Связь',240,150],ele:['Электрощит',10,290],sto:['Склад',125,290],med:['Медотсек',240,290]};
+const IADJ=[['rea','lab'],['lab','nav'],['rea','eng'],['lab','caf'],['nav','com'],['eng','caf'],['caf','com'],['eng','ele'],['caf','sto'],['com','med'],['ele','sto'],['sto','med']];
+const IVENT=[['rea','ele'],['nav','med'],['eng','com']];
+const ITASK={t1:['ele','Починить проводку','wires'],t2:['nav','Проложить курс','dial'],t3:['med','Пройти сканирование','hold'],t4:['lab','Анализ образцов','seq'],t5:['com','Загрузить данные','hold'],t6:['rea','Запустить реактор','code'],t7:['sto','Заправить канистру','hold'],t8:['eng','Выровнять двигатель','dial'],t9:['caf','Очистить фильтр','seq'],t10:['ele','Перенаправить питание','code'],t11:['nav','Ввести координаты','code'],t12:['sto','Рассортировать груз','wires']};
+const ISAB={lights:['Свет','Свет погас: в отсеках не видно лиц. Починить — в Электрощите.'],comms:['Связь','Связь нарушена: прогресс заданий не виден. Починить — в Связи.'],reactor:['Реактор','Перегрев реактора! Двое должны нажать стабилизаторы: один в Реакторе, другой в Навигации.']};
+const IM=()=>!!S&&S.mode==='imp';
+const iAdj=(a,b)=>IADJ.some(([x,y])=>(x===a&&y===b)||(x===b&&y===a));
+const iVent=r=>IVENT.filter(v=>v.includes(r)).map(v=>v[0]===r?v[1]:v[0]);
+const iNow=()=>Date.now()+(isHost?0:(ui.skew||0));
+const iImp=pid=>P(pid)?.role==='imp';
+const iCrewAlive=()=>S.players.filter(p=>p.alive&&p.role!=='imp');
+const iImpAlive=()=>S.players.filter(p=>p.alive&&p.role==='imp');
+function iTasksTotal(){const I=S.im;let t=0,d=0;S.players.filter(p=>p.role!=='imp').forEach(p=>{t+=I.tasks[p.pid].length;d+=I.tasks[p.pid].filter(x=>I.done[p.pid].includes(x)).length});return [d,t]}
+
+/* ---------- Самозванец: механика ---------- */
+function iStart(){const n=S.players.length,k=n>=7?2:1,o=S.iopts||{conf:true,fast:false};const ps=shuf(S.players.map(p=>p.pid));
+  S.players.forEach(p=>{p.alive=true;p.role=ps.indexOf(p.pid)<k?'imp':'crew'});
+  const now=Date.now(),ids=Object.keys(ITASK);
+  S.im={k,pos:{},tasks:{},done:{},bodies:[],kcd:{},btn:{},sab:null,sabCd:now+25000,killer:{},kills:{},votesOk:{},meet:null,res:null,t0:now,kcdLen:o.fast?18000:28000,conf:o.conf!==false,nonce:{}};
+  S.players.forEach(p=>{S.im.pos[p.pid]='caf';S.im.tasks[p.pid]=shuf(ids).slice(0,4);S.im.done[p.pid]=[];if(p.role==='imp')S.im.kcd[p.pid]=now+15000+8000});
+  S.day=1;S.log=[];S.chron=[];S.priv={};S.win=null;S.res=null;S.final=null;S.inv={};S.meters={a:1,b:1,c:1};
+  chron(`Станция «Полярис». Экипаж: ${n}, самозванцев: ${k}.`);setPhase('ideal')}
+function iPlay(){const now=Date.now(),I=S.im;S.players.forEach(p=>{I.pos[p.pid]=p.alive?'caf':I.pos[p.pid];if(p.role==='imp')I.kcd[p.pid]=now+(S.phase==='ideal'?15000:I.kcdLen*.6)});I.bodies=[];I.meet=null;I.sabCd=Math.max(I.sabCd,now+15000);setPhase('play');I.playAt=now}
+function iWin(side,why){const I=S.im;const pts={},won={},snipe={},awards=[];
+  S.players.forEach(p=>{const imp=p.role==='imp';won[p.pid]=imp?side==='imp':side==='crew';pts[p.pid]=(won[p.pid]?3:0)+(imp?(I.kills[p.pid]||0):Math.floor(I.done[p.pid].length/2));snipe[p.pid]=I.votesOk[p.pid]||0});
+  const best=(f,k,t,min)=>{let b=null,bv=0,tie=false;S.players.forEach(p=>{const v=f(p);if(v>bv){bv=v;b=p;tie=false}else if(v===bv)tie=true});if(b&&!tie&&bv>=min)awards.push({k,t,pid:b.pid})};
+  best(p=>I.kills[p.pid]||0,'Тень станции','больше всех устранений',2);best(p=>p.role!=='imp'?I.done[p.pid].length:0,'Трудяга','больше всех заданий',3);best(p=>I.votesOk[p.pid]||0,'Чутьё','чаще всех голосовал(а) против самозванца',1);
+  awards.forEach(a=>pts[a.pid]++);
+  S.win={side:side==='crew'?'town':'imp',why};S.final={pts,won,snipe,awards,goals:{}};chron(why);setPhase('end')}
+function iCheck(){if(S.phase==='end')return true;const I=S.im,[d,t]=iTasksTotal(),ia=iImpAlive().length,ca=iCrewAlive().length;
+  if(!ia){iWin('crew','Все самозванцы раскрыты. Станция спасена.');return true}
+  if(ia>=ca){iWin('imp','Самозванцев столько же, сколько экипажа. Станция потеряна.');return true}
+  if(t&&d>=t){iWin('crew','Все задания выполнены. Двигатели запущены, «Полярис» уходит домой.');return true}
+  return false}
+function iMeet(by,body){const I=S.im;I.meet={by,body,room:I.pos[by],at:Date.now()};I.sab=I.sab&&I.sab.k==='reactor'?null:I.sab;
+  chron(body?`${nm(by)} нашёл(ла) тело: ${nm(body)} (${IROOM[I.pos[by]][0]}).`:`${nm(by)} созвал(а) экстренное собрание.`);setPhase('meet')}
+function iVoteRes(){const I=S.im,al=S.players.filter(p=>p.alive);const c={};let skip=0;
+  al.forEach(p=>{const v=(S.inp[p.pid]||{}).iv;if(!v||v==='skip')skip++;else c[v]=(c[v]||0)+1;if(v&&v!=='skip'&&iImp(v)&&p.role!=='imp')I.votesOk[p.pid]=(I.votesOk[p.pid]||0)+1});
+  let top=null,tv=0,tie=false;for(const [k,v] of Object.entries(c)){if(v>tv){tv=v;top=k;tie=false}else if(v===tv)tie=true}
+  let txt,ej=null;if(!top||tie||tv<=skip)txt=tie?'Голоса разделились. Никого не выбросили.':'Большинство пропустило голосование. Никого не выбросили.';
+  else{ej=top;P(top).alive=false;const left=iImpAlive().length;txt=`${nm(top)} выброшен(а) в шлюз. `+(I.conf?(iImp(top)?`${nm(top)} был(а) самозванцем.`:`${nm(top)} не был(а) самозванцем.`)+` Самозванцев осталось: ${left}.`:'')}
+  I.res={ej,txt,tally:al.map(p=>[p.pid,(S.inp[p.pid]||{}).iv||'skip'])};chron(txt);setPhase('ires');I.resAt=Date.now()}
+function iAuto(){const I=S.im,now=Date.now(),ph=S.phase;if(!I)return;
+  if(ph==='ideal'){const r=S.players.filter(p=>(S.inp[p.pid]||{}).rdy).length;if(r>=S.players.length||age()>20)iPlay();return}
+  if(ph==='play'){if(I.sab&&I.sab.k==='reactor'&&now>I.sab.end){iWin('imp','Реактор расплавился. Станция потеряна.');return}iCheck();return}
+  if(ph==='meet'){const al=S.players.filter(p=>p.alive),g=al.filter(p=>(S.inp[p.pid]||{}).go).length;if(age()>75||(al.length&&g>=al.length)||(g>=Math.floor(al.length/2)+1&&age()>30))setPhase('ivote');return}
+  if(ph==='ivote'){const al=S.players.filter(p=>p.alive);if(al.every(p=>(S.inp[p.pid]||{}).iv)||age()>45)iVoteRes();return}
+  if(ph==='ires'){if(age()>9){if(!iCheck())iPlay()}return}}
+function iForce(){if(S.phase==='ideal')iPlay();else if(S.phase==='meet')setPhase('ivote');else if(S.phase==='ivote')iVoteRes();else if(S.phase==='ires'){if(!iCheck())iPlay()}}
+function iInput(pid,k,v){const p=P(pid),I=S.im;if(!p||!I)return false;const ph=S.phase,now=Date.now();
+  if(v&&typeof v==='object'&&v.n!=null){if((I.nonce[pid]||{})[k]===v.n)return false;(I.nonce[pid]=I.nonce[pid]||{})[k]=v.n}
+  const set=(kk,val)=>{if(JSON.stringify((S.inp[pid]||{})[kk])===JSON.stringify(val))return false;S.inp[pid]={...(S.inp[pid]||{}),[kk]:val};iAuto();return true};
+  if(k==='rdy'&&ph==='ideal')return set('rdy',true);
+  if(k==='go'&&ph==='meet'&&p.alive)return set('go',true);
+  if(k==='iv'&&ph==='ivote'&&p.alive){if(v!=='skip'&&!(P(v)?.alive))return false;return set('iv',v)}
+  if(ph!=='play'||!v||typeof v!=='object')return false;const here=I.pos[pid];
+  if(k==='mv'){const to=v.to;if(!IROOM[to]||to===here)return false;if(p.alive&&!iAdj(here,to))return false;I.pos[pid]=to;return true}
+  if(k==='vn'){if(!p.alive||p.role!=='imp'||!iVent(here).includes(v.to))return false;I.pos[pid]=v.to;return true}
+  if(k==='tk'){const id=v.id;if(!I.tasks[pid].includes(id)||I.done[pid].includes(id)||ITASK[id][0]!==here)return false;I.done[pid].push(id);if(p.role!=='imp')iCheck();return true}
+  if(k==='kl'){const t=P(v.t);if(!p.alive||p.role!=='imp'||!t||!t.alive||t.role==='imp'||I.pos[t.pid]!==here||now<(I.kcd[pid]||0))return false;
+    t.alive=false;I.bodies.push({pid:t.pid,room:here});I.killer[t.pid]=pid;I.kills[pid]=(I.kills[pid]||0)+1;I.kcd[pid]=now+I.kcdLen;chron(`Кто-то погиб в отсеке «${IROOM[here][0]}».`);iCheck();return true}
+  if(k==='rp'){if(!p.alive)return false;const b=I.bodies.find(x=>x.room===here);if(!b)return false;iMeet(pid,b.pid);return true}
+  if(k==='btn'){if(!p.alive||here!=='caf'||I.btn[pid]||(I.sab&&I.sab.k==='reactor')||now-(I.playAt||0)<12000)return false;I.btn[pid]=1;iMeet(pid,null);return true}
+  if(k==='sab'){if(!p.alive||p.role!=='imp'||I.sab||now<I.sabCd||!ISAB[v.k])return false;I.sab={k:v.k,at:now,end:v.k==='reactor'?now+45000:0,fx:{}};I.sabCd=now+45000;return true}
+  if(k==='fix'){const s=I.sab;if(!s||!p.alive)return false;
+    if(s.k==='lights'&&here==='ele'||s.k==='comms'&&here==='com'){I.sab=null;I.sabCd=Math.max(I.sabCd,now+30000);chron(`${p.name} починил(а): ${ISAB[s.k][0].toLowerCase()}.`);return true}
+    if(s.k==='reactor'&&(here==='rea'||here==='nav')){if(s.fx[here]===pid)return false;s.fx[here]=pid;if(s.fx.rea&&s.fx.nav&&s.fx.rea!==s.fx.nav){I.sab=null;I.sabCd=Math.max(I.sabCd,now+30000);chron('Реактор стабилизирован.')}return true}
+    return false}
+  return false}
+
+/* ---------- Самозванец: мини-игры ---------- */
+const ICOL=[['#e74c3c','красный'],['#3498db','синий'],['#f1c40f','жёлтый'],['#2ecc71','зелёный']];
+function iTaskOpen(id){const ty=ITASK[id][2];let st={};
+  if(ty==='wires')st={L:shuf([0,1,2,3]),R:shuf([0,1,2,3]),sel:null,ok:[]};
+  if(ty==='dial'){st={tg:10+Math.floor(Math.random()*80),v:0};st.v=(st.tg+40+Math.floor(Math.random()*20))%100}
+  if(ty==='seq')st={ord:shuf([1,2,3,4,5,6,7,8]),next:1};
+  if(ty==='code')st={code:String(10000+Math.floor(Math.random()*90000)),inp:'',show:Date.now()+3500};
+  if(ty==='hold')st={};
+  ui.itask={id,ty,st};render()}
+function iTaskDone(){const id=ui.itask.id;ui.itask=null;if(!iImp(me.pid))SND.sting&&SND.sting('phase');send('tk',{id,n:rid(6)},me.pid);toast(iImp(me.pid)?'Вы сделали вид, что выполнили задание':'Задание выполнено')}
+function iTaskView(){const T=ui.itask;if(!T)return '';const t=ITASK[T.id],st=T.st;let b='';
+  if(T.ty==='wires')b=`<p class="small mute">Соедините провода одного цвета: сначала слева, потом справа.</p><div class="iwires"><div>${st.L.map(c=>`<button class="iw ${st.ok.includes(c)?'ok':''} ${st.sel===c?'sel':''}" style="--c:${ICOL[c][0]}" data-act="iwl" data-v="${c}" ${st.ok.includes(c)?'disabled':''}></button>`).join('')}</div><div>${st.R.map(c=>`<button class="iw r ${st.ok.includes(c)?'ok':''}" style="--c:${ICOL[c][0]}" data-act="iwr" data-v="${c}" ${st.ok.includes(c)?'disabled':''}></button>`).join('')}</div></div>`;
+  if(T.ty==='dial')b=`<p class="small mute">Совместите стрелку с отметкой.</p><svg viewBox="0 0 200 120" style="width:100%;max-width:280px;display:block;margin:0 auto"><path d="M20 110a80 80 0 0 1 160 0" fill="none" stroke="#333a48" stroke-width="14"/>${(()=>{const a=v=>Math.PI*(1-v/100);const px=v=>100+Math.cos(a(v))*80,py=v=>110-Math.sin(a(v))*80;return `<circle cx="${px(st.tg)}" cy="${py(st.tg)}" r="9" fill="#2ecc71"/><path d="M100 110L${100+Math.cos(a(st.v))*70} ${110-Math.sin(a(st.v))*70}" stroke="#59d0ff" stroke-width="5" stroke-linecap="round"/>`})()}<circle cx="100" cy="110" r="6" fill="#59d0ff"/></svg><div class="row" style="justify-content:center">${[-10,-1,1,10].map(d=>`<button class="btn sm" data-act="idial" data-v="${d}">${d>0?'+':''}${d}</button>`).join('')}</div>`;
+  if(T.ty==='seq')b=`<p class="small mute">Нажмите числа по порядку, от 1 до 8.</p><div class="iseq">${st.ord.map(x=>`<button class="${x<st.next?'ok':''}" data-act="iseq" data-v="${x}" ${x<st.next?'disabled':''}>${x}</button>`).join('')}</div>`;
+  if(T.ty==='code'){const sh=Date.now()<st.show;b=`<p class="small mute">${sh?'Запомните код:':'Введите код, который видели.'}</p><div class="icode">${sh?st.code:(st.inp.padEnd(5,'•'))}</div><div class="ikeys">${[1,2,3,4,5,6,7,8,9,'⌫',0,'↻'].map(x=>`<button data-act="ikey" data-v="${x}" ${sh?'disabled':''}>${x}</button>`).join('')}</div>`}
+  if(T.ty==='hold')b=`<p class="small mute">Нажмите и держите 3 секунды, пока полоса не заполнится.</p><button class="ihold" data-hold="1"><span></span><b>Удерживайте</b></button>`;
+  return `<div class="dmodal itm" data-act="noop"><div class="ibox" data-act="noop"><div class="lbl">${esc(IROOM[t[0]][0])}${iImp(me.pid)?' · для вида':''}</div><h3>${esc(t[1])}</h3>${b}<button class="btn ghost" style="width:100%;margin-top:14px" data-act="iclose">Закрыть</button></div></div>`}
+let iHoldT=0;
+document.addEventListener('pointerdown',e=>{const h=e.target.closest&&e.target.closest('[data-hold]');if(!h)return;iHoldT=Date.now();h.classList.add('on')},true);
+document.addEventListener('pointerup',e=>{if(!iHoldT)return;const d=Date.now()-iHoldT;iHoldT=0;document.querySelectorAll('[data-hold].on').forEach(x=>x.classList.remove('on'));if(d>=3000&&ui.itask&&ui.itask.ty==='hold')setTimeout(iTaskDone,0)},true);
+document.addEventListener('pointercancel',()=>{iHoldT=0;document.querySelectorAll('[data-hold].on').forEach(x=>x.classList.remove('on'))},true);
+setInterval(()=>{if(S&&IM()&&['play','meet','ivote','ires','ideal'].includes(S.phase))render()},1000);
+
+/* ---------- Самозванец: экраны ---------- */
+function iTop(){const I=S.im;let bar='';if(I&&S.phase==='play'){const [d,t]=iTasksTotal();const hid=I.sab&&I.sab.k==='comms';bar=`<div class="ibar"><i style="width:${hid?0:Math.round(d/t*100)}%"></i><span>${hid?'Связь нарушена':'Задания экипажа: '+Math.round(d/t*100)+'%'}</span></div>`}
+  return `<div class="top"><div class="t1"><b>Станция «Полярис»</b><span class="small mute">${I?`самозванцев: ${I.k}`:''}</span>${toggles()}</div>${bar}</div>`}
+function iMap(vp,here,dead,walk){const imp=iImp(vp)&&!dead;const vs=imp?iVent(here):[];
+  return `<svg viewBox="0 0 340 400" class="imap">${IADJ.map(([a,b])=>{const A=IROOM[a],B=IROOM[b];return `<path d="M${A[1]+45} ${A[2]+50}L${B[1]+45} ${B[2]+50}" stroke="#2a3346" stroke-width="16"/>`}).join('')}
+  ${Object.entries(IROOM).map(([id,[n,x,y]])=>{const cur=id===here,can=!walk&&!cur&&(dead||iAdj(here,id)),vent=vs.includes(id);return `<g ${can?`data-act="imv" data-v="${id}"`:vent&&!walk?`data-act="ivn" data-v="${id}"`:''} class="${cur?'cur':can?'can':vent?'vent':''}"><rect x="${x}" y="${y}" width="90" height="100" rx="12"/><text x="${x+45}" y="${y+54}" text-anchor="middle">${n}</text>${walk===id?`<text x="${x+45}" y="${y+74}" text-anchor="middle" class="sm">идёте…</text>`:''}${vent?`<text x="${x+45}" y="${y+84}" text-anchor="middle" class="sm">люк</text>`:''}${id==='caf'?'<circle cx="'+(x+45)+'" cy="'+(y+22)+'" r="7" fill="#e74c3c"/>':''}</g>`}).join('')}</svg>`}
+function iPhase(vp){const I=S.im,ph=S.phase,me_=P(vp);if(!I)return '';
+  if(!me_)return `<div class="box"><p>Игра уже идёт. Можно наблюдать.</p></div>`;
+  const imp=me_.role==='imp',mates=S.players.filter(p=>p.role==='imp'&&p.pid!==vp);
+  if(ph==='ideal'){const rd=(S.inp[vp]||{}).rdy;return `<div class="icard ${imp?'imp':''}"><div class="k">Ваша роль</div><h1>${imp?'Самозванец':'Член экипажа'}</h1><p>${imp?'Устраняйте экипаж, когда рядом нет свидетелей, саботируйте системы и прячьтесь в люках. Делайте вид, что выполняете задания.':'Выполняйте задания в отсеках. Найдёте тело — сообщайте. Вычислите самозванца на собрании.'}</p>${imp&&mates.length?`<p class="small">Ваш напарник: <b>${esc(mates.map(m=>m.name).join(', '))}</b></p>`:''}</div>
+    <div class="box"><ul class="rules small"><li>Все сидят в одной комнате, но смотрят только в свой телефон.</li><li>Перемещайтесь по станции касанием соседнего отсека. Видите только тех, кто с вами в одном отсеке.</li><li>Если вас устранили — молчите до конца игры. Призраки продолжают выполнять задания.</li></ul></div>
+    <button class="btn pri" style="width:100%" data-act="irdy" ${rd?'disabled':''}>${rd?'Ждём остальных…':'Понятно'}</button>`}
+  if(ph==='meet'||ph==='ivote'||ph==='ires')return iMeetView(vp);
+  if(ph==='end')return iEnd(vp);
+  // play
+  const dead=!me_.alive,here=I.pos[vp],now=iNow();let h='';
+  if(dead&&ui.iDeadSeen!==S.gid){const kl=I.killer[vp];h+=`<div class="dmodal" data-act="noop"><div class="icard imp" data-act="noop" style="max-width:420px;margin:60px auto"><div class="k">Вас устранили</div><h1>${kl?esc(nm(kl)):'Шлюз'}</h1><p>${kl?'Это сделал(а) этот игрок. Никому не говорите — ни словом, ни взглядом.':'Вас выбросили в шлюз.'} Теперь вы призрак: летаете сквозь стены и можете доделывать задания.</p><button class="btn pri" style="width:100%" data-act="ideadok">Понятно, молчу</button></div></div>`}
+  if(ui.itask)h+=iTaskView();
+  if(I.sab){const s=ISAB[I.sab.k];const left=I.sab.end?Math.max(0,Math.ceil((I.sab.end-now)/1000)):null;const fixHere=!dead&&((I.sab.k==='lights'&&here==='ele')||(I.sab.k==='comms'&&here==='com')||(I.sab.k==='reactor'&&(here==='rea'||here==='nav')));const pressed=I.sab.k==='reactor'&&I.sab.fx[here]===vp;
+    h+=`<div class="isab ${I.sab.k==='reactor'?'hot':''}"><b>${esc(s[0])}${left!=null?' · '+left+' с':''}</b><span>${esc(s[1])}</span>${I.sab.k==='reactor'?`<span class="tiny">Реактор: ${I.sab.fx.rea?'нажат ✓':'никого'} · Навигация: ${I.sab.fx.nav?'нажат ✓':'никого'}</span>`:''}${fixHere?`<button class="btn pri sm" data-act="ifix" ${pressed?'disabled':''}>${pressed?'Держите, ждём второго':'Починить здесь'}</button>`:''}</div>`}
+  if(dead)h+=`<div class="box" style="border-color:#555"><p class="small"><b>Вы призрак.</b> Летайте в любой отсек, доделывайте задания. Не подсказывайте живым.</p></div>`;
+  const dark=I.sab&&I.sab.k==='lights'&&!imp&&!dead;
+  const occ=S.players.filter(p=>p.alive&&p.pid!==vp&&I.pos[p.pid]===here);const bodies=I.bodies.filter(b=>b.room===here);
+  const kReady=imp&&!dead&&now>=(I.kcd[vp]||0);const kLeft=imp?Math.max(0,Math.ceil(((I.kcd[vp]||0)-now)/1000)):0;
+  h+=`<div class="box iroom"><div class="lbl">Вы в отсеке</div><h2>${esc(IROOM[here][0])}</h2>
+   ${bodies.map(b=>`<div class="ibody">Здесь тело: <b>${esc(nm(b.pid))}</b>${!dead?`<button class="btn pri sm" data-act="irp">Сообщить</button>`:''}</div>`).join('')}
+   <div class="lbl" style="margin-top:8px">${dark?'В темноте кто-то есть':'Рядом с вами'}</div>
+   ${occ.length?occ.map(p=>`<div class="iocc"><span class="av">${dark?'?':esc(p.name[0].toUpperCase())}</span><b>${dark?'Силуэт':esc(p.name)}</b>${imp&&!dead&&p.role!=='imp'?`<button class="btn sm ${kReady?'kill':''}" data-act="ikl" data-v="${esc(p.pid)}" ${kReady?'':'disabled'}>${kReady?'Устранить':kLeft+' с'}</button>`:''}${imp&&p.role==='imp'&&!dark?'<span class="tiny" style="color:#ff6b6b">напарник</span>':''}</div>`).join(''):'<p class="small mute">Никого. Вы одни.</p>'}
+   ${here==='caf'&&!dead?`<button class="btn ${I.btn[vp]?'':'pri'}" style="width:100%;margin-top:10px" data-act="ibtn" ${I.btn[vp]||(I.sab&&I.sab.k==='reactor')||now-(I.playAt||0)<12000?'disabled':''}>${I.btn[vp]?'Кнопка уже использована':'Экстренное собрание'}</button>`:''}</div>`;
+  h+=iMap(vp,here,dead,ui.iwalk&&ui.iwalk.until>Date.now()?ui.iwalk.to:null);
+  if(imp&&!dead){const sl=Math.max(0,Math.ceil((I.sabCd-now)/1000));h+=`<div class="box"><div class="lbl">Саботаж ${I.sab?'· уже идёт':sl?'· через '+sl+' с':''}</div><div class="row">${Object.entries(ISAB).map(([k,s])=>`<button class="btn sm" data-act="isab" data-v="${k}" ${I.sab||sl?'disabled':''}>${s[0]}</button>`).join('')}</div>${iVent(here).length?'<p class="tiny mute" style="margin-top:6px">В этом отсеке люк: коснитесь отсека с пометкой «люк» на карте, чтобы переместиться мгновенно.</p>':''}</div>`}
+  const my=I.tasks[vp],dn=I.done[vp];
+  h+=`<div class="box"><div class="lbl">${imp?'Задания для вида (не считаются)':'Мои задания'} · ${dn.length}/${my.length}</div>${my.map(id=>{const t=ITASK[id],ok=dn.includes(id),inRoom=t[0]===here;return `<div class="itk ${ok?'ok':''}"><span><b>${esc(t[1])}</b><span class="tiny mute" style="display:block">${esc(IROOM[t[0]][0])}</span></span>${ok?'<span class="tiny" style="color:#7fe0a8">готово</span>':inRoom?`<button class="btn pri sm" data-act="itk" data-v="${id}">Выполнить</button>`:''}</div>`}).join('')}</div>`;
+  return h}
+function iMeetView(vp){const I=S.im,ph=S.phase,m=I.meet||{},me_=P(vp),al=me_&&me_.alive;let h=`<div class="imeet"><div class="k">${m.body?'Найдено тело':'Экстренное собрание'}</div><h2>${m.body?esc(nm(m.body)):esc(nm(m.by))}</h2><p class="small">${m.body?`Нашёл(ла) ${esc(nm(m.by))} · ${esc(IROOM[m.room]?.[0]||'')}`:'нажал(а) кнопку в столовой'}</p></div>`;
+  if(ph==='meet'){const g=(S.inp[vp]||{}).go;h+=`<div class="box"><div class="lbl">Обсуждение · ${Math.max(0,75-Math.floor(age()))} с</div><p class="small">Говорите вслух: где были, кого видели, кто вёл себя странно. Мёртвые молчат.</p>${S.players.map(p=>`<div class="iocc ${p.alive?'':'dead'}"><span class="av">${esc(p.name[0].toUpperCase())}</span><b>${esc(p.name)}</b><span class="tiny mute">${p.alive?'':'мёртв(а)'}</span></div>`).join('')}${al?`<button class="btn ${g?'':'pri'}" style="width:100%;margin-top:10px" data-act="go" ${g?'disabled':''}>${g?'Ждём остальных':'К голосованию'}</button>`:''}</div>`+micPanel();return h}
+  if(ph==='ivote'){const my=(S.inp[vp]||{}).iv;const n=S.players.filter(p=>p.alive&&(S.inp[p.pid]||{}).iv).length,t=S.players.filter(p=>p.alive).length;
+    h+=`<div class="box"><div class="lbl">Голосование · ${Math.max(0,45-Math.floor(age()))} с · проголосовали ${n}/${t}</div>${al?S.players.filter(p=>p.alive&&p.pid!==vp).map(p=>`<button class="pl ${my===p.pid?'on':''}" data-act="iv" data-v="${esc(p.pid)}"><span class="av">${esc(p.name[0].toUpperCase())}</span><span class="nm"><b>${esc(p.name)}</b></span></button>`).join('')+`<button class="btn ${my==='skip'?'pri':'ghost'}" style="width:100%" data-act="iv" data-v="skip">Пропустить</button>`:'<p class="small mute">Призраки не голосуют.</p>'}</div>`;return h}
+  const R=I.res||{};return h+`<div class="iej ${R.ej?'':'none'}"><p>${esc(R.txt||'')}</p></div><div class="box"><div class="lbl">Кто за кого</div>${(R.tally||[]).map(([a,b])=>`<p class="small">${esc(nm(a))} → ${b==='skip'?'пропуск':esc(nm(b))}</p>`).join('')}</div>`}
+function iEnd(vp){const F=S.final||{pts:{},awards:[]},I=S.im;recordStats();const crew=S.win.side==='town';const rows=S.players.slice().sort((a,b)=>(F.pts[b.pid]||0)-(F.pts[a.pid]||0));
+  return `<div class="win ${crew?'town':'maf'}"><h1>${crew?'Победа экипажа':'Победа самозванцев'}</h1><p>${esc(S.win.why)}</p></div>
+  <div class="box"><div class="lbl">Самозванцы</div>${S.players.filter(p=>p.role==='imp').map(p=>`<p><b>${esc(p.name)}</b> <span class="small mute">· устранений: ${I.kills[p.pid]||0}</span></p>`).join('')}</div>
+  ${F.awards.length?`<div class="box acc"><div class="lbl">Награды</div>${F.awards.map(a=>`<p><b>${esc(a.k)}</b>: ${esc(nm(a.pid))}<br><span class="tiny mute">${esc(a.t)}</span></p>`).join('')}</div>`:''}
+  <div class="box"><div class="lbl">Очки</div>${rows.map(p=>`<p class="small"><b>${esc(p.name)}</b> · ${F.pts[p.pid]||0} оч. <span class="mute">· ${p.role==='imp'?'самозванец':'экипаж, заданий '+I.done[p.pid].length+'/'+I.tasks[p.pid].length}</span></p>`).join('')}<p class="tiny mute">Победа +3, за каждое устранение +1, за каждые 2 задания +1, награда +1.</p></div>
+  <div class="box"><div class="lbl">Хроника</div>${S.chron.map(c=>`<p class="small">${esc(c.t)}</p>`).join('')}</div>
+  <div class="row"><button class="btn pri" data-act="shareCard">Поделиться итогами</button><button class="btn" data-act="tab" data-v="stats">Статистика</button></div>`}
+function iNarr(){const I=S.im;if(!I)return '';if(S.phase==='meet')return I.meet&&I.meet.body?`Найдено тело. ${nm(I.meet.body)}. Собрание.`:'Экстренное собрание.';if(S.phase==='ivote')return 'Голосование.';if(S.phase==='ires')return I.res?I.res.txt:'';if(S.phase==='end')return S.win.why;return ''}
+function iRules(){return `<details class="box" open><summary>Правила за минуту</summary><ul class="rules small">
+<li>От 4 игроков, каждый со своего телефона. 1 самозванец, с 7 игроков — 2.</li>
+<li>Станция из 9 отсеков. Касайтесь соседнего отсека на карте, чтобы перейти. Видите только тех, кто в вашем отсеке.</li>
+<li>Экипаж выполняет задания-мини-игры в нужных отсеках. Полоса заданий общая: заполнили — победа.</li>
+<li>Самозванец устраняет тех, кто остался с ним наедине, саботирует свет, связь и реактор, перемещается через люки.</li>
+<li>Нашли тело — «Сообщить». В Столовой у каждого одна экстренная кнопка. На собрании обсуждаете вслух и голосуете.</li>
+<li>Самозванцы побеждают, если их столько же, сколько экипажа, или если реактор не стабилизировали за 45 секунд.</li>
+<li>Убитые молчат до конца партии, но как призраки доделывают задания.</li></ul></details>`}
+function iDossier(vp){return iRules()+`<div class="box"><div class="lbl">Хроника</div>${S.chron.map(c=>`<p class="small">${esc(c.t)}</p>`).join('')}</div>`}
+function iLobby(){const host=isHost,o=S.iopts||{conf:true,fast:false},n=S.players.length;return `<div class="box"><div class="lbl">Настройки ${host?'':'· меняет создатель'}</div>
+  <p class="small">Самозванцев: <b>${n>=7?2:1}</b> (2 — с 7 игроков).</p>
+  <button class="opt ${o.conf!==false?'on':''}" ${host?'data-act="iopt" data-v="conf"':'disabled'} style="margin:8px 0;padding:10px 14px;min-height:0"><b>Показывать роль выброшенного</b></button>
+  <button class="opt ${o.fast?'on':''}" ${host?'data-act="iopt" data-v="fast"':'disabled'} style="margin:8px 0;padding:10px 14px;min-height:0"><b>Быстрые устранения</b> <span class="tiny mute">перезарядка 18 с вместо 28</span></button></div>`}
+function impHome(g){return `<button class="btn ghost sm" data-act="page" data-v="hub" style="margin-top:6px">← Все игры</button>
+  <div class="hero"><h1><span>Самозванец</span></h1><p class="mute">${esc(g.d)} От ${g.min} игроков, 10–15 минут.</p></div>
+  <div class="box" id="enter"><div class="lbl">Ваше имя</div><input id="nm" maxlength="20" placeholder="Например, Куаныш" value="${esc(me.name)}" autocomplete="off">
+  ${ui.err?`<p class="small" style="color:${/…$/.test(ui.err)?'var(--mute)':'#ff8a90'}">${esc(ui.err)}</p>`:''}
+  <div class="sep"></div><div class="row"><button class="btn pri" data-act="create">Создать игру</button></div>
+  <div class="row" style="margin-top:10px"><input id="code" maxlength="8" placeholder="Код игры" value="${esc(ui.code)}" style="flex:1 1 120px;text-transform:uppercase" autocomplete="off"><button class="btn" data-act="join">Войти</button></div>
+  <p class="tiny mute">Только каждый со своего телефона: игра в реальном времени. Надёжнее всего, когда все в одном Wi‑Fi.</p></div>
+  <details class="box"><summary>Статистика: Самозванец</summary>${statsHtml('imp')}</details>${iRules().replace(' open','')}`}
+function iShareText(){const F=S.final||{pts:{}};return `Самозванец · станция «Полярис»\n${S.win.side==='town'?'Победа экипажа':'Победа самозванцев'}\nСамозванцы: ${S.players.filter(p=>p.role==='imp').map(p=>p.name).join(', ')}\n`+S.players.map(p=>`${p.name}: ${F.pts[p.pid]||0} оч.`).join('\n')+'\n'+location.origin+location.pathname+'#impostor'}
+if(window.__T)window.__T.itask=iTaskOpen;
 
 /* ---------- commit / sync ---------- */
 function commit(){S.rev++;S.hostNow=Date.now();if(S.local)LS.set('maf.local',S);else{LS.set('maf.host',{code:S.code,S});broadcast()}speak();render()}
@@ -1811,7 +1995,7 @@ function handlePeer(pr){let c=false,pl=P(pr.pid);const name=clean(pr.name).slice
   if(!pl){if(S.phase==='lobby'&&S.players.length<16&&!S.kicked.includes(pr.pid)){S.players.push({pid:pr.pid,name,alive:true});c=true;pl=P(pr.pid)}else return false}
   else if(S.phase==='lobby'&&pl.name!==name){pl.name=name;c=true}
   if(Array.isArray(pr.sp)){const ids=new Set(S.log.map(l=>l.i));for(const e of pr.sp.slice(-4)){if(e&&typeof e.i==='string'&&!ids.has(e.i)&&typeof e.t==='string'&&clean(e.t)){addLog({i:e.i,d:S.day,s:P(e.s)?e.s:pr.pid,by:pr.pid,t:clean(e.t).slice(0,280)});c=true}}}
-  if(pr.pk===S.pk&&pr.a&&typeof pr.a==='object'){for(const k of ['ans','hint','req','share','code','acc','dn','shot','ready','cv','team','ms','vote','na','go','ne','use','rv','oa','bv','act'])if(pr.a[k]!==undefined&&input(pr.pid,k,pr.a[k]))c=true}
+  if(pr.pk===S.pk&&pr.a&&typeof pr.a==='object'){for(const k of ['mv','vn','tk','kl','rp','btn','sab','fix','iv','rdy','ans','hint','req','share','code','acc','dn','shot','ready','cv','team','ms','vote','na','go','ne','use','rv','oa','bv','act'])if(pr.a[k]!==undefined&&input(pr.pid,k,pr.a[k]))c=true}
   return c}
 function onRemote(d){if(!d||!d.gid)return;if(S&&S.gid===d.gid&&d.rev<S.rev)return;
   S=JSON.parse(JSON.stringify(d));ui.skew=(S.hostNow||Date.now())-Date.now();
@@ -1863,7 +2047,7 @@ function micToggle(){
     rec.onend=()=>{if(ui.wantMic){try{rec.start();return}catch(e){}}ui.listening=false;render()};rec.start();ui.listening=true;ui.wantMic=true}catch(e){ui.noMic=true;toast('Микрофон недоступен')}render()}}
 
 /* ---------- AI ---------- */
-function narr(){if(!S)return '';if(ES())return eNarr();if(DT())return dNarr();if(CL())return cNarr();if(BK())return bNarr();const s=sc(),ph=S.phase;
+function narr(){if(!S)return '';if(IM())return iNarr();if(ES())return eNarr();if(DT())return dNarr();if(CL())return cNarr();if(BK())return bNarr();const s=sc(),ph=S.phase;
   switch(ph){case 'intro':return COOP()?coopIntro(s):s.intro;
   case 'crisis':return `День ${S.day}. ${crDef().t}. ${crDef().x}`;
   case 'team':return `Лидер дня, ${nm(S.crisis.lead)}, собирает отряд из ${teamSize()} человек.`;
@@ -1900,27 +2084,27 @@ const SND={ctx:null,on:LS.get('maf.snd',false),amb:null,tk:null,cur:null,
  sting(k){if(!this.on||!this.init())return;const c=this.ctx,t=c.currentTime;
   const q={death:[[110,0],[82,.28],[55,.56]],win:[[392,0],[494,.15],[587,.3],[784,.45]],lose:[[294,0],[247,.32],[196,.64]],phase:[[660,0],[880,.12]],night:[[220,0],[165,.45]],morning:[[523,0],[659,.18],[784,.36]]}[k]||[];
   q.forEach(([f,d])=>{const o=c.createOscillator(),g=c.createGain();o.type=k==='death'?'sawtooth':'triangle';o.frequency.value=f;const len=k==='death'?1:.6;g.gain.setValueAtTime(.0001,t+d);g.gain.exponentialRampToValueAtTime(.22,t+d+.03);g.gain.exponentialRampToValueAtTime(.0001,t+d+len);o.connect(g).connect(c.destination);o.start(t+d);o.stop(t+d+len+.05)})}};
-function ambient(){if(!SND.on)return;if(!S||S.phase==='lobby'){if(SND.cur)SND.stop();return}const id=ES()?'hotel':DT()?'vamp':CL()?'tower':BK()?BAMB[S.cat]:S.scen;if(SND.cur!==id)SND.start(id)}
+function ambient(){if(!SND.on)return;if(!S||S.phase==='lobby'){if(SND.cur)SND.stop();return}const id=IM()?'orbit':ES()?'hotel':DT()?'vamp':CL()?'tower':BK()?BAMB[S.cat]:S.scen;if(SND.cur!==id)SND.start(id)}
 function phaseSound(){if(!S||!SND.on||ui.sndPk===S.pk)return;const first=ui.sndPk==null;ui.sndPk=S.pk;if(first)return;
   const ph=S.phase;if(ph==='night')SND.sting('night');else if(ph==='morning')SND.sting(S.res&&S.res.deaths&&S.res.deaths.length?'death':'morning');
-  else if(ph==='vres')SND.sting(S.res&&S.res.pid?'death':'phase');else if(ph==='end'){const p=P(me.pid);const lost=(BK()||DT()||ES())?(p&&S.final&&!S.final.won[p.pid]):(!S.local&&p&&SIDE(p.role)!==S.win.side);SND.sting(lost?'lose':'win')}else if(ph!=='lobby')SND.sting('phase')}
+  else if(ph==='vres')SND.sting(S.res&&S.res.pid?'death':'phase');else if(ph==='end'){const p=P(me.pid);const lost=(BK()||DT()||ES()||IM())?(p&&S.final&&!S.final.won[p.pid]):(!S.local&&p&&SIDE(p.role)!==S.win.side);SND.sting(lost?'lose':'win')}else if(ph!=='lobby')SND.sting('phase')}
 
 /* ---------- stats ---------- */
 function loadStats(){const st=LS.get('maf.stats',null)||{};if(!st.v){const old=st;const nw={v:2,gids:old.gids||[],m:{mafia:{p:old.p||{},g:old.g||[]},coop:{p:{},g:[]}}};LS.set('maf.stats',nw);return nw}return st}
 function recordStats(){if(!S||!S.final||!S.win)return;const st=loadStats();if(st.gids.includes(S.gid))return;
-  st.gids.push(S.gid);st.gids=st.gids.slice(-80);const w=S.win.side,md=ES()?'esc':DT()?'det':CL()?'classic':BK()?'bunker':COOP()?'coop':'mafia',M=st.m[md]=st.m[md]||{p:{},g:[]};
+  st.gids.push(S.gid);st.gids=st.gids.slice(-80);const w=S.win.side,md=IM()?'imp':ES()?'esc':DT()?'det':CL()?'classic':BK()?'bunker':COOP()?'coop':'mafia',M=st.m[md]=st.m[md]||{p:{},g:[]};
   S.players.forEach(p=>{const k=p.name.trim().toLowerCase();const r=M.p[k]=M.p[k]||{n:p.name,g:0,w:0,maf:0,mw:0,goals:0,pts:0,snipe:0};r.n=p.name;
-    const won=S.final.won?!!S.final.won[p.pid]:SIDE(p.role)===w;r.g++;if(won)r.w++;if(BK()?!p.out:(DT()||ES())?false:SIDE(p.role)!=='town'){r.maf++;if(won)r.mw++}if(S.final.goals[p.pid])r.goals++;r.pts+=S.final.pts[p.pid]||0;r.snipe+=(S.final.snipe||{})[p.pid]||0});
-  M.g.unshift({d:new Date().toLocaleDateString('ru-RU'),t:ES()?ER.title:DT()?'Дело №'+DCASE.no+' «'+DCASE.title+'»':CL()?'Классика':BK()?bcat().title:sc().title,w:ES()?(w==='town'?'выбрались, осталось '+eFmt(S.esc.leftAt||0):'не выбрались'):DT()?(w==='town'?'дело раскрыто':'дело не раскрыто'):CL()?(w==='town'?'победил город':w==='man'?'победил маньяк':'победила мафия'):BK()?({both:'выжили все',in:'выжил бункер',out:'выжили снаружи',none:'не выжил никто'}[w]):COOP()?(w==='town'?'все выжили':'не выжили'):w==='town'?'победили выжившие':w==='man'?'победил маньяк':'победили '+sc().roles.maf.pl.toLowerCase()});M.g=M.g.slice(0,20);LS.set('maf.stats',st)}
-function statsHtml(md){md=md||(S?(ES()?'esc':DT()?'det':CL()?'classic':BK()?'bunker':COOP()?'coop':'mafia'):'mafia');const st=loadStats(),M=st.m[md]||{p:{},g:[]},isE=md==='esc',isD=md==='det'||isE,isC=md==='coop'||md==='bunker'||isD,isB=md==='bunker'||isD,title=GAMES[pageOf(md)].t;const rows=Object.values(M.p).sort((a,b)=>b.pts-a.pts);
+    const won=S.final.won?!!S.final.won[p.pid]:SIDE(p.role)===w;r.g++;if(won)r.w++;if(BK()?!p.out:(DT()||ES())?false:IM()?p.role==='imp':SIDE(p.role)!=='town'){r.maf++;if(won)r.mw++}if(S.final.goals[p.pid])r.goals++;r.pts+=S.final.pts[p.pid]||0;r.snipe+=(S.final.snipe||{})[p.pid]||0});
+  M.g.unshift({d:new Date().toLocaleDateString('ru-RU'),t:IM()?'Станция «Полярис»':ES()?ER.title:DT()?'Дело №'+DCASE.no+' «'+DCASE.title+'»':CL()?'Классика':BK()?bcat().title:sc().title,w:IM()?(w==='town'?'победил экипаж':'победили самозванцы'):ES()?(w==='town'?'выбрались, осталось '+eFmt(S.esc.leftAt||0):'не выбрались'):DT()?(w==='town'?'дело раскрыто':'дело не раскрыто'):CL()?(w==='town'?'победил город':w==='man'?'победил маньяк':'победила мафия'):BK()?({both:'выжили все',in:'выжил бункер',out:'выжили снаружи',none:'не выжил никто'}[w]):COOP()?(w==='town'?'все выжили':'не выжили'):w==='town'?'победили выжившие':w==='man'?'победил маньяк':'победили '+sc().roles.maf.pl.toLowerCase()});M.g=M.g.slice(0,20);LS.set('maf.stats',st)}
+function statsHtml(md){md=md||(S?(IM()?'imp':ES()?'esc':DT()?'det':CL()?'classic':BK()?'bunker':COOP()?'coop':'mafia'):'mafia');const st=loadStats(),M=st.m[md]||{p:{},g:[]},isI=md==='imp',isE=md==='esc',isD=md==='det'||isE,isC=md==='coop'||md==='bunker'||isD,isB=md==='bunker'||isD,title=GAMES[pageOf(md)].t;const rows=Object.values(M.p).sort((a,b)=>b.pts-a.pts);
   if(!rows.length)return `<div class="box"><div class="lbl">${esc(title)}</div><p class="small mute">Пока пусто. После первой партии здесь появится рейтинг компании. Данные хранятся на этом телефоне.</p></div>`;
-  return `<div class="box"><div class="lbl">${esc(title)} · рейтинг на этом телефоне</div><div class="scroll"><table class="st"><thead><tr><th>Игрок</th><th>Очки</th><th>Игр</th><th>${isE?'Выбрались':isD?'Раскрыли':isC?'Выжили':'Побед'}</th>${isD?'':isB?'<th>В бункере</th>':isC?'':'<th>Мафией</th>'}${isB?'':'<th>Цели</th>'}${isC?'':'<th>Снайп.</th>'}</tr></thead><tbody>${rows.map((r,i)=>`<tr><td>${i<3?['1.','2.','3.'][i]+' ':''}${esc(r.n)}</td><td>${r.pts}</td><td>${r.g}</td><td>${Math.round(r.w/r.g*100)}%</td>${isD?'':isB?`<td>${r.maf}</td>`:isC?'':`<td>${r.maf}${r.maf?' ('+r.mw+' поб.)':''}</td>`}${isB?'':`<td>${r.goals}</td>`}${isC?'':`<td>${r.snipe}</td>`}</tr>`).join('')}</tbody></table></div>
+  return `<div class="box"><div class="lbl">${esc(title)} · рейтинг на этом телефоне</div><div class="scroll"><table class="st"><thead><tr><th>Игрок</th><th>Очки</th><th>Игр</th><th>${isE?'Выбрались':isD?'Раскрыли':isC?'Выжили':'Побед'}</th>${isD?'':isB?'<th>В бункере</th>':isC?'':(isI?'<th>Самозванцем</th>':'<th>Мафией</th>')}${isB||isI?'':'<th>Цели</th>'}${isC?'':'<th>Снайп.</th>'}</tr></thead><tbody>${rows.map((r,i)=>`<tr><td>${i<3?['1.','2.','3.'][i]+' ':''}${esc(r.n)}</td><td>${r.pts}</td><td>${r.g}</td><td>${Math.round(r.w/r.g*100)}%</td>${isD?'':isB?`<td>${r.maf}</td>`:isC?'':`<td>${r.maf}${r.maf?' ('+r.mw+' поб.)':''}</td>`}${isB||isI?'':`<td>${r.goals}</td>`}${isC?'':`<td>${r.snipe}</td>`}</tr>`).join('')}</tbody></table></div>
   ${isC?'':'<p class="tiny mute">«Снайп.» — голоса против мафии и маньяка.</p>'}
   ${M.g.length?`<div class="lbl" style="margin-top:10px">Последние партии</div>${M.g.slice(0,8).map(g=>`<p class="small">${esc(g.d)} · ${esc(g.t)} · ${esc(g.w)}</p>`).join('')}`:''}</div>
   <button class="btn ghost" style="width:100%" data-act="resetStats">${ui.rs?'Точно очистить всю статистику?':'Очистить статистику'}</button>`}
 
 /* ---------- share card ---------- */
-async function shareCard(){if(!S||!S.win)return;if(ES()){const txt=eShareText();try{if(navigator.share){await navigator.share({text:txt});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(txt);toast('Итоги скопированы')}catch(e){toast('Не получилось поделиться')}return}if(DT()){const txt=dShareText();try{if(navigator.share){await navigator.share({text:txt});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(txt);toast('Итоги скопированы')}catch(e){toast('Не получилось поделиться')}return}if(CL()){const F=S.final;const txt=`Мафия: Классика\n${S.win.side==='town'?'Город победил':S.win.side==='man'?'Маньяк победил':'Мафия победила'}\n`+S.players.map(p=>`${p.name} — ${CROLE[p.role].n} (${F.pts[p.pid]||0} оч.)`).join('\n')+'\n'+location.origin+location.pathname+'#classic';try{if(navigator.share){await navigator.share({text:txt});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(txt);toast('Итоги скопированы')}catch(e){toast('Не получилось поделиться')}return}if(BK()){const F=S.final,c=bcat();const txt=`Бункер · ${c.title}\n${({both:'Выжили все',in:'Бункер выжил',out:'Выжили снаружи',none:'Никто не выжил'})[S.win.side]}\nВ бункере: ${inside().map(p=>p.name+' ('+p.cards.prof.t.split(',')[0]+')').join(', ')}\nСнаружи: ${outside().map(p=>p.name).join(', ')||'—'}\n`+S.players.map(p=>p.name+': '+(F.pts[p.pid]||0)+' оч.').join('\n')+'\n'+location.origin+location.pathname+'#bunker';try{if(navigator.share){await navigator.share({text:txt});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(txt);toast('Итоги скопированы')}catch(e){toast('Не получилось поделиться')}return}const s=sc(),F=S.final||{pts:{},awards:[]},W=1080,H=1350,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+async function shareCard(){if(!S||!S.win)return;if(IM()){const txt=iShareText();try{if(navigator.share){await navigator.share({text:txt});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(txt);toast('Итоги скопированы')}catch(e){toast('Не получилось поделиться')}return}if(ES()){const txt=eShareText();try{if(navigator.share){await navigator.share({text:txt});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(txt);toast('Итоги скопированы')}catch(e){toast('Не получилось поделиться')}return}if(DT()){const txt=dShareText();try{if(navigator.share){await navigator.share({text:txt});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(txt);toast('Итоги скопированы')}catch(e){toast('Не получилось поделиться')}return}if(CL()){const F=S.final;const txt=`Мафия: Классика\n${S.win.side==='town'?'Город победил':S.win.side==='man'?'Маньяк победил':'Мафия победила'}\n`+S.players.map(p=>`${p.name} — ${CROLE[p.role].n} (${F.pts[p.pid]||0} оч.)`).join('\n')+'\n'+location.origin+location.pathname+'#classic';try{if(navigator.share){await navigator.share({text:txt});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(txt);toast('Итоги скопированы')}catch(e){toast('Не получилось поделиться')}return}if(BK()){const F=S.final,c=bcat();const txt=`Бункер · ${c.title}\n${({both:'Выжили все',in:'Бункер выжил',out:'Выжили снаружи',none:'Никто не выжил'})[S.win.side]}\nВ бункере: ${inside().map(p=>p.name+' ('+p.cards.prof.t.split(',')[0]+')').join(', ')}\nСнаружи: ${outside().map(p=>p.name).join(', ')||'—'}\n`+S.players.map(p=>p.name+': '+(F.pts[p.pid]||0)+' оч.').join('\n')+'\n'+location.origin+location.pathname+'#bunker';try{if(navigator.share){await navigator.share({text:txt});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(txt);toast('Итоги скопированы')}catch(e){toast('Не получилось поделиться')}return}const s=sc(),F=S.final||{pts:{},awards:[]},W=1080,H=1350,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
   x.fillStyle=s.bg;x.fillRect(0,0,W,H);const gr=x.createRadialGradient(W/2,0,50,W/2,0,900);gr.addColorStop(0,s.acc+'55');gr.addColorStop(1,'transparent');x.fillStyle=gr;x.fillRect(0,0,W,H);
   x.fillStyle=s.acc;x.font='bold 44px Manrope, sans-serif';x.fillText((COOP()?'ВЫЖИВАНИЕ':'МАФИЯ: ВЫЖИВАНИЕ')+' · '+s.title.toUpperCase(),70,110);
   const t=COOP()?(S.win.side==='town'?'Мы выжили':'Группа не выжила'):S.win.side==='town'?'Выжившие победили':S.win.side==='man'?'Маньяк победил':s.roles.maf.pl+' победили';
@@ -1944,7 +2128,7 @@ function render(){
   const app=$('#app');if(!app)return;
   if(pDown){pPend=true;return}
   const a=document.activeElement,fid=a&&a.id,ss=a&&a.selectionStart;
-  const s=(ES()||(!S&&ui.page==='escape'))?GAMES.escape:(DT()||(!S&&ui.page==='detective'))?GAMES.detective:(CL()||(!S&&ui.page==='classic'))?GAMES.classic:(BK()||(!S&&ui.page==='bunker'))?bcat():sc();const hubAcc=!S&&ui.page==='hub';document.body.style.setProperty('--acc',hubAcc?'#b5d94a':s.acc);document.body.style.setProperty('--sbg',hubAcc?'#0d0f14':s.bg);setTitle();
+  const s=(IM()||(!S&&ui.page==='impostor'))?GAMES.impostor:(ES()||(!S&&ui.page==='escape'))?GAMES.escape:(DT()||(!S&&ui.page==='detective'))?GAMES.detective:(CL()||(!S&&ui.page==='classic'))?GAMES.classic:(BK()||(!S&&ui.page==='bunker'))?bcat():sc();const hubAcc=!S&&ui.page==='hub';document.body.style.setProperty('--acc',hubAcc?'#b5d94a':s.acc);document.body.style.setProperty('--sbg',hubAcc?'#0d0f14':s.bg);setTitle();
   let h;
   if(!S)h=homeView();else if(S.phase==='lobby')h=lobbyView();else h=gameView();
   document.body.classList.toggle('night',!!S&&S.phase==='night');
@@ -1990,8 +2174,8 @@ function hubView(){
   <div class="row"><input id="code" maxlength="8" placeholder="Код игры" value="${esc(ui.code)}" style="flex:1 1 120px;text-transform:uppercase" autocomplete="off"><button class="btn pri" data-act="join">Войти</button></div>
   ${ui.err?`<p class="small" style="color:${/…$/.test(ui.err)?'var(--mute)':'#ff8a90'}">${esc(ui.err)}</p>`:''}
   <p class="tiny mute">Код сам приведёт в нужную игру.</p></div>
-  <details class="box"><summary>Статистика компании</summary>${statsHtml('classic')}${statsHtml('mafia')}${statsHtml('coop')}${statsHtml('det')}${statsHtml('bunker')}${statsHtml('esc')}</details>`}
-function gameHome(pg){const g=GAMES[pg],md=g.mode;const isC=md==='coop';if(md==='bunker')return bunkerHome(g);if(md==='classic')return classicHome(g);if(md==='det')return detHome(g);if(md==='esc')return escHome(g);
+  <details class="box"><summary>Статистика компании</summary>${statsHtml('classic')}${statsHtml('mafia')}${statsHtml('coop')}${statsHtml('det')}${statsHtml('bunker')}${statsHtml('esc')}${statsHtml('imp')}</details>`}
+function gameHome(pg){const g=GAMES[pg],md=g.mode;const isC=md==='coop';if(md==='bunker')return bunkerHome(g);if(md==='classic')return classicHome(g);if(md==='det')return detHome(g);if(md==='esc')return escHome(g);if(md==='imp')return impHome(g);
   return `<button class="btn ghost sm" data-act="page" data-v="hub" style="margin-top:6px">← Все игры</button>
   <div class="hero"><h1>${isC?'<span>Выживание</span>':'Мафия:<br><span>Выживание</span>'}</h1><p class="mute">${esc(g.d)} От ${g.min} игроков.</p></div>
   <div class="lbl">Истории</div>
@@ -2025,9 +2209,9 @@ function lobbyView(){const s=sc(),host=isHost||S.local;
   ${S.local?`<div class="row"><input id="addn" maxlength="20" placeholder="Имя игрока" style="flex:1 1 160px" autocomplete="off"><button class="btn" data-act="addLocal">Добавить</button></div>`:''}
   </div>
   ${BK()?catStrip(S.cat,'pickCat')+catDetail(S.cat):''}
-  ${!COOP()&&!BK()&&!CL()&&!DT()&&!ES()&&S.players.length===4?'<div class="box"><p class="small">Вчетвером первая ночь — ночь знакомства: убивать нельзя, детектив уже проверяет.</p></div>':''}
-  ${ES()?eLobby():DT()?dLobby():CL()?cOptsHtml():COOP()||BK()?'':optsHtml()}
-  ${BK()||CL()||DT()||ES()?'':`<div class="lbl">Сценарий ${host?'— выберите':''}</div>
+  ${!COOP()&&!BK()&&!CL()&&!DT()&&!ES()&&!IM()&&S.players.length===4?'<div class="box"><p class="small">Вчетвером первая ночь — ночь знакомства: убивать нельзя, детектив уже проверяет.</p></div>':''}
+  ${IM()?iLobby():ES()?eLobby():DT()?dLobby():CL()?cOptsHtml():COOP()||BK()?'':optsHtml()}
+  ${BK()||CL()||DT()||ES()||IM()?'':`<div class="lbl">Сценарий ${host?'— выберите':''}</div>
   ${host?scenStrip(S.scen,'pickScen'):''}
   ${scenDetail(S.scen,S.mode)}`}
   <button class="btn ghost" data-act="leave" style="width:100%">Выйти из комнаты</button>`;
@@ -2082,13 +2266,14 @@ function hl(t){let x=esc(t);const names=S.players.map(p=>esc(p.name)).filter(n=>
   const re=new RegExp(`(клянусь|честно|точно|я не|не я|видел[аи]?|слышал[аи]?|вру|врёт|врет|подозр[а-яё]*|мафи[а-яё]*|${names.join('|')||'zzzz'})`,'gi');return x.replace(re,'<mark>$1</mark>')}
 
 function netBanner(){return (!S||S.local||isHost||!net.status)?'':`<div class="box" style="border-color:var(--red)"><p class="small">${esc(net.status)}</p></div>`}
-function gameView(){const vp=viewPid();let h=(ES()?eTop():DT()?dTop():CL()?cTop():BK()?bTop():topBar())+netBanner();
+function gameView(){const vp=viewPid();let h=(IM()?iTop():ES()?eTop():DT()?dTop():CL()?cTop():BK()?bTop():topBar())+netBanner();
   h+=`<div class="tabs"><button class="${ui.tab==='game'?'on':''}" data-act="tab" data-v="game">Игра</button><button class="${ui.tab==='dos'?'on':''}" data-act="tab" data-v="dos">Досье</button><button class="${ui.tab==='rules'?'on':''}" data-act="tab" data-v="rules">Правила</button></div>`;
-  if(ui.tab==='dos')return h+(ES()?eDossier(vp):DT()?dDossier(vp):BK()?bDossier():dossier());
+  if(ui.tab==='dos')return h+(IM()?iDossier(vp):ES()?eDossier(vp):DT()?dDossier(vp):BK()?bDossier():dossier());
   if(ui.tab==='stats')return h+statsHtml();
-  if(ui.tab==='rules')return h+(ES()?eRules():DT()?dRules():CL()?cRules():BK()?bRules():goals()+(COOP()?coopRules():rulesHtml()));
+  if(ui.tab==='rules')return h+(IM()?iRules():ES()?eRules():DT()?dRules():CL()?cRules():BK()?bRules():goals()+(COOP()?coopRules():rulesHtml()));
   if(S.local&&S.lq&&S.lq.i<S.lq.q.length&&!S.lq.show){const pid=S.lq.q[S.lq.i];
     return h+`<div class="pass"><p class="mute">${esc({deal:'Раздача карт',mission:'Тайный выбор отряда',night:'Ночь',reveal:'Раскрытие карт'}[S.phase]||'')} · ${S.lq.i+1} из ${S.lq.q.length}</p><p>Передай телефон</p><div class="nmx">${esc(nm(pid))}</div><button class="btn pri" data-act="lqShow">Я ${esc(nm(pid))} — показать</button><p class="tiny mute">Остальные отворачиваются</p></div>`}
+  if(IM())return h+iPhase(vp);
   const me_=P(vp);
   if(!S.local&&!me_&&S.phase!=='end')h+=`<div class="box"><p>Игра уже идёт без вас. Можно наблюдать.</p></div>`;
   if(me_&&!me_.alive&&S.phase!=='end')h+=`<div class="box" style="border-color:var(--red)"><p><b>Вы выбыли.</b> Наблюдайте молча: мёртвые не подсказывают.</p></div>`;
@@ -2221,12 +2406,13 @@ function rulesHtml(){return `<details class="box"><summary>Правила за �
 <li><b>Вчетвером в мафию</b> первая ночь — ночь знакомства: убивать нельзя, детектив уже проверяет.</li>
 <li><b>Ночные события:</b> иногда ночью всем приходит общий вопрос «да/нет», и решение большинства влияет на утро.</li></ul></details>`}
 
-const PHN={eintro:'Пролог',esc:'Побег',inv:'Расследование',dnight:'Ночь',accuse:'Обвинение',reveal:'Раскрытие карт',bvote:'Голосование',deal:'Раздача',intro:'Пролог',crisis:'Кризис',team:'Отряд',mission:'Вылазка',cres:'Итог кризиса',discuss:'Обсуждение',vote:'Голосование',vres:'Итог голосования',night:'Ночь',morning:'Утро'};
+const PHN={ideal:'Роли',play:'Станция',meet:'Собрание',ivote:'Голосование',ires:'Итог',eintro:'Пролог',esc:'Побег',inv:'Расследование',dnight:'Ночь',accuse:'Обвинение',reveal:'Раскрытие карт',bvote:'Голосование',deal:'Раздача',intro:'Пролог',crisis:'Кризис',team:'Отряд',mission:'Вылазка',cres:'Итог кризиса',discuss:'Обсуждение',vote:'Голосование',vres:'Итог голосования',night:'Ночь',morning:'Утро'};
 function playerBar(){const ph=S.phase,p=P(me.pid);let lab='',btn='';
   const tts='';
   if(ph==='lobby'){if(!isHost)return `<div class="hostbar"><div class="in"><div class="lab"><b>Ждём игроков</b>Игру начнёт создатель, когда соберутся все</div></div></div>`;
     lab=`<b>Вы создатель и тоже игрок</b>${S.players.length<minP()?'Нужно ещё '+(minP()-S.players.length):'Все в сборе?'}`;btn=`<button class="btn pri" data-act="start" ${S.players.length<minP()?'disabled':''}>Раздать карты</button>`}
   else if(ph==='end'){lab='<b>Партия окончена</b>'+(isHost?'Сыграть ещё раз тем же составом':'Новую партию запускает создатель');if(isHost)btn=`<button class="btn pri" data-act="again">Новая игра</button>`}
+  else if(IM()){lab=`<b>${PHN[ph]||''}</b>${ph==='play'?(P(me.pid)?.alive?'Ходите по отсекам, выполняйте задания':'Вы призрак — молчите'):''}${ph==='play'?'':ph==='meet'?'Говорите вслух':ph==='ivote'?'Голосуйте на экране':''}`}
   else if(ES()&&ph==='esc'){lab='<b>Таймер идёт</b>Ответ может ввести любой. Ошибка −30 с'}
   else{const can=p&&(ph==='deal'||p.alive),my=mine('go',me.pid);
     if(ADV.includes(ph)){lab=`<b>${(CL()&&ph==='intro')?'День знакомства':(DT()&&ph==='inv')?'День '+S.det.round+' из 3':PHN[ph]}</b>${(DT()&&ph==='inv')?'Завершаем день, когда готовы все (или большинство через 45 с)':'Идём дальше, когда готовы все (или большинство через 25 с)'}: ${goN()}/${pool().length}`;
@@ -2285,6 +2471,24 @@ const A={
   clvGo:()=>{const t=ui.confirm;ui.confirm=null;cVote(t==='skip'?null:t);commit()},
   copt:v=>{if(!(isHost||S.local))return;S.copts=S.copts||{};if(v==='man')S.copts.man=!S.copts.man;else S.copts[v]=S.copts[v]===false;commit()},
   cnext:()=>{cAdvance();commit()},
+  irdy:()=>send('rdy',true,me.pid),
+  iopt:v=>{if(!isHost)return;S.iopts=S.iopts||{conf:true,fast:false};S.iopts[v]=v==='conf'?S.iopts.conf===false:!S.iopts[v];commit()},
+  imv:v=>{const dead=!P(me.pid)?.alive;if(ui.iwalk&&ui.iwalk.until>Date.now())return;ui.itask=null;if(dead){send('mv',{to:v,n:rid(6)},me.pid);return}ui.iwalk={to:v,until:Date.now()+1200};render();setTimeout(()=>{ui.iwalk=null;if(S&&IM()&&S.phase==='play')send('mv',{to:v,n:rid(6)},me.pid)},1200)},
+  ivn:v=>{ui.itask=null;send('vn',{to:v,n:rid(6)},me.pid)},
+  itk:v=>iTaskOpen(v),
+  iclose:()=>{ui.itask=null;render()},
+  iwl:v=>{ui.itask.st.sel=+v;render()},
+  iwr:v=>{const st=ui.itask.st;if(st.sel===+v){st.ok.push(+v);st.sel=null;if(st.ok.length===4)return iTaskDone()}else st.sel=null;render()},
+  idial:v=>{const st=ui.itask.st;st.v=Math.max(0,Math.min(99,st.v+(+v)));if(st.v===st.tg)return iTaskDone();render()},
+  iseq:v=>{const st=ui.itask.st;if(+v===st.next){st.next++;if(st.next>8)return iTaskDone()}else st.next=1;render()},
+  ikey:v=>{const st=ui.itask.st;if(v==='⌫')st.inp=st.inp.slice(0,-1);else if(v==='↻'){st.inp='';st.show=Date.now()+3000}else if(st.inp.length<5){st.inp+=v;if(st.inp.length===5){if(st.inp===st.code)return iTaskDone();toast('Неверный код');st.inp='';st.show=Date.now()+2500}}render()},
+  ikl:v=>send('kl',{t:v,n:rid(6)},me.pid),
+  irp:()=>send('rp',{n:rid(6)},me.pid),
+  ibtn:()=>send('btn',{n:rid(6)},me.pid),
+  isab:v=>send('sab',{k:v,n:rid(6)},me.pid),
+  ifix:()=>send('fix',{n:rid(6)},me.pid),
+  iv:v=>send('iv',v,me.pid),
+  ideadok:()=>{ui.iDeadSeen=S.gid;render()},
   enext:()=>{eAdvance();commit()},
   eopen:v=>{ui.eDoc=v;render()},
   eclose:()=>{ui.eDoc=null;render()},
@@ -2325,7 +2529,8 @@ const A={
   toNight:()=>{if(S.hunt)return toast('Сначала охотник стреляет');afterVres();commit()},
   toDay:()=>{if(S.hunt)return toast('Сначала охотник стреляет');afterMorning();commit()},
   shot:v=>{const who=S.hunt&&S.hunt.pid;if(!who)return;if(S.local||isHost){if(input(who,'shot',v))commit()}else{send('shot',v,me.pid)}},
-  again:()=>{if(ES()){const pl=S.players.map(p=>({pid:p.pid,name:p.name,alive:true}));const code=S.code,loc=S.local,k=S.kicked;S=newState(code,loc);S.mode='esc';S.players=pl;S.kicked=k||[];ui.ein={};ui.eDoc=null;ui.eLast=undefined;ui.eScare=undefined;commit();return}
+  again:()=>{if(IM()){const pl=S.players.map(p=>({pid:p.pid,name:p.name,alive:true}));const code=S.code,loc=S.local,k=S.kicked,o=S.iopts;S=newState(code,loc);S.mode='imp';S.iopts=o;S.players=pl;S.kicked=k||[];ui.itask=null;ui.iwalk=null;commit();return}
+    if(ES()){const pl=S.players.map(p=>({pid:p.pid,name:p.name,alive:true}));const code=S.code,loc=S.local,k=S.kicked;S=newState(code,loc);S.mode='esc';S.players=pl;S.kicked=k||[];ui.ein={};ui.eDoc=null;ui.eLast=undefined;ui.eScare=undefined;commit();return}
     if(DT()){const pl=S.players.map(p=>({pid:p.pid,name:p.name,alive:true}));const code=S.code,loc=S.local,k=S.kicked;S=newState(code,loc);S.mode='det';S.players=pl;S.kicked=k||[];ui.dAcc={};ui.dDoc=null;commit();return}
     if(CL()){const pl=S.players.map(p=>({pid:p.pid,name:p.name,alive:true}));const code=S.code,loc=S.local,k=S.kicked,co=S.copts;S=newState(code,loc);S.mode='classic';S.copts=co;S.players=pl;S.kicked=k||[];ui.flip={};commit();return}
     if(BK()){const pl=S.players.map(p=>({pid:p.pid,name:p.name,alive:true}));const code=S.code,loc=S.local,k=S.kicked,cat=S.cat;S=newState(code,loc);S.mode='bunker';S.cat=cat;S.players=pl;S.kicked=k||[];ui.flip={};commit();return}const pl=S.players.map(p=>({pid:p.pid,name:p.name,alive:true}));const scn=S.scen,code=S.code,loc=S.local,k=S.kicked,md=S.mode,op=S.opts;S=newState(code,loc);S.mode=md;S.opts=op||{};S.players=pl;S.scen=scn;S.kicked=k||[];ui.flip={};commit()},
