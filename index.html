@@ -160,7 +160,10 @@ ul.rules{padding-left:20px}ul.rules li{margin:6px 0}
 .iwires{display:flex;justify-content:space-between;gap:30px;margin:12px 0}.iwires>div{display:flex;flex-direction:column;gap:14px;flex:1}.iw{height:30px;border-radius:6px 15px 15px 6px;border:0;background:var(--c);opacity:.9}.iw.r{border-radius:15px 6px 6px 15px}.iw.sel{outline:3px solid #fff}.iw.ok{opacity:.25}
 .iseq{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}.iseq button{height:58px;border-radius:12px;border:1px solid #2a3346;background:#1c2436;color:#e8ecf5;font-size:22px;font-weight:800}.iseq button.ok{background:#1f5a3a;opacity:.6}
 .icode{font-family:'PT Mono',monospace;font-size:38px;letter-spacing:.3em;text-align:center;margin:10px 0;color:#59d0ff}.ikeys{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.ikeys button{height:52px;border-radius:12px;border:1px solid #2a3346;background:#1c2436;color:#e8ecf5;font-size:20px;font-weight:700}
-.ihold{position:relative;width:100%;height:72px;border-radius:16px;border:2px solid #59d0ff;background:#0c1a28;color:#cfeeff;font-size:17px;font-weight:800;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}.ihold span{position:absolute;inset:0 100% 0 0;background:#1f6aa0;transition:right .2s}.ihold.on span{right:0;transition:right 3s linear}.ihold b{position:relative}
+.ihold{position:relative;width:100%;height:72px;border-radius:16px;border:2px solid #59d0ff;background:#0c1a28;color:#cfeeff;font-size:17px;font-weight:800;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}.ihold span{position:absolute;inset:0 100% 0 0;background:#1f6aa0;transition:right .2s}.ihold.on span{right:0;transition:right var(--ms,3s) linear}
+.iodd{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:12px 0}.iodd button{height:52px;border-radius:10px;border:1px solid #2a3346;background:#1c2436;color:#cfeeff;font-size:24px}
+.isort-it{width:120px;height:80px;margin:14px auto;border-radius:10px;background:var(--c);display:grid;place-items:center;font-weight:800;color:#111;box-shadow:0 6px 0 rgba(0,0,0,.35)}.isort{flex:1;min-height:56px;border-radius:12px;border:3px solid var(--c);background:#141a26;color:#e8ecf5;font-weight:800}
+.isimon{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:260px;margin:12px auto}.isimon button{height:100px;border-radius:18px;border:0;background:var(--c);opacity:.35;transition:opacity .1s}.isimon button.lit{opacity:1;box-shadow:0 0 24px var(--c)}.isimon button:disabled{cursor:default}.isimon button:active:not(:disabled){opacity:1}.ihold b{position:relative}
 /* escape */
 .etmr{font-family:'PT Mono',monospace;font-size:22px;font-weight:700;color:var(--acc);letter-spacing:.04em}.etmr.low{color:#ff4b4b;animation:dflick 1s infinite}
 .escare{margin:12px 0;padding:12px 14px;border-radius:12px;background:radial-gradient(circle at 0 0,#3a1010,#120808);border:1px solid #4a1a1a;color:#f0caca;font-style:italic;font-size:15px;animation:dflick 5s infinite}
@@ -1823,7 +1826,18 @@ if(/[?&]t=1/.test(location.search))window.__T={set:ms=>{S.esc.end=Date.now()+ms;
 const IROOM={rea:['Реактор',10,10],lab:['Лаборатория',125,10],nav:['Навигация',240,10],eng:['Двигатели',10,150],caf:['Столовая',125,150],com:['Связь',240,150],ele:['Электрощит',10,290],sto:['Склад',125,290],med:['Медотсек',240,290]};
 const IADJ=[['rea','lab'],['lab','nav'],['rea','eng'],['lab','caf'],['nav','com'],['eng','caf'],['caf','com'],['eng','ele'],['caf','sto'],['com','med'],['ele','sto'],['sto','med']];
 const IVENT=[['rea','ele'],['nav','med'],['eng','com']];
-const ITASK={t1:['ele','Починить проводку','wires'],t2:['nav','Проложить курс','dial'],t3:['med','Пройти сканирование','hold'],t4:['lab','Анализ образцов','seq'],t5:['com','Загрузить данные','hold'],t6:['rea','Запустить реактор','code'],t7:['sto','Заправить канистру','hold'],t8:['eng','Выровнять двигатель','dial'],t9:['caf','Очистить фильтр','seq'],t10:['ele','Перенаправить питание','code'],t11:['nav','Ввести координаты','code'],t12:['sto','Рассортировать груз','wires']};
+const ITASK={
+ s1:{n:'Починить проводку',k:'s',st:[['ele','wires']]},s2:{n:'Проложить курс',k:'s',st:[['nav','dial']]},s3:{n:'Анализ образцов',k:'s',st:[['lab','seq']]},s4:{n:'Запустить реактор',k:'s',st:[['rea','code']]},
+ s5:{n:'Очистить фильтр',k:'s',st:[['caf','odd']]},s6:{n:'Разобрать медикаменты',k:'s',st:[['med','sort']]},s7:{n:'Проверить зажигание',k:'s',st:[['eng','simon',{n:4}]]},s8:{n:'Рассортировать груз',k:'s',st:[['sto','sort']]},
+ s9:{n:'Настроить антенну',k:'s',st:[['com','dial']]},s10:{n:'Сбросить предохранители',k:'s',st:[['ele','seq']]},s11:{n:'Сверить анализы',k:'s',st:[['med','odd']]},s12:{n:'Ввести координаты',k:'s',st:[['nav','code']]},
+ m1:{n:'Передать данные',k:'m',st:[['com','hold',{l:'Скачать данные'}],['nav','hold',{l:'Загрузить в навигацию'}]]},
+ m2:{n:'Заправить двигатель',k:'m',st:[['sto','hold',{l:'Набрать топливо'}],['eng','hold',{l:'Залить в двигатель'}]]},
+ m3:{n:'Доставить образец',k:'m',st:[['lab','code',{l:'Взять образец из сейфа'}],['med','wires',{l:'Подключить анализатор'}]]},
+ m4:{n:'Перезапуск щита',k:'m',st:[['ele','seq',{l:'Отключить щит'}],['rea','simon',{l:'Перезапустить контур',n:5}]]},
+ m5:{n:'Починить связь со столовой',k:'m',st:[['caf','wires',{l:'Снять панель'}],['com','odd',{l:'Найти битый канал'}]]},
+ l1:{n:'Полное сканирование',k:'l',st:[['med','hold',{ms:9000}]]},l2:{n:'Калибровка двигателя',k:'l',st:[['eng','calib']]},l3:{n:'Стабилизация ядра',k:'l',st:[['rea','simon',{n:7}]]},l4:{n:'Инвентаризация склада',k:'l',st:[['sto','sort',{n:10}]]}};
+const iStepOf=(pid,id)=>(S.im.step[pid]||{})[id]||0;
+const iCur=(pid,id)=>ITASK[id].st[iStepOf(pid,id)]||null;
 const ISAB={lights:['Свет','Свет погас: в отсеках не видно лиц. Починить — в Электрощите.'],comms:['Связь','Связь нарушена: прогресс заданий не виден. Починить — в Связи.'],reactor:['Реактор','Перегрев реактора! Двое должны нажать стабилизаторы: один в Реакторе, другой в Навигации.']};
 const IM=()=>!!S&&S.mode==='imp';
 const iAdj=(a,b)=>IADJ.some(([x,y])=>(x===a&&y===b)||(x===b&&y===a));
@@ -1832,14 +1846,15 @@ const iNow=()=>Date.now()+(isHost?0:(ui.skew||0));
 const iImp=pid=>P(pid)?.role==='imp';
 const iCrewAlive=()=>S.players.filter(p=>p.alive&&p.role!=='imp');
 const iImpAlive=()=>S.players.filter(p=>p.alive&&p.role==='imp');
-function iTasksTotal(){const I=S.im;let t=0,d=0;S.players.filter(p=>p.role!=='imp').forEach(p=>{t+=I.tasks[p.pid].length;d+=I.tasks[p.pid].filter(x=>I.done[p.pid].includes(x)).length});return [d,t]}
+function iTasksTotal(){const I=S.im;let t=0,d=0;S.players.filter(p=>p.role!=='imp').forEach(p=>I.tasks[p.pid].forEach(id=>{t+=ITASK[id].st.length;d+=iStepOf(p.pid,id)}));return [d,t]}
+function iDeal(n){const c=n-(n>=7?2:1),k=c<=3?7:c<=5?6:5,pk=(pre,m)=>shuf(Object.keys(ITASK).filter(x=>x[0]===pre)).slice(0,m);return shuf([...pk('l',1),...pk('m',k>=6?2:1),...pk('s',k-1-(k>=6?2:1))])}
 
 /* ---------- Самозванец: механика ---------- */
 function iStart(){const n=S.players.length,k=n>=7?2:1,o=S.iopts||{conf:true,fast:false};const ps=shuf(S.players.map(p=>p.pid));
   S.players.forEach(p=>{p.alive=true;p.role=ps.indexOf(p.pid)<k?'imp':'crew'});
   const now=Date.now(),ids=Object.keys(ITASK);
-  S.im={k,pos:{},tasks:{},done:{},bodies:[],kcd:{},btn:{},sab:null,sabCd:now+25000,killer:{},kills:{},votesOk:{},meet:null,res:null,t0:now,kcdLen:o.fast?18000:28000,conf:o.conf!==false,nonce:{}};
-  S.players.forEach(p=>{S.im.pos[p.pid]='caf';S.im.tasks[p.pid]=shuf(ids).slice(0,4);S.im.done[p.pid]=[];if(p.role==='imp')S.im.kcd[p.pid]=now+15000+8000});
+  S.im={k,pos:{},tasks:{},done:{},bodies:[],kcd:{},btn:{},sab:null,sabCd:now+25000,killer:{},kills:{},votesOk:{},meet:null,res:null,t0:now,kcdLen:o.fast?18000:28000,conf:o.conf!==false,nonce:{},step:{}};
+  S.players.forEach(p=>{S.im.pos[p.pid]='caf';S.im.tasks[p.pid]=iDeal(n);S.im.done[p.pid]=[];S.im.step[p.pid]={};if(p.role==='imp')S.im.kcd[p.pid]=now+15000+8000});
   S.day=1;S.log=[];S.chron=[];S.priv={};S.win=null;S.res=null;S.final=null;S.inv={};S.meters={a:1,b:1,c:1};
   chron(`Станция «Полярис». Экипаж: ${n}, самозванцев: ${k}.`);setPhase('ideal')}
 function iPlay(){const now=Date.now(),I=S.im;S.players.forEach(p=>{I.pos[p.pid]=p.alive?'caf':I.pos[p.pid];if(p.role==='imp')I.kcd[p.pid]=now+(S.phase==='ideal'?15000:I.kcdLen*.6)});I.bodies=[];I.meet=null;I.sabCd=Math.max(I.sabCd,now+15000);setPhase('play');I.playAt=now}
@@ -1878,7 +1893,7 @@ function iInput(pid,k,v){const p=P(pid),I=S.im;if(!p||!I)return false;const ph=S
   if(ph!=='play'||!v||typeof v!=='object')return false;const here=I.pos[pid];
   if(k==='mv'){const to=v.to;if(!IROOM[to]||to===here)return false;if(p.alive&&!iAdj(here,to))return false;I.pos[pid]=to;return true}
   if(k==='vn'){if(!p.alive||p.role!=='imp'||!iVent(here).includes(v.to))return false;I.pos[pid]=v.to;return true}
-  if(k==='tk'){const id=v.id;if(!I.tasks[pid].includes(id)||I.done[pid].includes(id)||ITASK[id][0]!==here)return false;I.done[pid].push(id);if(p.role!=='imp')iCheck();return true}
+  if(k==='tk'){const id=v.id;if(!I.tasks[pid].includes(id)||I.done[pid].includes(id))return false;const cs=iCur(pid,id);if(!cs||cs[0]!==here||v.s!==iStepOf(pid,id))return false;I.step[pid][id]=iStepOf(pid,id)+1;if(I.step[pid][id]>=ITASK[id].st.length)I.done[pid].push(id);if(p.role!=='imp')iCheck();return true}
   if(k==='kl'){const t=P(v.t);if(!p.alive||p.role!=='imp'||!t||!t.alive||t.role==='imp'||I.pos[t.pid]!==here||now<(I.kcd[pid]||0))return false;
     t.alive=false;I.bodies.push({pid:t.pid,room:here});I.killer[t.pid]=pid;I.kills[pid]=(I.kills[pid]||0)+1;I.kcd[pid]=now+I.kcdLen;chron(`Кто-то погиб в отсеке «${IROOM[here][0]}».`);iCheck();return true}
   if(k==='rp'){if(!p.alive)return false;const b=I.bodies.find(x=>x.room===here);if(!b)return false;iMeet(pid,b.pid);return true}
@@ -1892,24 +1907,34 @@ function iInput(pid,k,v){const p=P(pid),I=S.im;if(!p||!I)return false;const ph=S
 
 /* ---------- Самозванец: мини-игры ---------- */
 const ICOL=[['#e74c3c','красный'],['#3498db','синий'],['#f1c40f','жёлтый'],['#2ecc71','зелёный']];
-function iTaskOpen(id){const ty=ITASK[id][2];let st={};
+function iTaskOpen(id){const sidx=iStepOf(me.pid,id),cs=ITASK[id].st[sidx];if(!cs)return;const ty=cs[1],o=cs[2]||{};let st={};
   if(ty==='wires')st={L:shuf([0,1,2,3]),R:shuf([0,1,2,3]),sel:null,ok:[]};
-  if(ty==='dial'){st={tg:10+Math.floor(Math.random()*80),v:0};st.v=(st.tg+40+Math.floor(Math.random()*20))%100}
+  if(ty==='dial'||ty==='calib'){st={stage:0,stages:ty==='calib'?3:1};iDialNew(st)}
   if(ty==='seq')st={ord:shuf([1,2,3,4,5,6,7,8]),next:1};
-  if(ty==='code')st={code:String(10000+Math.floor(Math.random()*90000)),inp:'',show:Date.now()+3500};
-  if(ty==='hold')st={};
-  ui.itask={id,ty,st};render()}
-function iTaskDone(){const id=ui.itask.id;ui.itask=null;if(!iImp(me.pid))SND.sting&&SND.sting('phase');send('tk',{id,n:rid(6)},me.pid);toast(iImp(me.pid)?'Вы сделали вид, что выполнили задание':'Задание выполнено')}
-function iTaskView(){const T=ui.itask;if(!T)return '';const t=ITASK[T.id],st=T.st;let b='';
+  if(ty==='code')st={code:String(10000+Math.floor(Math.random()*90000)),inp:'',show:Date.now()+3500};if(ty==='code')setTimeout(render,3550);
+  if(ty==='hold')st={ms:o.ms||3000};
+  if(ty==='odd'){st={round:0,rounds:3};iOddNew(st)}
+  if(ty==='sort')st={items:Array.from({length:o.n||6},()=>Math.floor(Math.random()*3)),i:0};
+  if(ty==='simon')st={seq:Array.from({length:o.n||4},()=>Math.floor(Math.random()*4)),inp:0,lit:-1,show:true};
+  ui.itask={id,ty,st,s:sidx,l:o.l||ITASK[id].n};if(ty==='simon')iSimonPlay();render()}
+function iDialNew(st){st.tg=10+Math.floor(Math.random()*80);st.v=(st.tg+40+Math.floor(Math.random()*20))%100}
+const IODD=[['◐','◑'],['▲','▼'],['☾','☽'],['◧','◨'],['◀','▶'],['↺','↻']];
+function iOddNew(st){st.sym=IODD[Math.floor(Math.random()*IODD.length)];st.odd=Math.floor(Math.random()*20)}
+function iSimonPlay(){const T=ui.itask;if(!T||T.ty!=='simon')return;const st=T.st;st.show=true;st.inp=0;let i=0;const step=()=>{if(ui.itask!==T)return;if(i>=st.seq.length*2){st.lit=-1;st.show=false;render();return}st.lit=i%2===0?st.seq[i/2]:-1;i++;render();setTimeout(step,i%2?450:200)};setTimeout(step,600)}
+function iTaskDone(){const id=ui.itask.id,sx=ui.itask.s;ui.itask=null;if(!iImp(me.pid))SND.sting&&SND.sting('phase');send('tk',{id,s:sx,n:rid(6)},me.pid);const more=sx+1<ITASK[id].st.length;toast(iImp(me.pid)?'Вы сделали вид, что выполнили задание':more?'Шаг выполнен. Дальше: '+IROOM[ITASK[id].st[sx+1][0]][0]:'Задание выполнено')}
+function iTaskView(){const T=ui.itask;if(!T)return '';const t=ITASK[T.id],cs=t.st[T.s],st=T.st;let b='';
   if(T.ty==='wires')b=`<p class="small mute">Соедините провода одного цвета: сначала слева, потом справа.</p><div class="iwires"><div>${st.L.map(c=>`<button class="iw ${st.ok.includes(c)?'ok':''} ${st.sel===c?'sel':''}" style="--c:${ICOL[c][0]}" data-act="iwl" data-v="${c}" ${st.ok.includes(c)?'disabled':''}></button>`).join('')}</div><div>${st.R.map(c=>`<button class="iw r ${st.ok.includes(c)?'ok':''}" style="--c:${ICOL[c][0]}" data-act="iwr" data-v="${c}" ${st.ok.includes(c)?'disabled':''}></button>`).join('')}</div></div>`;
-  if(T.ty==='dial')b=`<p class="small mute">Совместите стрелку с отметкой.</p><svg viewBox="0 0 200 120" style="width:100%;max-width:280px;display:block;margin:0 auto"><path d="M20 110a80 80 0 0 1 160 0" fill="none" stroke="#333a48" stroke-width="14"/>${(()=>{const a=v=>Math.PI*(1-v/100);const px=v=>100+Math.cos(a(v))*80,py=v=>110-Math.sin(a(v))*80;return `<circle cx="${px(st.tg)}" cy="${py(st.tg)}" r="9" fill="#2ecc71"/><path d="M100 110L${100+Math.cos(a(st.v))*70} ${110-Math.sin(a(st.v))*70}" stroke="#59d0ff" stroke-width="5" stroke-linecap="round"/>`})()}<circle cx="100" cy="110" r="6" fill="#59d0ff"/></svg><div class="row" style="justify-content:center">${[-10,-1,1,10].map(d=>`<button class="btn sm" data-act="idial" data-v="${d}">${d>0?'+':''}${d}</button>`).join('')}</div>`;
+  if(T.ty==='dial'||T.ty==='calib')b=`<p class="small mute">Совместите стрелку с отметкой.${T.ty==='calib'?` Этап ${st.stage+1} из 3.`:''}</p><svg viewBox="0 0 200 120" style="width:100%;max-width:280px;display:block;margin:0 auto"><path d="M20 110a80 80 0 0 1 160 0" fill="none" stroke="#333a48" stroke-width="14"/>${(()=>{const a=v=>Math.PI*(1-v/100);const px=v=>100+Math.cos(a(v))*80,py=v=>110-Math.sin(a(v))*80;return `<circle cx="${px(st.tg)}" cy="${py(st.tg)}" r="9" fill="#2ecc71"/><path d="M100 110L${100+Math.cos(a(st.v))*70} ${110-Math.sin(a(st.v))*70}" stroke="#59d0ff" stroke-width="5" stroke-linecap="round"/>`})()}<circle cx="100" cy="110" r="6" fill="#59d0ff"/></svg><div class="row" style="justify-content:center">${[-10,-1,1,10].map(d=>`<button class="btn sm" data-act="idial" data-v="${d}">${d>0?'+':''}${d}</button>`).join('')}</div>`;
   if(T.ty==='seq')b=`<p class="small mute">Нажмите числа по порядку, от 1 до 8.</p><div class="iseq">${st.ord.map(x=>`<button class="${x<st.next?'ok':''}" data-act="iseq" data-v="${x}" ${x<st.next?'disabled':''}>${x}</button>`).join('')}</div>`;
   if(T.ty==='code'){const sh=Date.now()<st.show;b=`<p class="small mute">${sh?'Запомните код:':'Введите код, который видели.'}</p><div class="icode">${sh?st.code:(st.inp.padEnd(5,'•'))}</div><div class="ikeys">${[1,2,3,4,5,6,7,8,9,'⌫',0,'↻'].map(x=>`<button data-act="ikey" data-v="${x}" ${sh?'disabled':''}>${x}</button>`).join('')}</div>`}
-  if(T.ty==='hold')b=`<p class="small mute">Нажмите и держите 3 секунды, пока полоса не заполнится.</p><button class="ihold" data-hold="1"><span></span><b>Удерживайте</b></button>`;
-  return `<div class="dmodal itm" data-act="noop"><div class="ibox" data-act="noop"><div class="lbl">${esc(IROOM[t[0]][0])}${iImp(me.pid)?' · для вида':''}</div><h3>${esc(t[1])}</h3>${b}<button class="btn ghost" style="width:100%;margin-top:14px" data-act="iclose">Закрыть</button></div></div>`}
+  if(T.ty==='hold')b=`<p class="small mute">Нажмите и держите ${Math.round(st.ms/1000)} секунд, пока полоса не заполнится. Отпустите раньше — начнёте заново.</p><button class="ihold" data-hold="1" style="--ms:${st.ms}ms"><span></span><b>Удерживайте</b></button>`;
+  if(T.ty==='odd')b=`<p class="small mute">Найдите символ, который отличается. Раунд ${st.round+1} из ${st.rounds}.</p><div class="iodd">${Array.from({length:20},(_,i)=>`<button data-act="iodd" data-v="${i}">${i===st.odd?st.sym[1]:st.sym[0]}</button>`).join('')}</div>`;
+  if(T.ty==='sort'){const c=st.items[st.i];b=`<p class="small mute">Отправьте ящик в контейнер его цвета. ${st.i+1} из ${st.items.length}.</p><div class="isort-it" style="--c:${ICOL[c][0]}">ЯЩИК</div><div class="row" style="justify-content:center">${[0,1,2].map(x=>`<button class="isort" style="--c:${ICOL[x][0]}" data-act="isort" data-v="${x}">${ICOL[x][1]}</button>`).join('')}</div>`}
+  if(T.ty==='simon')b=`<p class="small mute">${st.show?'Смотрите и запоминайте…':`Повторите последовательность: ${st.inp} из ${st.seq.length}.`}</p><div class="isimon">${[0,1,2,3].map(x=>`<button style="--c:${ICOL[x][0]}" class="${st.lit===x?'lit':''}" data-act="isim" data-v="${x}" ${st.show?'disabled':''}></button>`).join('')}</div>`;
+  return `<div class="dmodal itm" data-act="noop"><div class="ibox" data-act="noop"><div class="lbl">${esc(IROOM[cs[0]][0])}${t.st.length>1?` · шаг ${T.s+1} из ${t.st.length}`:''}${iImp(me.pid)?' · для вида':''}</div><h3>${esc(T.l)}</h3>${b}<button class="btn ghost" style="width:100%;margin-top:14px" data-act="iclose">Закрыть</button></div></div>`}
 let iHoldT=0;
 document.addEventListener('pointerdown',e=>{const h=e.target.closest&&e.target.closest('[data-hold]');if(!h)return;iHoldT=Date.now();h.classList.add('on')},true);
-document.addEventListener('pointerup',e=>{if(!iHoldT)return;const d=Date.now()-iHoldT;iHoldT=0;document.querySelectorAll('[data-hold].on').forEach(x=>x.classList.remove('on'));if(d>=3000&&ui.itask&&ui.itask.ty==='hold')setTimeout(iTaskDone,0)},true);
+document.addEventListener('pointerup',e=>{if(!iHoldT)return;const d=Date.now()-iHoldT;iHoldT=0;document.querySelectorAll('[data-hold].on').forEach(x=>x.classList.remove('on'));if(ui.itask&&ui.itask.ty==='hold'&&d>=ui.itask.st.ms)setTimeout(iTaskDone,0)},true);
 document.addEventListener('pointercancel',()=>{iHoldT=0;document.querySelectorAll('[data-hold].on').forEach(x=>x.classList.remove('on'))},true);
 setInterval(()=>{if(S&&IM()&&['play','meet','ivote','ires','ideal'].includes(S.phase))render()},1000);
 
@@ -1945,7 +1970,7 @@ function iPhase(vp){const I=S.im,ph=S.phase,me_=P(vp);if(!I)return '';
   h+=iMap(vp,here,dead,ui.iwalk&&ui.iwalk.until>Date.now()?ui.iwalk.to:null);
   if(imp&&!dead){const sl=Math.max(0,Math.ceil((I.sabCd-now)/1000));h+=`<div class="box"><div class="lbl">Саботаж ${I.sab?'· уже идёт':sl?'· через '+sl+' с':''}</div><div class="row">${Object.entries(ISAB).map(([k,s])=>`<button class="btn sm" data-act="isab" data-v="${k}" ${I.sab||sl?'disabled':''}>${s[0]}</button>`).join('')}</div>${iVent(here).length?'<p class="tiny mute" style="margin-top:6px">В этом отсеке люк: коснитесь отсека с пометкой «люк» на карте, чтобы переместиться мгновенно.</p>':''}</div>`}
   const my=I.tasks[vp],dn=I.done[vp];
-  h+=`<div class="box"><div class="lbl">${imp?'Задания для вида (не считаются)':'Мои задания'} · ${dn.length}/${my.length}</div>${my.map(id=>{const t=ITASK[id],ok=dn.includes(id),inRoom=t[0]===here;return `<div class="itk ${ok?'ok':''}"><span><b>${esc(t[1])}</b><span class="tiny mute" style="display:block">${esc(IROOM[t[0]][0])}</span></span>${ok?'<span class="tiny" style="color:#7fe0a8">готово</span>':inRoom?`<button class="btn pri sm" data-act="itk" data-v="${id}">Выполнить</button>`:''}</div>`}).join('')}</div>`;
+  h+=`<div class="box"><div class="lbl">${imp?'Задания для вида (не считаются)':'Мои задания'} · ${dn.length}/${my.length}</div>${my.map(id=>{const t=ITASK[id],ok=dn.includes(id),si=iStepOf(vp,id),cs=t.st[si],inRoom=cs&&cs[0]===here;return `<div class="itk ${ok?'ok':''}"><span><b>${esc(t.n)}</b>${t.k==='l'?' <span class="chip">долгое</span>':''}<span class="tiny mute" style="display:block">${ok?'готово':esc(IROOM[cs[0]][0])+(t.st.length>1?` · шаг ${si+1} из ${t.st.length}: ${esc((cs[2]||{}).l||'')}`:'')}</span></span>${ok?'<span class="tiny" style="color:#7fe0a8">✓</span>':inRoom?`<button class="btn pri sm" data-act="itk" data-v="${id}">Выполнить</button>`:''}</div>`}).join('')}</div>`;
   return h}
 function iMeetView(vp){const I=S.im,ph=S.phase,m=I.meet||{},me_=P(vp),al=me_&&me_.alive;let h=`<div class="imeet"><div class="k">${m.body?'Найдено тело':'Экстренное собрание'}</div><h2>${m.body?esc(nm(m.body)):esc(nm(m.by))}</h2><p class="small">${m.body?`Нашёл(ла) ${esc(nm(m.by))} · ${esc(IROOM[m.room]?.[0]||'')}`:'нажал(а) кнопку в столовой'}</p></div>`;
   if(ph==='meet'){const g=(S.inp[vp]||{}).go;h+=`<div class="box"><div class="lbl">Обсуждение · ${Math.max(0,75-Math.floor(age()))} с</div><p class="small">Говорите вслух: где были, кого видели, кто вёл себя странно. Мёртвые молчат.</p>${S.players.map(p=>`<div class="iocc ${p.alive?'':'dead'}"><span class="av">${esc(p.name[0].toUpperCase())}</span><b>${esc(p.name)}</b><span class="tiny mute">${p.alive?'':'мёртв(а)'}</span></div>`).join('')}${al?`<button class="btn ${g?'':'pri'}" style="width:100%;margin-top:10px" data-act="go" ${g?'disabled':''}>${g?'Ждём остальных':'К голосованию'}</button>`:''}</div>`+micPanel();return h}
@@ -1963,7 +1988,7 @@ function iNarr(){const I=S.im;if(!I)return '';if(S.phase==='meet')return I.meet&
 function iRules(){return `<details class="box" open><summary>Правила за минуту</summary><ul class="rules small">
 <li>От 4 игроков, каждый со своего телефона. 1 самозванец, с 7 игроков — 2.</li>
 <li>Станция из 9 отсеков. Касайтесь соседнего отсека на карте, чтобы перейти. Видите только тех, кто в вашем отсеке.</li>
-<li>Экипаж выполняет задания-мини-игры в нужных отсеках. Полоса заданий общая: заполнили — победа.</li>
+<li>Экипаж выполняет задания-мини-игры в нужных отсеках: 5–7 на человека (чем меньше экипаж, тем больше). Есть составные задания из двух шагов в разных концах станции и долгие задания, на которых вы надолго заняты. Полоса заданий общая: заполнили — победа.</li>
 <li>Самозванец устраняет тех, кто остался с ним наедине, саботирует свет, связь и реактор, перемещается через люки.</li>
 <li>Нашли тело — «Сообщить». В Столовой у каждого одна экстренная кнопка. На собрании обсуждаете вслух и голосуете.</li>
 <li>Самозванцы побеждают, если их столько же, сколько экипажа, или если реактор не стабилизировали за 45 секунд.</li>
@@ -1983,6 +2008,7 @@ function impHome(g){return `<button class="btn ghost sm" data-act="page" data-v=
   <details class="box"><summary>Статистика: Самозванец</summary>${statsHtml('imp')}</details>${iRules().replace(' open','')}`}
 function iShareText(){const F=S.final||{pts:{}};return `Самозванец · станция «Полярис»\n${S.win.side==='town'?'Победа экипажа':'Победа самозванцев'}\nСамозванцы: ${S.players.filter(p=>p.role==='imp').map(p=>p.name).join(', ')}\n`+S.players.map(p=>`${p.name}: ${F.pts[p.pid]||0} оч.`).join('\n')+'\n'+location.origin+location.pathname+'#impostor'}
 if(window.__T)window.__T.itask=iTaskOpen;
+if(window.__T)window.__T.ITASK=ITASK;
 
 /* ---------- commit / sync ---------- */
 function commit(){S.rev++;S.hostNow=Date.now();if(S.local)LS.set('maf.local',S);else{LS.set('maf.host',{code:S.code,S});broadcast()}speak();render()}
@@ -2479,9 +2505,12 @@ const A={
   iclose:()=>{ui.itask=null;render()},
   iwl:v=>{ui.itask.st.sel=+v;render()},
   iwr:v=>{const st=ui.itask.st;if(st.sel===+v){st.ok.push(+v);st.sel=null;if(st.ok.length===4)return iTaskDone()}else st.sel=null;render()},
-  idial:v=>{const st=ui.itask.st;st.v=Math.max(0,Math.min(99,st.v+(+v)));if(st.v===st.tg)return iTaskDone();render()},
+  idial:v=>{const st=ui.itask.st;st.v=Math.max(0,Math.min(99,st.v+(+v)));if(st.v===st.tg){st.stage++;if(st.stage>=st.stages)return iTaskDone();iDialNew(st);toast('Этап '+st.stage+' из '+st.stages)}render()},
+  iodd:v=>{const st=ui.itask.st;if(+v===st.odd){st.round++;if(st.round>=st.rounds)return iTaskDone();iOddNew(st)}else toast('Не тот');render()},
+  isort:v=>{const st=ui.itask.st;if(+v===st.items[st.i]){st.i++;if(st.i>=st.items.length)return iTaskDone()}else toast('Не тот контейнер');render()},
+  isim:v=>{const st=ui.itask.st;if(st.show)return;if(+v===st.seq[st.inp]){st.inp++;if(st.inp>=st.seq.length)return iTaskDone();render()}else{toast('Сбой — смотрите ещё раз');iSimonPlay()}},
   iseq:v=>{const st=ui.itask.st;if(+v===st.next){st.next++;if(st.next>8)return iTaskDone()}else st.next=1;render()},
-  ikey:v=>{const st=ui.itask.st;if(v==='⌫')st.inp=st.inp.slice(0,-1);else if(v==='↻'){st.inp='';st.show=Date.now()+3000}else if(st.inp.length<5){st.inp+=v;if(st.inp.length===5){if(st.inp===st.code)return iTaskDone();toast('Неверный код');st.inp='';st.show=Date.now()+2500}}render()},
+  ikey:v=>{const st=ui.itask.st;if(v==='⌫')st.inp=st.inp.slice(0,-1);else if(v==='↻'){st.inp='';st.show=Date.now()+3000;setTimeout(render,3050)}else if(st.inp.length<5){st.inp+=v;if(st.inp.length===5){if(st.inp===st.code)return iTaskDone();toast('Неверный код');st.inp='';st.show=Date.now()+2500;setTimeout(render,2550)}}render()},
   ikl:v=>send('kl',{t:v,n:rid(6)},me.pid),
   irp:()=>send('rp',{n:rid(6)},me.pid),
   ibtn:()=>send('btn',{n:rid(6)},me.pid),
