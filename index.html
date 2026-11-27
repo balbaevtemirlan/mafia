@@ -152,6 +152,7 @@ details summary{cursor:pointer;font-weight:700;min-height:40px;display:flex;alig
 ul.rules{padding-left:20px}ul.rules li{margin:6px 0}
 @media (prefers-reduced-motion:reduce){.cin,.mt i{transition:none}.micb.on{animation:none}}
 
+.sc{position:relative}.svc{position:absolute;top:8px;right:8px;z-index:2;background:rgba(0,0,0,.72);color:#fff;font-size:12px;font-weight:800;padding:3px 8px;border-radius:10px;border:1px solid rgba(255,255,255,.2)}.svc.lead{background:var(--acc,#ff4b4b);color:#111;border-color:transparent}.btn .svc{position:static;margin-left:6px}
 /* impostor */
 .ibar{position:relative;height:22px;border-radius:11px;background:#1a2130;overflow:hidden;margin-top:8px}.ibar i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#2ecc71,#7fe0a8);transition:width .5s}.ibar span{position:relative;display:block;text-align:center;font-size:12px;line-height:22px;font-weight:700;color:#e8ffe9;text-shadow:0 1px 2px #000}
 .imap{width:100%;display:block;margin:6px 0 12px}.imap rect{fill:#141a26;stroke:#2a3346;stroke-width:2}.imap text{fill:#8b93a5;font-size:13px;font-weight:700;font-family:Manrope,sans-serif}.imap text.sm{font-size:10px;font-weight:600}
@@ -1026,7 +1027,7 @@ const shufIf=(ph,q)=>ph==='night'?q:q;
 function chron(t){S.chron.push({d:S.day,t})}
 function addPriv(pid,t){(S.priv[pid]=S.priv[pid]||[]).push(t)}
 
-function startGame(){if(IM())return iStart();if(ES())return eStart();if(DT())return dStart();if(CL())return cStart();if(BK())return startBunker();if(COOP())return startCoop();
+function startGame(){if(SVM()&&S.phase==='lobby')svResolve();if(IM())return iStart();if(ES())return eStart();if(DT())return dStart();if(CL())return cStart();if(BK())return startBunker();if(COOP())return startCoop();
   const n=S.players.length,k=n<=6?1:n<=9?2:n<=12?3:4,s=sc();
   let free=n-k-2;const sp=[];for(const r of shuf(['grd','jur','wit','hun','man','trt']))if(S.opts&&S.opts[r]&&n>=SPEC[r].min&&free>1){sp.push(r);free--}
   const roles=shuf([...Array(k).fill('maf'),'doc','det',...sp,...Array(free).fill('civ')]);
@@ -1063,7 +1064,21 @@ function validNa(pid,v){if(COOP()){if(['guard','rest','search'].includes(v))retu
   if(p.role==='maf')return t.role!=='maf';
   if(p.role==='doc')return v!==S.lastHeal;
   return v!==pid}
+const SVM=()=>BK()||COOP()||(S&&S.mode==='mafia');
+const svList=()=>BK()?BCAT.map(x=>x.id):SCEN.map(x=>x.id);
+const svTitle=id=>id==='rnd'?'Случайно':((BK()?BCAT:SCEN).find(x=>x.id===id)||{}).title||id;
+function svTally(){const c={};Object.entries(S.sv||{}).forEach(([pid,v])=>{if(P(pid))c[v]=(c[v]||0)+1});return c}
+function svLeader(){const c=svTally();let best=[],bv=0;for(const [k,v] of Object.entries(c)){if(v>bv){bv=v;best=[k]}else if(v===bv)best.push(k)}return {best,bv,c}}
+function svResolve(){S.svNote='';if(S.local||S.svLock)return;const {best,bv}=svLeader();if(!bv)return;let pick=best[Math.floor(Math.random()*best.length)],note=best.length>1?'ничья, решил жребий':'';
+  if(pick==='rnd'){const L=svList();pick=L[Math.floor(Math.random()*L.length)];note='выпал случайный вариант'}
+  if(BK())S.cat=pick;else S.scen=pick;S.svNote=`Голосование выбрало: ${svTitle(pick)}${note?' ('+note+')':''}`}
+function svStrip(){const L=svLeader(),my=(S.sv||{})[me.pid],items=BK()?BCAT.map(x=>({id:x.id,t:x.title,sub:x.sub,acc:x.acc,bg:x.bg,pic:x.pic})):SCEN.map(x=>({id:x.id,t:x.title,sub:x.sub,acc:x.acc,bg:x.bg,pic:x.id}));
+  const who=id=>Object.entries(S.sv||{}).filter(([pid,v])=>v===id&&P(pid)).map(([pid])=>P(pid).name);
+  const chip=id=>{const w=who(id);return w.length?`<span class="svc ${L.best.includes(id)?'lead':''}">${w.length} · ${esc(w.map(n=>n.slice(0,1).toUpperCase()).join(''))}</span>`:''};
+  return `<div class="strip">${items.map(x=>`<button class="sc ${my===x.id?'on':''}" style="--a:${x.acc};--b:${x.bg}" data-act="svote" data-v="${x.id}"><span class="pic">${pic(x.pic)}</span>${chip(x.id)}<span class="tx"><small>${esc(x.sub)}</small><h3>${esc(x.t)}</h3></span></button>`).join('')}</div>
+  <div class="row" style="margin:6px 0 10px"><button class="btn sm ${my==='rnd'?'pri':'ghost'}" data-act="svote" data-v="rnd">🎲 Мне всё равно — случайно ${chip('rnd')}</button></div>`}
 function input(pid,k,v){
+  if(k==='sv'){if(S.phase!=='lobby'||!SVM()||!(v==='rnd'||svList().includes(v)))return false;S.sv=S.sv||{};if(S.sv[pid]===v)return false;S.sv[pid]=v;if(!S.svLock){const L=svLeader();if(L.best.length===1&&L.best[0]!=='rnd'){if(BK())S.cat=L.best[0];else S.scen=L.best[0]}}return true}
   if(IM())return iInput(pid,k,v);
   if(BK()&&k!=='go')return bInput(pid,k,v);
   if(CL()&&k!=='go')return cInput(pid,k,v);
@@ -2029,7 +2044,7 @@ function handlePeer(pr){let c=false,pl=P(pr.pid);const name=clean(pr.name).slice
   if(!pl){if(S.phase==='lobby'&&S.players.length<16&&!S.kicked.includes(pr.pid)){S.players.push({pid:pr.pid,name,alive:true});c=true;pl=P(pr.pid)}else return false}
   else if(S.phase==='lobby'&&pl.name!==name){pl.name=name;c=true}
   if(Array.isArray(pr.sp)){const ids=new Set(S.log.map(l=>l.i));for(const e of pr.sp.slice(-4)){if(e&&typeof e.i==='string'&&!ids.has(e.i)&&typeof e.t==='string'&&clean(e.t)){addLog({i:e.i,d:S.day,s:P(e.s)?e.s:pr.pid,by:pr.pid,t:clean(e.t).slice(0,280)});c=true}}}
-  if(pr.pk===S.pk&&pr.a&&typeof pr.a==='object'){for(const k of ['mv','vn','tk','kl','rp','btn','sab','fix','iv','rdy','ans','hint','req','share','code','acc','dn','shot','ready','cv','team','ms','vote','na','go','ne','use','rv','oa','bv','act'])if(pr.a[k]!==undefined&&input(pr.pid,k,pr.a[k]))c=true}
+  if(pr.pk===S.pk&&pr.a&&typeof pr.a==='object'){for(const k of ['sv','mv','vn','tk','kl','rp','btn','sab','fix','iv','rdy','ans','hint','req','share','code','acc','dn','shot','ready','cv','team','ms','vote','na','go','ne','use','rv','oa','bv','act'])if(pr.a[k]!==undefined&&input(pr.pid,k,pr.a[k]))c=true}
   return c}
 function onRemote(d){if(!d||!d.gid)return;if(S&&S.gid===d.gid&&d.rev<S.rev)return;
   S=JSON.parse(JSON.stringify(d));ui.skew=(S.hostNow||Date.now())-Date.now();
@@ -2158,7 +2173,7 @@ let pDown=false,pPend=false,lastHtml='';
 document.addEventListener('pointerdown',()=>{pDown=true},true);
 const pUp=()=>{pDown=false;if(pPend){pPend=false;setTimeout(render,40)}};
 document.addEventListener('pointerup',pUp,true);document.addEventListener('pointercancel',pUp,true);
-function render(){
+function render(){if(S&&S.svNote&&S.phase!=='lobby'&&ui.svSeen!==S.gid){ui.svSeen=S.gid;setTimeout(()=>toast(S.svNote),400)}
   const app=$('#app');if(!app)return;
   if(pDown){pPend=true;return}
   const a=document.activeElement,fid=a&&a.id,ss=a&&a.selectionStart;
@@ -2242,11 +2257,11 @@ function lobbyView(){const s=sc(),host=isHost||S.local;
   ${S.players.map(p=>`<div class="pl"><span class="av">${esc(p.name.slice(0,1).toUpperCase())}</span><span class="nm"><b>${esc(p.name)}${p.pid===me.pid&&!S.local?' (вы)':''}</b>${!S.local&&p.pid===S.hostPid?'<span class="tiny mute">создатель · играет как все</span>':''}${!S.local&&isHost&&p.pid!==me.pid&&!onlinePids().has(p.pid)?'<span class="tiny" style="color:#ff8a90">не в сети</span>':''}</span>${host&&p.pid!==S.hostPid?`<button class="btn sm ghost" data-act="kick" data-v="${esc(p.pid)}">Убрать</button>`:''}</div>`).join('')}
   ${S.local?`<div class="row"><input id="addn" maxlength="20" placeholder="Имя игрока" style="flex:1 1 160px" autocomplete="off"><button class="btn" data-act="addLocal">Добавить</button></div>`:''}
   </div>
-  ${BK()?catStrip(S.cat,'pickCat')+catDetail(S.cat):''}
+  ${SVM()&&!S.local?`<div class="box"><div class="lbl">${BK()?'Катастрофа':'Сценарий'} · голосование</div><p class="small mute">${S.svLock?'Создатель выбирает сам. Голоса не учитываются.':'Тапните, во что хотите играть. Побеждает больше голосов, при ничьей — жребий. Создатель может начать в любой момент.'}</p>${!S.svLock&&svLeader().bv?`<p class="small">Лидирует: <b>${esc(svLeader().best.map(svTitle).join(' / '))}</b> · ${svLeader().bv} гол.</p>`:''}${S.svLock?(isHost?(BK()?catStrip(S.cat,'pickCat'):scenStrip(S.scen,'pickScen')):''):svStrip()}${isHost?`<button class="btn sm ghost" data-act="svLock">${S.svLock?'Вернуть голосование':'Выбрать самому, без голосования'}</button>`:''}</div>`:''}
+  ${BK()?(S.local?catStrip(S.cat,'pickCat'):'')+catDetail(S.cat):''}
   ${!COOP()&&!BK()&&!CL()&&!DT()&&!ES()&&!IM()&&S.players.length===4?'<div class="box"><p class="small">Вчетвером первая ночь — ночь знакомства: убивать нельзя, детектив уже проверяет.</p></div>':''}
   ${IM()?iLobby():ES()?eLobby():DT()?dLobby():CL()?cOptsHtml():COOP()||BK()?'':optsHtml()}
-  ${BK()||CL()||DT()||ES()||IM()?'':`<div class="lbl">Сценарий ${host?'— выберите':''}</div>
-  ${host?scenStrip(S.scen,'pickScen'):''}
+  ${BK()||CL()||DT()||ES()||IM()?'':`${S.local?`<div class="lbl">Сценарий — выберите</div>${scenStrip(S.scen,'pickScen')}`:''}
   ${scenDetail(S.scen,S.mode)}`}
   <button class="btn ghost" data-act="leave" style="width:100%">Выйти из комнаты</button>`;
   return h}
@@ -2494,6 +2509,8 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
 /* ---------- actions ---------- */
 const A={
   pickScenHome:v=>{ui.scen=v;render()},
+  svote:v=>send('sv',v,me.pid),
+  svLock:()=>{if(!isHost)return;S.svLock=!S.svLock;commit()},
   pickScen:v=>{if(!(isHost||S.local))return;S.scen=v;ui.scen=v;commit()},
   create:()=>createGame(),
   join:()=>{ui.code=$('#code')?.value||'';joinGame(ui.code)},
