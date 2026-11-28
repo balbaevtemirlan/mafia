@@ -153,6 +153,24 @@ ul.rules{padding-left:20px}ul.rules li{margin:6px 0}
 @media (prefers-reduced-motion:reduce){.cin,.mt i{transition:none}.micb.on{animation:none}}
 
 .sc{position:relative}.svc{position:absolute;top:8px;right:8px;z-index:2;background:rgba(0,0,0,.72);color:#fff;font-size:12px;font-weight:800;padding:3px 8px;border-radius:10px;border:1px solid rgba(255,255,255,.2)}.svc.lead{background:var(--acc,#ff4b4b);color:#111;border-color:transparent}.btn .svc{position:static;margin-left:6px}
+/* poker */
+.pc{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;width:46px;height:64px;border-radius:7px;background:#f6f2e8;color:#161616;font-weight:800;font-size:18px;line-height:1;box-shadow:0 2px 6px rgba(0,0,0,.45);margin:2px;font-family:Manrope,sans-serif;vertical-align:middle}
+.pc i{font-style:normal;font-size:20px;margin-top:3px}.pc.r{color:#c8262c}
+.pc.big{width:76px;height:106px;font-size:30px;border-radius:11px;margin:4px}.pc.big i{font-size:36px}
+.pc.sm{width:30px;height:42px;font-size:13px;border-radius:5px;margin:1px}.pc.sm i{font-size:14px;margin-top:1px}.pc.xs{width:20px;height:28px}
+.pc.back{background:repeating-linear-gradient(45deg,#1f7a50 0 6px,#175c3c 6px 12px);border:2px solid #ebe5d5}
+.pc.slot{background:rgba(0,0,0,.12);border:2px dashed rgba(255,255,255,.22);box-shadow:none}
+.pc.dim{opacity:.38}.pc.hl{outline:3px solid #ffd166;outline-offset:1px}
+.ptable{background:radial-gradient(ellipse at center,#1d7a50 0%,#125238 65%,#0c3826 100%);border-radius:80px/56px;border:6px solid #4a3220;padding:16px 8px 14px;text-align:center;margin:10px 0;box-shadow:inset 0 0 34px rgba(0,0,0,.55),0 6px 20px rgba(0,0,0,.4)}
+.pboard{display:flex;justify-content:center;flex-wrap:nowrap;margin-top:6px}.ptable .pot{color:#ffe7a3;font-weight:800;margin-top:8px;font-size:17px}
+.pseat{display:flex;align-items:center;gap:10px;padding:9px 6px;border-bottom:1px solid rgba(255,255,255,.06)}.pseat:last-child{border-bottom:0}
+.pseat .av{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--acc) 20%,#0b0e13);color:var(--acc);font-weight:800}
+.pseat .pn{flex:1;line-height:1.25}.pseat .pch{text-align:right;display:flex;flex-direction:column;align-items:flex-end;line-height:1.2}.pseat .pcs{display:flex}
+.pseat.cur{background:color-mix(in srgb,var(--acc) 12%,transparent);border-radius:10px}.pseat.out{opacity:.55}
+.ptag{display:inline-block;font-size:11px;font-weight:800;padding:1px 6px;border-radius:8px;background:#2a3346;color:#cfd6e3;margin-left:2px;vertical-align:1px}.ptag.d{background:#f6f2e8;color:#111}
+.pwin{color:#7fe0a8;font-weight:800;font-size:13px}
+.pmc{display:flex;justify-content:center;width:100%;background:none;border:0;padding:4px 0;cursor:pointer}.pmine.out .pmc{opacity:.5}
+.pacts .row>.btn{flex:1 1 0}#pkr{accent-color:var(--acc);height:28px}
 /* impostor */
 .ibar{position:relative;height:22px;border-radius:11px;background:#1a2130;overflow:hidden;margin-top:8px}.ibar i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#2ecc71,#7fe0a8);transition:width .5s}.ibar span{position:relative;display:block;text-align:center;font-size:12px;line-height:22px;font-weight:700;color:#e8ffe9;text-shadow:0 1px 2px #000}
 .imap{width:100%;display:block;margin:6px 0 12px}.imap rect{fill:#141a26;stroke:#2a3346;stroke-width:2}.imap text{fill:#8b93a5;font-size:13px;font-weight:700;font-family:Manrope,sans-serif}.imap text.sm{font-size:10px;font-weight:600}
@@ -930,7 +948,7 @@ const nm=pid=>P(pid)?.name||'—';
 const crDef=()=>sc().cr[S.crisis.i];
 const teamSize=()=>Math.max(1,Math.min(alive().length,alive().length<=6?2:3));
 const COOP=()=>S&&S.mode==='coop';
-const minP=()=>COOP()?3:(S&&(S.mode==='det'||S.mode==='esc'))?2:(S&&S.mode==='classic')?5:4;
+const minP=()=>COOP()?3:(S&&(S.mode==='det'||S.mode==='esc'||S.mode==='pok'))?2:(S&&S.mode==='classic')?5:4;
 const SPEC={grd:{n:'Телохранитель',min:5,d:'Каждую ночь закрываешь собой одного игрока, но не себя. Если на него нападут, погибнешь ты, а он выживет.'},
 jur:{n:'Журналист',min:5,d:'Один раз за игру ночью расследуешь игрока, и утром всем публикуется, из мафии он или нет. Потом просто наблюдаешь.'},
 wit:{n:'Свидетель',min:5,d:'В начале игры ты кое-что видел(а): тебе тайно назовут двоих, и один из них точно из мафии. Дальше ты обычный мирный — решай, когда об этом рассказать.'},
@@ -997,11 +1015,11 @@ const GAMES={mafia:{t:'Мафия: Выживание',mode:'mafia',min:4,pic:'h
   impostor:{t:'Самозванец',mode:'imp',min:4,pic:'himp',acc:'#59d0ff',bg:'#0b1220',sub:'Кто-то на борту не тот, кем кажется',d:'Игра в реальном времени на станции из 9 отсеков: ходите по карте, выполняйте мини-задания, а самозванец устраняет экипаж, саботирует реактор и прячется в люках. Нашли тело — собрание и голосование.'},
   classic:{t:'Мафия: Классика',mode:'classic',min:5,pic:'hnoir',acc:'#d4af37',bg:'#0e0c0a',sub:'Город засыпает, просыпается мафия',d:'Классическая мафия без сюжета и шкал: Дон, Комиссар, Доктор, Любовница, Маньяк. Быстрая партия на 20–30 минут.'},
   colony:{t:'Колония: Стратегия',soon:1,min:3,pic:'hcol',acc:'#7ccf6a',bg:'#0f130c',sub:'Строй, торгуй, побеждай',d:'Стратегия на шестиугольном поле: добывайте ресурсы, стройте поселения и дороги, торгуйтесь друг с другом. Первый, кто наберёт 10 очков, побеждает.'},
-  poker:{t:'Покер',soon:1,min:2,pic:'hpoker',acc:'#3fbf7f',bg:'#0b1410',sub:'Техасский холдем на игровые фишки',d:'Две закрытые карты на твоём телефоне, общие карты на столе, ставки кнопками. Банк, блайнды и комбинации считаются сами. Только игровые фишки, без денег.'},
+  poker:{t:'Покер',mode:'pok',min:2,pic:'hpoker',acc:'#3fbf7f',bg:'#0b1410',sub:'Техасский холдем на игровые фишки',d:'Две закрытые карты на твоём телефоне, общие карты на столе, ставки кнопками. Банк, блайнды и комбинации считаются сами. Только игровые фишки, без денег.'},
   detective:{t:'Детектив',mode:'det',min:2,pic:'hdet',acc:'#d94a4a',bg:'#0d0b0a',sub:'Настоящее дело: документы, допросы, улики',d:'Кооперативное расследование в духе true crime. У каждого на телефоне свои документы: рапорты, дневники, допросы, экспертизы. Запрашиваете улики, взламываете коды, спорите. В конце каждый тайно называет виновного.'},
   escape:{t:'Побег из комнаты',mode:'esc',min:2,pic:'hesc',acc:'#e0a24a',bg:'#0f0d0a',sub:'Сорок минут до полуночи',d:'Кооперативный квест на время. Улики разложены по телефонам: у тебя часы на стене, у друга — записка, без которой они ничего не значат. Коды, механизмы, шифры и последняя дверь.'}};
 function pageFromHash(){const h=(location.hash||'').slice(1);return GAMES[h]&&!GAMES[h].soon?h:'hub'}
-const pageOf=md=>md==='imp'?'impostor':md==='esc'?'escape':md==='det'?'detective':md==='coop'?'survive':md==='bunker'?'bunker':md==='classic'?'classic':'mafia';
+const pageOf=md=>md==='pok'?'poker':md==='imp'?'impostor':md==='esc'?'escape':md==='det'?'detective':md==='coop'?'survive':md==='bunker'?'bunker':md==='classic'?'classic':'mafia';
 function setTitle(){try{document.title=S?GAMES[pageOf(S.mode)].t:ui.page!=='hub'?GAMES[ui.page].t:SITE}catch(e){}}
 function goPage(p){ui.page=p;ui.err='';try{if(p==='hub')history.replaceState(null,'',location.pathname+location.search);else location.hash=p}catch(e){}window.scrollTo(0,0);render()}
 function initNet(){
@@ -1014,20 +1032,20 @@ function initNet(){
 }
 
 /* ---------- engine (host) ---------- */
-function newState(code,local){return {v:1,mode:ui.page==='impostor'?'imp':ui.page==='escape'?'esc':ui.page==='detective'?'det':ui.page==='survive'?'coop':ui.page==='bunker'?'bunker':ui.page==='classic'?'classic':'mafia',cat:ui.cat,copts:{don:true,lov:true,man:false,open:true},gid:rid(6),rev:0,code:code||'',local:!!local,hostPid:local?null:me.pid,scen:ui.scen,phase:'lobby',pn:0,pk:0,players:[],kicked:[],day:0,evac:4,meters:{a:4,b:4,c:4},inv:{},inp:{},log:[],chron:[],priv:{},votes:[],missions:[],crisis:null,timer:null,deck:[],lead:[],li:0,lastHeal:null,shield:false,res:null,win:null,ai:null,lq:null,opts:{},hostNow:Date.now()}}
+function newState(code,local){return {v:1,mode:ui.page==='poker'?'pok':ui.page==='impostor'?'imp':ui.page==='escape'?'esc':ui.page==='detective'?'det':ui.page==='survive'?'coop':ui.page==='bunker'?'bunker':ui.page==='classic'?'classic':'mafia',cat:ui.cat,copts:{don:true,lov:true,man:false,open:true},gid:rid(6),rev:0,code:code||'',local:!!local,hostPid:local?null:me.pid,scen:ui.scen,phase:'lobby',pn:0,pk:0,players:[],kicked:[],day:0,evac:4,meters:{a:4,b:4,c:4},inv:{},inp:{},log:[],chron:[],priv:{},votes:[],missions:[],crisis:null,timer:null,deck:[],lead:[],li:0,lastHeal:null,shield:false,res:null,win:null,ai:null,lq:null,opts:{},hostNow:Date.now()}}
 const ADV=['intro','cres','discuss','vres','morning','inv','dnight','eintro'],WAIT=['deal','crisis','team','mission','vote','night','reveal','bvote','accuse'];
 const pool=()=>S.phase==='deal'?S.players:alive();
 const goN=()=>pool().filter(p=>S.inp[p.pid]?.go).length;
 const goNeed=()=>Math.floor(pool().length/2)+1;
 const age=()=>(Date.now()+((isHost||S.local)?0:ui.skew)-(S.phAt||0))/1000;
-function advance(){if(IM())return iForce();if(ES())return eAdvance();if(DT())return dAdvance();if(CL())return cAdvance();if(BK())return bAdvance();if(S.hunt&&age()<60)return;S.hunt=null;switch(S.phase){case 'intro':startDay();break;case 'cres':afterCres();break;case 'discuss':COOP()?goNight():setPhase('vote');break;case 'vres':afterVres();break;case 'morning':afterMorning();break}}
+function advance(){if(PK())return pForce();if(IM())return iForce();if(ES())return eAdvance();if(DT())return dAdvance();if(CL())return cAdvance();if(BK())return bAdvance();if(S.hunt&&age()<60)return;S.hunt=null;switch(S.phase){case 'intro':startDay();break;case 'cres':afterCres();break;case 'discuss':COOP()?goNight():setPhase('vote');break;case 'vres':afterVres();break;case 'morning':afterMorning();break}}
 function setPhase(ph){S.phase=ph;S.pk=++S.pn;S.inp={};S.phAt=Date.now();if(ph!=='discuss')S.timer=null;S.lq=null;
   if(S.local){let q=null;if(ph==='deal')q=S.players.map(p=>p.pid);else if(ph==='mission')q=[...S.crisis.team];else if(ph==='night')q=alive().map(p=>p.pid);else if(ph==='reveal'&&S.mode==='bunker')q=S.players.filter(p=>p.out||BCARD.some(([k])=>!p.rev[k])).map(p=>p.pid);if(q)S.lq={q:shufIf(ph,q),i:0,show:false}}}
 const shufIf=(ph,q)=>ph==='night'?q:q;
 function chron(t){S.chron.push({d:S.day,t})}
 function addPriv(pid,t){(S.priv[pid]=S.priv[pid]||[]).push(t)}
 
-function startGame(){if(SVM()&&S.phase==='lobby')svResolve();if(IM())return iStart();if(ES())return eStart();if(DT())return dStart();if(CL())return cStart();if(BK())return startBunker();if(COOP())return startCoop();
+function startGame(){if(SVM()&&S.phase==='lobby')svResolve();if(PK())return pStart();if(IM())return iStart();if(ES())return eStart();if(DT())return dStart();if(CL())return cStart();if(BK())return startBunker();if(COOP())return startCoop();
   const n=S.players.length,k=n<=6?1:n<=9?2:n<=12?3:4,s=sc();
   let free=n-k-2;const sp=[];for(const r of shuf(['grd','jur','wit','hun','man','trt']))if(S.opts&&S.opts[r]&&n>=SPEC[r].min&&free>1){sp.push(r);free--}
   const roles=shuf([...Array(k).fill('maf'),'doc','det',...sp,...Array(free).fill('civ')]);
@@ -1079,6 +1097,7 @@ function svStrip(){const L=svLeader(),my=(S.sv||{})[me.pid],items=BK()?BCAT.map(
   <div class="row" style="margin:6px 0 10px"><button class="btn sm ${my==='rnd'?'pri':'ghost'}" data-act="svote" data-v="rnd">🎲 Мне всё равно — случайно ${chip('rnd')}</button></div>`}
 function input(pid,k,v){
   if(k==='sv'){if(S.phase!=='lobby'||!SVM()||!(v==='rnd'||svList().includes(v)))return false;S.sv=S.sv||{};if(S.sv[pid]===v)return false;S.sv[pid]=v;if(!S.svLock){const L=svLeader();if(L.best.length===1&&L.best[0]!=='rnd'){if(BK())S.cat=L.best[0];else S.scen=L.best[0]}}return true}
+  if(PK())return pInput(pid,k,v);
   if(IM())return iInput(pid,k,v);
   if(BK()&&k!=='go')return bInput(pid,k,v);
   if(CL()&&k!=='go')return cInput(pid,k,v);
@@ -1105,7 +1124,7 @@ function input(pid,k,v){
   return true;
 }
 const has=(pid,k)=>S.inp[pid]&&S.inp[pid][k]!==undefined;
-function need(){if(ES()||IM())return null;if(DT())return dNeed();if(CL())return cNeed();if(BK())return bNeed();const A=alive();switch(S.phase){
+function need(){if(ES()||IM()||PK())return null;if(DT())return dNeed();if(CL())return cNeed();if(BK())return bNeed();const A=alive();switch(S.phase){
   case 'deal':return S.players.map(p=>[p.pid,'ready']);
   case 'crisis':return A.map(p=>[p.pid,'cv']);
   case 'team':return [[S.crisis.lead,'team']];
@@ -1113,6 +1132,7 @@ function need(){if(ES()||IM())return null;if(DT())return dNeed();if(CL())return 
   case 'vote':return A.map(p=>[p.pid,'vote']);
   case 'night':return [...A.map(p=>[p.pid,'na']),...(S.nev!=null?A.map(p=>[p.pid,'ne']):[])];}return null}
 function auto(){
+  if(PK())return pAuto();
   if(DT())return dAuto();
   if(ES())return eAuto();
   if(IM())return iAuto();
@@ -1126,7 +1146,7 @@ function auto(){
   switch(S.phase){case 'deal':setPhase('intro');break;case 'crisis':resolveChoice();break;
   case 'team':S.crisis.team=S.inp[S.crisis.lead].team;setPhase('mission');break;
   case 'mission':resolveMission();break;case 'vote':resolveVote();break;case 'night':resolveNight();break}}
-function force(){if(IM())return iForce();if(ES())return eAdvance();if(DT())return S.phase==='accuse'?dFinish():dAdvance();if(CL())return cForce();if(BK())return bForce();switch(S.phase){
+function force(){if(PK())return pForce();if(IM())return iForce();if(ES())return eAdvance();if(DT())return S.phase==='accuse'?dFinish():dAdvance();if(CL())return cForce();if(BK())return bForce();switch(S.phase){
   case 'deal':setPhase('intro');break;case 'crisis':resolveChoice();break;
   case 'team':{const L=S.crisis.lead;const t=[L,...shuf(alive().map(p=>p.pid).filter(x=>x!==L))].slice(0,teamSize());S.crisis.team=t;setPhase('mission');break}
   case 'mission':resolveMission();break;case 'vote':resolveVote();break;case 'night':resolveNight();break}}
@@ -2033,6 +2053,244 @@ function iShareText(){const F=S.final||{pts:{}};return `Самозванец · 
 if(window.__T)window.__T.itask=iTaskOpen;
 if(window.__T)window.__T.ITASK=ITASK;
 
+/* ---------- poker (Texas Hold'em) ---------- */
+const PK=()=>!!S&&S.mode==='pok';
+const PRK=['2','3','4','5','6','7','8','9','10','В','Д','К','Т'],PSU=['♠','♥','♦','♣'];
+const pR=c=>c>>2,pS=c=>c&3;
+const PRN=['двойки','тройки','четвёрки','пятёрки','шестёрки','семёрки','восьмёрки','девятки','десятки','валеты','дамы','короли','тузы'];
+const PRG=['двоек','троек','четвёрок','пятёрок','шестёрок','семёрок','восьмёрок','девяток','десяток','валетов','дам','королей','тузов'];
+const PRG1=['двойки','тройки','четвёрки','пятёрки','шестёрки','семёрки','восьмёрки','девятки','десятки','валета','дамы','короля','туза'];
+const PR1=['двойка','тройка','четвёрка','пятёрка','шестёрка','семёрка','восьмёрка','девятка','десятка','валет','дама','король','туз'];
+const PST=['Префлоп','Флоп','Тёрн','Ривер'];
+const PBL=[[5,10],[10,20],[15,30],[25,50],[50,100],[75,150],[100,200],[150,300],[250,500],[400,800],[600,1200],[1000,2000],[1500,3000],[2500,5000],[5000,10000],[10000,20000]];
+const PSTK={500:0,1000:1,2000:2,5000:3};
+const PDEF={stack:1000,grow:10,tmr:60,rebuy:true};
+function pEval5(cs){const r=cs.map(pR).sort((a,b)=>b-a),fl=cs.every(c=>pS(c)===pS(cs[0]));
+  const cnt={};r.forEach(x=>cnt[x]=(cnt[x]||0)+1);
+  const g=Object.entries(cnt).map(([k,v])=>[+k,v]).sort((a,b)=>b[1]-a[1]||b[0]-a[0]);
+  const u=[...new Set(r)];let st=-1;if(u.length===5){if(u[0]-u[4]===4)st=u[0];else if(u[0]===12&&u[1]===3)st=3}
+  let cat,tb;
+  if(st>=0&&fl){cat=st===12?9:8;tb=[st]}
+  else if(g[0][1]===4){cat=7;tb=[g[0][0],g[1][0]]}
+  else if(g[0][1]===3&&g[1][1]===2){cat=6;tb=[g[0][0],g[1][0]]}
+  else if(fl){cat=5;tb=r}
+  else if(st>=0){cat=4;tb=[st]}
+  else if(g[0][1]===3){cat=3;tb=g.map(x=>x[0])}
+  else if(g[0][1]===2&&g[1][1]===2){cat=2;tb=g.map(x=>x[0])}
+  else if(g[0][1]===2){cat=1;tb=g.map(x=>x[0])}
+  else{cat=0;tb=r}
+  let s=cat;for(let i=0;i<5;i++)s=s*13+(tb[i]||0);return {s,cat,tb,cs}}
+function pBest(cards){const n=cards.length;if(n<5)return null;let best=null;
+  for(let a=0;a<n;a++)for(let b=a+1;b<n;b++)for(let c=b+1;c<n;c++)for(let d=c+1;d<n;d++)for(let e=d+1;e<n;e++){const v=pEval5([cards[a],cards[b],cards[c],cards[d],cards[e]]);if(!best||v.s>best.s)best=v}
+  return best}
+function pName(v){if(!v)return '';const t=v.tb;switch(v.cat){
+  case 9:return 'Роял-флеш';case 8:return 'Стрит-флеш до '+PRG1[t[0]];case 7:return 'Каре '+PRG[t[0]];
+  case 6:return 'Фулл-хаус: '+PRN[t[0]]+' и '+PRN[t[1]];case 5:return 'Флеш до '+PRG1[t[0]];case 4:return 'Стрит до '+PRG1[t[0]];
+  case 3:return 'Сет '+PRG[t[0]];case 2:return 'Две пары: '+PRN[t[0]]+' и '+PRN[t[1]];case 1:return 'Пара '+PRG[t[0]];default:return 'Старшая карта: '+PR1[t[0]]}}
+function pCard(c,cls){if(c==null)return `<span class="pc slot ${cls||''}"></span>`;if(c<0)return `<span class="pc back ${cls||''}"></span>`;return `<span class="pc ${pS(c)===1||pS(c)===2?'r':''} ${cls||''}">${PRK[pR(c)]}<i>${PSU[pS(c)]}</i></span>`}
+const pTxt=c=>PRK[pR(c)]+PSU[pS(c)];
+const pNow=()=>Date.now()+(isHost?0:(ui.skew||0));
+const pBl=()=>PBL[Math.min(S.po.lvl,PBL.length-1)];
+const pPot=()=>Object.values(S.po.tot).reduce((a,b)=>a+b,0);
+function pAfter(pid,pred){const o=S.po,sz=o.seats.length;const i=o.seats.indexOf(pid);for(let k=1;k<=sz;k++){const q=o.seats[(i+k+sz)%sz];if(pred(q))return q}return null}
+const pLiveNA=()=>{const o=S.po;return o.inh.filter(p=>!o.fold[p]&&!o.ai[p])};
+const pLive=()=>{const o=S.po;return o.inh.filter(p=>!o.fold[p])};
+function pPay(pid,amt){const o=S.po;const a=Math.max(0,Math.min(amt,o.ch[pid]));o.ch[pid]-=a;o.bet[pid]=(o.bet[pid]||0)+a;o.tot[pid]=(o.tot[pid]||0)+a;if(o.ch[pid]===0)o.ai[pid]=1;return a}
+function pBump(){S.po.seq++;S.pk=++S.pn}
+function pSetDl(){const o=S.po,t=(S.popts||PDEF).tmr;o.dl=t&&o.cur?Date.now()+t*1000:0;o.curAt=Date.now()}
+
+function pStart(){const n=S.players.length;if(n>10){toast('В покер можно играть максимум вдесятером');return}
+  const o=S.popts=Object.assign({},PDEF,S.popts||{});
+  S.players.forEach(p=>{p.alive=true;p.role='pl'});
+  const seats=S.players.map(p=>p.pid),ch={};seats.forEach(pid=>ch[pid]=o.stack);
+  S.po={seats,ch,hand:0,lvl:PSTK[o.stack]!=null?PSTK[o.stack]:1,btnP:seats[Math.floor(Math.random()*n)],inh:[],deck:[],hole:{},board:[],st:0,bet:{},tot:{},fold:{},ai:{},need:[],can:[],cur:null,max:0,minR:0,seq:0,last:{},dl:0,res:null,hist:[],out:[],rb:{},stop:false,shown:{},won:{},startBtn:true};
+  chron(`Партия началась: ${n} игроков, по ${o.stack} фишек, блайнды ${pBl().join('/')}.`);
+  pNewHand()}
+function pNewHand(){const o=S.po,op=S.popts||PDEF;
+  const inh=o.seats.filter(pid=>P(pid)&&o.ch[pid]>0);
+  if(inh.length<2||o.stop)return pEnd();
+  o.hand++;o.lvlUp=false;
+  if(op.grow&&o.hand>1&&(o.hand-1)%op.grow===0&&o.lvl<PBL.length-1){o.lvl++;o.lvlUp=true;chron(`Раздача ${o.hand}: блайнды выросли до ${pBl().join('/')}.`)}
+  if(o.startBtn){o.startBtn=false;if(!inh.includes(o.btnP))o.btnP=pAfter(o.btnP,q=>inh.includes(q))}
+  else o.btnP=pAfter(o.btnP,q=>inh.includes(q));
+  o.inh=inh;
+  const hu=inh.length===2;o.sbP=hu?o.btnP:pAfter(o.btnP,q=>inh.includes(q));o.bbP=pAfter(o.sbP,q=>inh.includes(q));
+  o.deck=shuf([...Array(52).keys()]);o.hole={};o.board=[];o.st=0;o.bet={};o.tot={};o.fold={};o.ai={};o.last={};o.shown={};o.won={};o.res=null;o.best={};
+  let d=o.sbP;for(let r=0;r<2;r++)for(let k=0;k<inh.length;k++){(o.hole[d]=o.hole[d]||[]).push(o.deck.pop());d=pAfter(d,q=>inh.includes(q))}
+  const [sb,bb]=pBl();
+  const a1=pPay(o.sbP,sb),a2=pPay(o.bbP,bb);o.last[o.sbP]={t:'sb',a:a1};o.last[o.bbP]={t:'bb',a:a2};
+  o.max=Math.max(a1,a2);o.minR=bb;
+  o.need=inh.filter(p=>!o.ai[p]);o.can=[...o.need];
+  setPhase('hand');o.seq++;
+  pTurn(o.bbP)}
+function pTurn(from){const o=S.po;const lna=pLiveNA();
+  if(lna.length===0||(lna.length===1&&(o.bet[lna[0]]||0)>=o.max)){o.need=[]}
+  const nx=o.need.length?pAfter(from,q=>o.need.includes(q)):null;
+  if(!nx){o.cur=null;o.dl=0;return pStreetEnd()}
+  o.cur=nx;pSetDl()}
+function pStreetEnd(){const o=S.po;o.bet={};o.max=0;
+  const live=pLive();if(live.length<=1)return pWinFold();
+  if(o.st>=3||pLiveNA().length<=1){if(o.board.length<5)o.runout=true;while(o.board.length<5)o.board.push(o.deck.pop());o.st=3;return pShowdown()}
+  o.st++;o.deck.pop();if(o.st===1)o.board.push(o.deck.pop(),o.deck.pop(),o.deck.pop());else o.board.push(o.deck.pop());
+  o.minR=pBl()[1];o.need=pLiveNA();o.can=[...o.need];o.last={};
+  pBump();pTurn(o.btnP)}
+function pAct(pid,t,a){const o=S.po;if(S.phase!=='hand'||o.cur!==pid)return false;
+  const mb=o.bet[pid]||0,owe=o.max-mb,ch=o.ch[pid],maxTo=mb+ch;
+  if(t==='raise'&&maxTo<=o.max)t='call';
+  if(t==='fold'){o.fold[pid]=1;o.last[pid]={t:'fold'}}
+  else if(t==='check'){if(owe>0)return false;o.last[pid]={t:'check'}}
+  else if(t==='call'){if(owe<=0)return false;const p=pPay(pid,owe);o.last[pid]={t:o.ai[pid]?'allin':'call',a:o.bet[pid]};void p}
+  else if(t==='raise'){if(!o.can.includes(pid))return false;a=Math.floor(+a);if(!(a>0))return false;if(a>=maxTo)a=maxTo;
+    const minTo=o.max+o.minR;if(a<=o.max||(a<minTo&&a<maxTo))return false;
+    const inc=a-o.max,wasMax=o.max;pPay(pid,a-mb);o.max=a;
+    const others=pLiveNA().filter(q=>q!==pid);
+    if(inc>=o.minR){o.minR=inc;o.can=[...others]}else o.can=o.can.filter(q=>q!==pid);
+    o.need=others;o.last[pid]={t:o.ai[pid]?'allin':(wasMax?'raise':'bet'),a};}
+  else return false;
+  o.need=o.need.filter(q=>q!==pid);o.can=o.can.filter(q=>q!==pid);
+  pBump();
+  if(pLive().length===1){o.cur=null;pWinFold();return true}
+  pTurn(pid);return true}
+function pPots(){const o=S.po,inh=o.inh,live=pLive();
+  const caps=[...new Set(live.map(p=>o.tot[p]||0))].filter(x=>x>0).sort((a,b)=>a-b);
+  const pots=[];let prev=0;
+  caps.forEach(cap=>{let amt=0;inh.forEach(p=>{const t=o.tot[p]||0;amt+=Math.max(0,Math.min(t,cap)-prev)});pots.push({amt,el:live.filter(p=>(o.tot[p]||0)>=cap)});prev=cap});
+  let left=0;inh.forEach(p=>{const t=o.tot[p]||0;if(t>prev)left+=t-prev});if(left&&pots.length)pots[pots.length-1].amt+=left;
+  return pots.filter(x=>x.amt>0)}
+function pSplit(amt,win){const o=S.po;const order=[];let q=o.btnP;for(let i=0;i<o.seats.length;i++){q=pAfter(q,()=>true);if(win.includes(q)&&!order.includes(q))order.push(q)}
+  const each=Math.floor(amt/win.length);let rem=amt-each*win.length;const r={};order.forEach(p=>{r[p]=each+(rem>0?1:0);if(rem>0)rem--});return r}
+function pShowdown(){const o=S.po,live=pLive();live.forEach(p=>{o.best[p]=pBest([...o.hole[p],...o.board]);o.shown[p]=1});
+  const pots=pPots().map(pt=>{const top=Math.max(...pt.el.map(p=>o.best[p].s));const win=pt.el.filter(p=>o.best[p].s===top);const sh=pSplit(pt.amt,win);Object.entries(sh).forEach(([p,v])=>{o.ch[p]+=v;o.won[p]=(o.won[p]||0)+v});return {amt:pt.amt,win,name:pName(o.best[win[0]]),cs:o.best[win[0]].cs}});
+  o.res={pots,sd:true};pAfterHand()}
+function pWinFold(){const o=S.po,w=pLive()[0],amt=pPot();o.ch[w]+=amt;o.won[w]=amt;o.res={pots:[{amt,win:[w],name:null}],sd:false};pAfterHand()}
+function pAfterHand(){const o=S.po;o.cur=null;o.dl=0;o.need=[];o.can=[];
+  const bust=o.inh.filter(p=>o.ch[p]===0&&!o.out.includes(p));bust.sort((a,b)=>(o.tot[a]||0)-(o.tot[b]||0)).forEach(p=>o.out.push(p));
+  const pt=o.res.pots.map(x=>`${x.win.map(nm).join(' и ')} ${x.win.length>1?'делят':'забирает'} ${x.amt}${x.name?' — '+x.name:''}`).join('; ');
+  const line=`Раздача ${o.hand}${o.board.length?' ['+o.board.map(pTxt).join(' ')+']':''}: ${pt}${o.res.sd?'':' (остальные сбросили)'}.`;
+  o.hist.unshift(line);o.hist=o.hist.slice(0,40);chron(line);
+  bust.forEach(p=>chron(`${nm(p)} остаётся без фишек.`));
+  setPhase('show')}
+function pEnd(){const o=S.po;o.cur=null;o.dl=0;
+  const rank=pRank();const pts={},won={};
+  rank.forEach((p,i)=>{pts[p]=Math.max(0,(rank.length>=3?3:2)-i);won[p]=i===0});
+  const w=rank[0];const solo=o.seats.filter(p=>o.ch[p]>0).length===1;
+  S.win={side:'town',why:solo?`${nm(w)} забирает все фишки за ${o.hand} раздач.`:`Партия завершена после ${o.hand} раздач. Больше всех фишек у ${nm(w)}: ${o.ch[w]}.`};
+  S.final={pts,won,goals:{},snipe:{}};chron(S.win.why);setPhase('end')}
+function pRank(){const o=S.po;return o.seats.filter(p=>P(p)).slice().sort((a,b)=>(o.ch[b]-o.ch[a])||(o.out.indexOf(b)-o.out.indexOf(a)))}
+function pTimeout(){const o=S.po,c=o.cur;if(!c)return;const owe=o.max-(o.bet[c]||0);pAct(c,owe>0?'fold':'check');if(o.last[c])o.last[c].auto=1}
+function pAuto(){const o=S.po;if(!o)return;
+  if(S.phase==='hand'){if(o.dl&&Date.now()>o.dl)pTimeout();return}
+  if(S.phase==='show'){const req=S.players.filter(p=>o.ch[p.pid]>0),g=req.filter(p=>S.inp[p.pid]?.go).length;
+    if((req.length&&g>=req.length)||(age()>20&&g*2>=req.length)||age()>45)pNewHand()}}
+function pForce(){if(S.phase==='hand')pTimeout();else if(S.phase==='show')pNewHand()}
+function pInput(pid,k,v){const o=S.po,p=P(pid);if(!p||!o)return false;
+  if(k==='pa'){if(!v||typeof v!=='object'||v.s!==o.seq)return false;return pAct(pid,String(v.t),v.a)}
+  if(k==='go'){if(S.phase!=='show'||S.inp[pid]?.go)return false;S.inp[pid]={...(S.inp[pid]||{}),go:true};pAuto();return true}
+  if(k==='shw'){if(S.phase!=='show'||!o.inh.includes(pid)||o.shown[pid])return false;o.shown[pid]=1;if(o.board.length>=3)o.best[pid]=pBest([...o.hole[pid],...o.board]);return true}
+  if(k==='rb'){const op=S.popts||PDEF;if(!op.rebuy||o.rb[pid]||o.ch[pid]>0||o.stop||!['show','hand'].includes(S.phase))return false;o.ch[pid]=op.stack;o.rb[pid]=1;o.out=o.out.filter(q=>q!==pid);chron(`${p.name} докупается: ${op.stack} фишек.`);return true}
+  return false}
+
+/* views */
+function pTop(){const o=S.po;if(!o)return '';const [sb,bb]=pBl(),op=S.popts||PDEF;const nxt=op.grow?op.grow-((o.hand-1)%op.grow):0;
+  return `<div class="top"><div class="t1"><b>Покер</b><span class="small mute">${S.phase==='end'?`Партия окончена · ${o.hand} раздач`:`Раздача ${o.hand} · блайнды ${sb}/${bb}`}${S.phase!=='end'&&op.grow&&o.lvl<PBL.length-1?` · рост через ${nxt}`:''}${o.lvlUp&&S.phase==='hand'?' · <b style="color:var(--acc)">блайнды выросли</b>':''}</span>${toggles()}</div></div>`}
+function pLastTxt(l){if(!l)return '';const a=l.a;return {sb:'малый блайнд '+a,bb:'большой блайнд '+a,fold:'фолд',check:'чек',call:'колл '+a,bet:'ставка '+a,raise:'рейз до '+a,allin:'олл-ин '+a}[l.t]+(l.auto?' (время)':'')}
+function pSeat(pid,vp){const o=S.po,p=P(pid);if(!p)return '';const inH=o.inh.includes(pid),ch=o.ch[pid]||0,ph=S.phase;
+  const tags=[pid===o.btnP&&inH?'<span class="ptag d">D</span>':'',pid===o.sbP&&inH&&o.sbP!==o.btnP?'<span class="ptag">МБ</span>':'',pid===o.bbP&&inH?'<span class="ptag">ББ</span>':''].join('');
+  let st='';
+  if(!inH)st=ch?'ждёт следующей раздачи':'без фишек';
+  else if(o.fold[pid])st='фолд';
+  else if(ph==='hand'&&o.cur===pid){const left=o.dl?Math.max(0,Math.ceil((o.dl-pNow())/1000)):0;st=`<b style="color:var(--acc)">ходит${o.dl?' · '+pTm(left):''}</b>`}
+  else st=pLastTxt(o.last[pid]);
+  if(inH&&o.ai[pid]&&!o.fold[pid])st=(st&&!/олл-ин/.test(st)?st+' · ':'')+'<b style="color:#ffb648">олл-ин</b>';
+  const showC=ph==='show'&&inH&&o.shown[pid]&&o.hole[pid];
+  const cards=showC?`<span class="pcs">${o.hole[pid].map(c=>pCard(c,'sm')).join('')}</span>`:(inH&&!o.fold[pid]&&pid!==vp&&ph==='hand'?`<span class="pcs">${pCard(-1,'sm xs')}${pCard(-1,'sm xs')}</span>`:'');
+  const won=ph==='show'&&o.won[pid]?`<span class="pwin">+${o.won[pid]}</span>`:'';
+  const bn=ph==='show'&&showC&&o.best[pid]?`<br><span class="tiny">${esc(pName(o.best[pid]))}</span>`:'';
+  return `<div class="pseat ${ph==='hand'&&o.cur===pid?'cur':''} ${inH&&!o.fold[pid]?'':'out'}"><span class="av">${esc(p.name.slice(0,1).toUpperCase())}</span><span class="pn"><b>${esc(p.name)}${pid===vp?' (вы)':''}</b> ${tags}<br><span class="tiny mute">${st}</span>${bn}</span>${cards}<span class="pch"><b>${ch}</b>${(o.bet[pid]&&ph==='hand')?`<span class="tiny">в банке ${o.bet[pid]}</span>`:''}${won}</span></div>`}
+function pBoard(){const o=S.po;const hl=new Set();if(S.phase==='show'&&o.res&&o.res.sd&&o.res.pots[0])o.res.pots[0].cs.forEach(c=>hl.add(c));
+  const b=[0,1,2,3,4].map(i=>pCard(o.board[i]!=null?o.board[i]:null,o.board[i]!=null&&hl.size&&!hl.has(o.board[i])?'dim':o.board[i]!=null&&hl.has(o.board[i])?'hl':'')).join('');
+  return `<div class="ptable"><div class="tiny" style="color:#cfe9d9;letter-spacing:.08em;text-transform:uppercase">${S.phase==='show'?'Итог раздачи':PST[o.st]}</div><div class="pboard">${b}</div><div class="pot">Банк: ${pPot()}</div></div>`}
+function pMine(vp){const o=S.po;if(!o.inh.includes(vp)||!o.hole[vp])return '';const h=o.hole[vp],open=ui.pkOpen===o.hand+':'+S.gid||S.phase==='show'||o.fold[vp];
+  const hl=new Set(S.phase==='show'&&o.best[vp]?o.best[vp].cs:[]);
+  let combo='';if(open){const b=o.board.length>=3?pBest([...h,...o.board]):null;combo=b?pName(b):pR(h[0])===pR(h[1])?'Карманная пара '+PRG[pR(h[0])]:pS(h[0])===pS(h[1])?'Одномастные':''}
+  return `<div class="box pmine ${o.fold[vp]?'out':''}"><div class="lbl">Ваши карты${o.fold[vp]?' · вы сбросили':''}</div>
+  <button class="pmc" data-act="pkPeek" ${S.phase==='show'?'disabled':''}>${h.map(c=>open?pCard(c,'big'+(hl.size&&hl.has(c)?' hl':'')):pCard(-1,'big')).join('')}</button>
+  <p class="small" style="margin:6px 0 0">${open?(combo?'У вас: <b>'+esc(combo)+'</b>':''):'<span class="mute">Карты закрыты от соседей. Нажмите, чтобы посмотреть.</span>'}${open&&S.phase==='hand'&&!o.fold[vp]?' <span class="tiny mute">'+(combo?'· ':'')+'нажмите, чтобы закрыть</span>':''}</p></div>`}
+function pActs(vp){const o=S.po;if(S.phase!=='hand'||o.cur!==vp)return '';
+  const mb=o.bet[vp]||0,owe=o.max-mb,ch=o.ch[vp],maxTo=mb+ch,can=o.can.includes(vp)&&maxTo>o.max,minTo=Math.min(maxTo,o.max+o.minR);
+  let r=+ui.pkR;if(!(r>=minTo&&r<=maxTo))r=ui.pkR=minTo;
+  const pot=pPot(),cl=v=>Math.max(minTo,Math.min(maxTo,Math.round(v)));
+  const pre=[['Мин',minTo],['½ банка',cl(o.max+(pot+owe)/2)],['Банк',cl(o.max+pot+owe)],['Олл-ин',maxTo]];
+  const callTxt=owe<=0?'Чек':owe>=ch?`Олл-ин ${ch}`:`Колл ${owe}`;
+  const rTxt=v=>v>=maxTo?`Олл-ин ${maxTo}`:(o.max?'Рейз до ':'Ставка ')+v;
+  return `<div class="box acc pacts"><div class="lbl">Ваш ход${owe>0?` · нужно добавить ${Math.min(owe,ch)}`:''}</div>
+  <div class="row"><button class="btn ghost" data-act="pkF" style="flex:1">Фолд</button><button class="btn pri" data-act="pkC" style="flex:2">${callTxt}</button></div>
+  ${can?`<div class="sep"></div><div class="row" style="gap:6px">${pre.map(([t,v])=>`<button class="btn sm ${r===v?'pri':'ghost'}" data-act="pkSet" data-v="${v}">${t}</button>`).join('')}</div>
+  ${minTo<maxTo?`<div class="row" style="align-items:center;gap:8px;margin-top:8px"><button class="btn sm ghost" data-act="pkStep" data-v="-1">−</button><input id="pkr" type="range" min="${minTo}" max="${maxTo}" step="1" value="${r}" style="flex:1"><button class="btn sm ghost" data-act="pkStep" data-v="1">+</button></div>`:''}
+  <button class="btn" data-act="pkRz" id="pkrl" style="width:100%;margin-top:8px">${rTxt(r)}</button>`:''}</div>`}
+function pResult(vp){const o=S.po;if(S.phase!=='show'||!o.res)return '';const iIn=o.inh.includes(vp);
+  return `<div class="box acc"><div class="lbl">Раздача ${o.hand}</div>${o.res.pots.map((x,i)=>`<p><b>${x.win.map(p=>esc(nm(p))).join(' и ')}</b> ${x.win.length>1?'делят':'забирает'} <b>${x.amt}</b>${o.res.pots.length>1?` <span class="tiny mute">(${i?'побочный банк':'основной банк'})</span>`:''}${x.name?`<br><span class="small">${esc(x.name)}</span>`:'<br><span class="small mute">Остальные сбросили карты</span>'}</p>`).join('')}
+  ${o.runout?'<p class="tiny mute">Все в олл-ине — общие карты открыты до конца.</p>':''}
+  ${iIn&&!o.shown[vp]?`<button class="btn sm ghost" data-act="pkShow">Показать мои карты всем</button>`:''}</div>`}
+function pBust(vp){const o=S.po,op=S.popts||PDEF;if(!P(vp)||o.ch[vp]>0)return '';
+  return `<div class="box" style="border-color:var(--red)"><p><b>Фишки закончились.</b> ${op.rebuy&&!o.rb[vp]&&!o.stop?'Можно один раз докупиться и вернуться со следующей раздачи.':'Досматривайте партию — место в рейтинге уже есть.'}</p>${op.rebuy&&!o.rb[vp]&&!o.stop?`<button class="btn pri" data-act="pkRb">Докупиться на ${op.stack}</button>`:''}</div>`}
+function pHost(){const o=S.po;if(!isHost||S.phase==='end')return '';const waited=o.cur&&o.cur!==me.pid&&(Date.now()-(o.curAt||0))>20000;
+  return `${waited?`<div class="box"><p class="small">${esc(nm(o.cur))} думает уже больше 20 секунд. Если телефон отключился, можно сходить за игрока.</p><button class="btn sm" data-act="pkSkip">Ход за ${esc(nm(o.cur))}: ${o.max-(o.bet[o.cur]||0)>0?'фолд':'чек'}</button></div>`:''}
+  <details class="box"><summary>Управление партией</summary><p class="small mute">Партия идёт, пока у всех, кроме одного, не кончатся фишки. Можно закончить раньше: победит тот, у кого больше фишек.</p>
+  <button class="btn sm ${o.stop?'pri':'ghost'}" data-act="pkStop">${o.stop?'Последняя раздача ✓ (отменить)':'Закончить после этой раздачи'}</button>
+  ${S.phase==='show'?`<button class="btn sm ghost" data-act="pkEndNow">${ui.pkEndC?'Точно закончить сейчас?':'Закончить прямо сейчас'}</button>`:''}</details>`}
+function pPhase(vp){const o=S.po;if(!o)return '';const ph=S.phase;
+  if(ph==='end')return pEndView(vp);
+  if(!P(vp))return `<div class="box"><p>Игра уже идёт без вас. Можно наблюдать.</p></div>`+pBoard()+`<div class="box">${o.seats.map(p=>pSeat(p,vp)).join('')}</div>`;
+  return pResult(vp)+pBoard()+pActs(vp)+pMine(vp)+pBust(vp)+`<div class="box"><div class="lbl">Стол</div>${o.seats.map(p=>pSeat(p,vp)).join('')}</div>`+pHost()}
+function pEndView(vp){const o=S.po,F=S.final||{pts:{}};recordStats();const rank=pRank();
+  return `<div class="win town"><h1>${esc(nm(rank[0]))} — победа</h1><p>${esc(S.win.why)}</p></div>
+  <div class="box"><div class="lbl">Итоговые места</div>${rank.map((p,i)=>`<p class="small"><b>${i+1}. ${esc(nm(p))}</b> · ${o.ch[p]} фишек${o.rb[p]?' <span class="mute">· докупался</span>':''} <span class="mute">· +${F.pts[p]||0} оч.</span></p>`).join('')}<p class="tiny mute">В рейтинг: 1-е место +3, 2-е +2, 3-е +1 (вдвоём: +2 и +1).</p></div>
+  <div class="box"><div class="lbl">Последние раздачи</div>${o.hist.slice(0,12).map(t=>`<p class="small">${esc(t)}</p>`).join('')}</div>
+  <div class="row"><button class="btn pri" data-act="shareCard">Поделиться итогами</button><button class="btn" data-act="tab" data-v="stats">Статистика</button></div>`}
+function pRules(){return `<details class="box" open><summary>Правила за минуту</summary><ul class="rules small">
+<li>Техасский холдем на игровые фишки, от 2 до 10 игроков, каждый со своего телефона. Денег нет и не будет.</li>
+<li>Каждому раздаются 2 закрытые карты: их видите только вы, на своём телефоне. На стол по очереди выкладываются 5 общих карт: флоп (3), тёрн (1), ривер (1).</li>
+<li>Перед раздачей двое слева от дилера (D) ставят блайнды: малый (МБ) и большой (ББ). Дилер сдвигается каждую раздачу.</li>
+<li>В свой ход: <b>фолд</b> — сбросить карты, <b>чек</b> — пропустить, если ставок нет, <b>колл</b> — уравнять ставку, <b>рейз</b> — поднять. Минимальный рейз — на размер прошлого повышения. Олл-ин — поставить всё.</li>
+<li>Побеждает лучшая комбинация из 5 карт среди ваших двух и пяти общих. По старшинству: старшая карта, пара, две пары, сет, стрит, флеш, фулл-хаус, каре, стрит-флеш, роял-флеш.</li>
+<li>Если кто-то в олл-ине на меньшую сумму, он может выиграть только ту часть банка, которую покрыл. Остальное — побочный банк, его делят другие. Всё считается само.</li>
+<li>Если включён таймер, по истечении времени телефон сам делает чек, а если нужно доплатить — фолд.</li>
+<li>Блайнды растут каждые несколько раздач (настраивается). Кто остался без фишек, может один раз докупиться, если это включено.</li>
+<li>Партия до последнего игрока с фишками. Создатель может закончить раньше — тогда побеждает тот, у кого больше фишек.</li></ul></details>`}
+function pDossier(){const o=S.po;return `<div class="box"><div class="lbl">История раздач</div>${o&&o.hist.length?o.hist.map(t=>`<p class="small">${esc(t)}</p>`).join(''):'<p class="small mute">Пока пусто.</p>'}</div>`+pCombos()}
+function pCombos(){const ex=[['Роял-флеш','10 В Д К Т одной масти'],['Стрит-флеш','5 подряд одной масти'],['Каре','4 одинаковые'],['Фулл-хаус','3 + 2 одинаковые'],['Флеш','5 одной масти'],['Стрит','5 подряд'],['Сет','3 одинаковые'],['Две пары','2 + 2'],['Пара','2 одинаковые'],['Старшая карта','ничего из этого']];
+  return `<details class="box"><summary>Комбинации — от старшей к младшей</summary>${ex.map(([a,b])=>`<p class="small"><b>${a}</b> <span class="mute">— ${b}</span></p>`).join('')}<p class="tiny mute">Т — туз, К — король, Д — дама, В — валет. Туз может быть и младшей картой стрита: Т 2 3 4 5.</p></details>`}
+function pLobby(){const host=isHost,o=Object.assign({},PDEF,S.popts||{}),n=S.players.length;const bl=PBL[PSTK[o.stack]!=null?PSTK[o.stack]:1];
+  const b=(k,v,t)=>`<button class="btn sm ${o[k]===v?'pri':'ghost'}" ${host?`data-act="popt" data-v="${k}:${v}"`:'disabled'}>${t}</button>`;
+  return `<div class="box"><div class="lbl">Настройки ${host?'':'· меняет создатель'}</div>
+  <p class="small" style="margin:4px 0">Фишек у каждого</p><div class="row" style="gap:6px">${b('stack',500,'500')}${b('stack',1000,'1 000')}${b('stack',2000,'2 000')}${b('stack',5000,'5 000')}</div>
+  <p class="small" style="margin:10px 0 4px">Блайнды растут</p><div class="row" style="gap:6px">${b('grow',6,'каждые 6 раздач')}${b('grow',10,'каждые 10')}${b('grow',0,'не растут')}</div>
+  <p class="small" style="margin:10px 0 4px">Время на ход</p><div class="row" style="gap:6px">${b('tmr',30,'30 с')}${b('tmr',60,'60 с')}${b('tmr',0,'без таймера')}</div>
+  <p class="small" style="margin:10px 0 4px">Докупка</p><div class="row" style="gap:6px">${b('rebuy',true,'можно один раз')}${b('rebuy',false,'нельзя')}</div>
+  <p class="tiny mute" style="margin-top:10px">Стартовые блайнды ${bl[0]}/${bl[1]}. ${n>10?'<b style="color:#ff8a90">За столом максимум 10 игроков.</b>':'От 2 до 10 игроков.'} Чем быстрее растут блайнды, тем короче партия.</p></div>`}
+function pokHome(g){return `<button class="btn ghost sm" data-act="page" data-v="hub" style="margin-top:6px">← Все игры</button>
+  <div class="hero"><h1><span>Покер</span></h1><p class="mute">${esc(g.d)} От ${g.min} до 10 игроков.</p></div>
+  <div class="box" id="enter"><div class="lbl">Ваше имя</div><input id="nm" maxlength="20" placeholder="Например, Куаныш" value="${esc(me.name)}" autocomplete="off">
+  ${ui.err?`<p class="small" style="color:${/…$/.test(ui.err)?'var(--mute)':'#ff8a90'}">${esc(ui.err)}</p>`:''}
+  <div class="sep"></div><div class="row"><button class="btn pri" data-act="create">Создать игру</button></div>
+  <div class="row" style="margin-top:10px"><input id="code" maxlength="8" placeholder="Код игры" value="${esc(ui.code)}" style="flex:1 1 120px;text-transform:uppercase" autocomplete="off"><button class="btn" data-act="join">Войти</button></div>
+  <p class="tiny mute">Только каждый со своего телефона: свои карты видите только вы. Надёжнее всего, когда все в одном Wi‑Fi.</p></div>
+  ${pCombos()}<details class="box"><summary>Статистика: Покер</summary>${statsHtml('pok')}</details>${pRules().replace(' open','')}`}
+function pBar(){const o=S.po,ph=S.phase;let lab='',btn='';
+  if(ph==='hand'){const c=o.cur;const left=o.dl?Math.max(0,Math.ceil((o.dl-pNow())/1000)):0;
+    lab=c===me.pid?`<b>Ваш ход</b>${PST[o.st]}${o.dl?' · осталось '+pTm(left):''}`:`<b>${PST[o.st]}</b>${c?'Ходит '+esc(nm(c))+(o.dl?' · '+pTm(left):''):'Открываем карты…'}`}
+  else if(ph==='show'){const req=S.players.filter(p=>o.ch[p.pid]>0),g=req.filter(p=>S.inp[p.pid]?.go).length,my=S.inp[me.pid]?.go||mine('go',me.pid);
+    lab=`<b>${o.stop?'Последняя раздача сыграна':'Следующая раздача'}</b>Когда готовы все: ${g}/${req.length}`;
+    if(o.ch[me.pid]>0||isHost)btn=`<button class="btn ${my?'':'pri'}" data-act="go" ${my?'disabled':''}>${my?'Жду других':o.stop?'К итогам':'Раздать'}</button>`}
+  return `<div class="hostbar"><div class="in"><div class="lab">${lab}</div>${btn}</div></div>`}
+function pShareText(){const o=S.po;return `Покер · Вечер игр\n${S.win.why}\n`+pRank().map((p,i)=>`${i+1}. ${nm(p)} — ${o.ch[p]} фишек`).join('\n')+'\n'+location.origin+location.pathname+'#poker'}
+const pTm=l=>`<span class="pktm">${l}</span> с`;
+setInterval(()=>{if(!S||!PK()||S.phase!=='hand'||!S.po||!S.po.cur)return;const o=S.po;
+  if(o.dl){const l=String(Math.max(0,Math.ceil((o.dl-pNow())/1000)));document.querySelectorAll('.pktm').forEach(e=>{if(e.textContent!==l)e.textContent=l})}
+  if(isHost&&o.cur!==me.pid&&Date.now()-(o.curAt||0)>20000&&ui.pkWait!==o.seq){ui.pkWait=o.seq;render()}},500);
+document.addEventListener('input',e=>{if(e.target.id!=='pkr'||!S||!PK())return;ui.pkR=+e.target.value;const o=S.po,vp=me.pid,maxTo=(o.bet[vp]||0)+o.ch[vp],l=$('#pkrl');if(l)l.textContent=ui.pkR>=maxTo?`Олл-ин ${maxTo}`:(o.max?'Рейз до ':'Ставка ')+ui.pkR});
+
 /* ---------- commit / sync ---------- */
 function commit(){S.rev++;S.hostNow=Date.now();if(S.local)LS.set('maf.local',S);else{LS.set('maf.host',{code:S.code,S});broadcast()}speak();render()}
 let ruVoice=null;function pickVoice(){try{const v=speechSynthesis.getVoices();ruVoice=v.find(x=>/^ru/i.test(x.lang))||null}catch(e){}}
@@ -2044,7 +2302,7 @@ function handlePeer(pr){let c=false,pl=P(pr.pid);const name=clean(pr.name).slice
   if(!pl){if(S.phase==='lobby'&&S.players.length<16&&!S.kicked.includes(pr.pid)){S.players.push({pid:pr.pid,name,alive:true});c=true;pl=P(pr.pid)}else return false}
   else if(S.phase==='lobby'&&pl.name!==name){pl.name=name;c=true}
   if(Array.isArray(pr.sp)){const ids=new Set(S.log.map(l=>l.i));for(const e of pr.sp.slice(-4)){if(e&&typeof e.i==='string'&&!ids.has(e.i)&&typeof e.t==='string'&&clean(e.t)){addLog({i:e.i,d:S.day,s:P(e.s)?e.s:pr.pid,by:pr.pid,t:clean(e.t).slice(0,280)});c=true}}}
-  if(pr.pk===S.pk&&pr.a&&typeof pr.a==='object'){for(const k of ['sv','mv','vn','tk','kl','rp','btn','sab','fix','iv','rdy','ans','hint','req','share','code','acc','dn','shot','ready','cv','team','ms','vote','na','go','ne','use','rv','oa','bv','act'])if(pr.a[k]!==undefined&&input(pr.pid,k,pr.a[k]))c=true}
+  if(pr.pk===S.pk&&pr.a&&typeof pr.a==='object'){for(const k of ['pa','shw','rb','sv','mv','vn','tk','kl','rp','btn','sab','fix','iv','rdy','ans','hint','req','share','code','acc','dn','shot','ready','cv','team','ms','vote','na','go','ne','use','rv','oa','bv','act'])if(pr.a[k]!==undefined&&input(pr.pid,k,pr.a[k]))c=true}
   return c}
 function onRemote(d){if(!d||!d.gid)return;if(S&&S.gid===d.gid&&d.rev<S.rev)return;
   S=JSON.parse(JSON.stringify(d));ui.skew=(S.hostNow||Date.now())-Date.now();
@@ -2096,7 +2354,7 @@ function micToggle(){
     rec.onend=()=>{if(ui.wantMic){try{rec.start();return}catch(e){}}ui.listening=false;render()};rec.start();ui.listening=true;ui.wantMic=true}catch(e){ui.noMic=true;toast('Микрофон недоступен')}render()}}
 
 /* ---------- AI ---------- */
-function narr(){if(!S)return '';if(IM())return iNarr();if(ES())return eNarr();if(DT())return dNarr();if(CL())return cNarr();if(BK())return bNarr();const s=sc(),ph=S.phase;
+function narr(){if(!S)return '';if(PK())return S.phase==='end'&&S.win?S.win.why:'';if(IM())return iNarr();if(ES())return eNarr();if(DT())return dNarr();if(CL())return cNarr();if(BK())return bNarr();const s=sc(),ph=S.phase;
   switch(ph){case 'intro':return COOP()?coopIntro(s):s.intro;
   case 'crisis':return `День ${S.day}. ${crDef().t}. ${crDef().x}`;
   case 'team':return `Лидер дня, ${nm(S.crisis.lead)}, собирает отряд из ${teamSize()} человек.`;
@@ -2133,27 +2391,27 @@ const SND={ctx:null,on:LS.get('maf.snd',false),amb:null,tk:null,cur:null,
  sting(k){if(!this.on||!this.init())return;const c=this.ctx,t=c.currentTime;
   const q={death:[[110,0],[82,.28],[55,.56]],win:[[392,0],[494,.15],[587,.3],[784,.45]],lose:[[294,0],[247,.32],[196,.64]],phase:[[660,0],[880,.12]],night:[[220,0],[165,.45]],morning:[[523,0],[659,.18],[784,.36]]}[k]||[];
   q.forEach(([f,d])=>{const o=c.createOscillator(),g=c.createGain();o.type=k==='death'?'sawtooth':'triangle';o.frequency.value=f;const len=k==='death'?1:.6;g.gain.setValueAtTime(.0001,t+d);g.gain.exponentialRampToValueAtTime(.22,t+d+.03);g.gain.exponentialRampToValueAtTime(.0001,t+d+len);o.connect(g).connect(c.destination);o.start(t+d);o.stop(t+d+len+.05)})}};
-function ambient(){if(!SND.on)return;if(!S||S.phase==='lobby'){if(SND.cur)SND.stop();return}const id=IM()?'orbit':ES()?'hotel':DT()?'vamp':CL()?'tower':BK()?BAMB[S.cat]:S.scen;if(SND.cur!==id)SND.start(id)}
+function ambient(){if(!SND.on)return;if(!S||S.phase==='lobby'||PK()){if(SND.cur)SND.stop();return}const id=IM()?'orbit':ES()?'hotel':DT()?'vamp':CL()?'tower':BK()?BAMB[S.cat]:S.scen;if(SND.cur!==id)SND.start(id)}
 function phaseSound(){if(!S||!SND.on||ui.sndPk===S.pk)return;const first=ui.sndPk==null;ui.sndPk=S.pk;if(first)return;
-  const ph=S.phase;if(ph==='night')SND.sting('night');else if(ph==='morning')SND.sting(S.res&&S.res.deaths&&S.res.deaths.length?'death':'morning');
-  else if(ph==='vres')SND.sting(S.res&&S.res.pid?'death':'phase');else if(ph==='end'){const p=P(me.pid);const lost=(BK()||DT()||ES()||IM())?(p&&S.final&&!S.final.won[p.pid]):(!S.local&&p&&SIDE(p.role)!==S.win.side);SND.sting(lost?'lose':'win')}else if(ph!=='lobby')SND.sting('phase')}
+  const ph=S.phase;if(PK()&&ph!=='end'){if(ph==='hand'&&S.po&&S.po.cur===me.pid&&ui.pkTurn!==S.po.seq){ui.pkTurn=S.po.seq;SND.sting('phase')}return}if(ph==='night')SND.sting('night');else if(ph==='morning')SND.sting(S.res&&S.res.deaths&&S.res.deaths.length?'death':'morning');
+  else if(ph==='vres')SND.sting(S.res&&S.res.pid?'death':'phase');else if(ph==='end'){const p=P(me.pid);const lost=(BK()||DT()||ES()||IM()||PK())?(p&&S.final&&!S.final.won[p.pid]):(!S.local&&p&&SIDE(p.role)!==S.win.side);SND.sting(lost?'lose':'win')}else if(ph!=='lobby')SND.sting('phase')}
 
 /* ---------- stats ---------- */
 function loadStats(){const st=LS.get('maf.stats',null)||{};if(!st.v){const old=st;const nw={v:2,gids:old.gids||[],m:{mafia:{p:old.p||{},g:old.g||[]},coop:{p:{},g:[]}}};LS.set('maf.stats',nw);return nw}return st}
 function recordStats(){if(!S||!S.final||!S.win)return;const st=loadStats();if(st.gids.includes(S.gid))return;
-  st.gids.push(S.gid);st.gids=st.gids.slice(-80);const w=S.win.side,md=IM()?'imp':ES()?'esc':DT()?'det':CL()?'classic':BK()?'bunker':COOP()?'coop':'mafia',M=st.m[md]=st.m[md]||{p:{},g:[]};
+  st.gids.push(S.gid);st.gids=st.gids.slice(-80);const w=S.win.side,md=PK()?'pok':IM()?'imp':ES()?'esc':DT()?'det':CL()?'classic':BK()?'bunker':COOP()?'coop':'mafia',M=st.m[md]=st.m[md]||{p:{},g:[]};
   S.players.forEach(p=>{const k=p.name.trim().toLowerCase();const r=M.p[k]=M.p[k]||{n:p.name,g:0,w:0,maf:0,mw:0,goals:0,pts:0,snipe:0};r.n=p.name;
-    const won=S.final.won?!!S.final.won[p.pid]:SIDE(p.role)===w;r.g++;if(won)r.w++;if(BK()?!p.out:(DT()||ES())?false:IM()?p.role==='imp':SIDE(p.role)!=='town'){r.maf++;if(won)r.mw++}if(S.final.goals[p.pid])r.goals++;r.pts+=S.final.pts[p.pid]||0;r.snipe+=(S.final.snipe||{})[p.pid]||0});
-  M.g.unshift({d:new Date().toLocaleDateString('ru-RU'),t:IM()?'Станция «Полярис»':ES()?ER.title:DT()?'Дело №'+DCASE.no+' «'+DCASE.title+'»':CL()?'Классика':BK()?bcat().title:sc().title,w:IM()?(w==='town'?'победил экипаж':'победили самозванцы'):ES()?(w==='town'?'выбрались, осталось '+eFmt(S.esc.leftAt||0):'не выбрались'):DT()?(w==='town'?'дело раскрыто':'дело не раскрыто'):CL()?(w==='town'?'победил город':w==='man'?'победил маньяк':'победила мафия'):BK()?({both:'выжили все',in:'выжил бункер',out:'выжили снаружи',none:'не выжил никто'}[w]):COOP()?(w==='town'?'все выжили':'не выжили'):w==='town'?'победили выжившие':w==='man'?'победил маньяк':'победили '+sc().roles.maf.pl.toLowerCase()});M.g=M.g.slice(0,20);LS.set('maf.stats',st)}
-function statsHtml(md){md=md||(S?(IM()?'imp':ES()?'esc':DT()?'det':CL()?'classic':BK()?'bunker':COOP()?'coop':'mafia'):'mafia');const st=loadStats(),M=st.m[md]||{p:{},g:[]},isI=md==='imp',isE=md==='esc',isD=md==='det'||isE,isC=md==='coop'||md==='bunker'||isD,isB=md==='bunker'||isD,title=GAMES[pageOf(md)].t;const rows=Object.values(M.p).sort((a,b)=>b.pts-a.pts);
+    const won=S.final.won?!!S.final.won[p.pid]:SIDE(p.role)===w;r.g++;if(won)r.w++;if(BK()?!p.out:(DT()||ES()||PK())?false:IM()?p.role==='imp':SIDE(p.role)!=='town'){r.maf++;if(won)r.mw++}if(S.final.goals[p.pid])r.goals++;r.pts+=S.final.pts[p.pid]||0;r.snipe+=(S.final.snipe||{})[p.pid]||0});
+  M.g.unshift({d:new Date().toLocaleDateString('ru-RU'),t:PK()?'Техасский холдем, '+S.po.hand+' раздач':IM()?'Станция «Полярис»':ES()?ER.title:DT()?'Дело №'+DCASE.no+' «'+DCASE.title+'»':CL()?'Классика':BK()?bcat().title:sc().title,w:PK()?'победил '+nm(pRank()[0]):IM()?(w==='town'?'победил экипаж':'победили самозванцы'):ES()?(w==='town'?'выбрались, осталось '+eFmt(S.esc.leftAt||0):'не выбрались'):DT()?(w==='town'?'дело раскрыто':'дело не раскрыто'):CL()?(w==='town'?'победил город':w==='man'?'победил маньяк':'победила мафия'):BK()?({both:'выжили все',in:'выжил бункер',out:'выжили снаружи',none:'не выжил никто'}[w]):COOP()?(w==='town'?'все выжили':'не выжили'):w==='town'?'победили выжившие':w==='man'?'победил маньяк':'победили '+sc().roles.maf.pl.toLowerCase()});M.g=M.g.slice(0,20);LS.set('maf.stats',st)}
+function statsHtml(md){md=md||(S?(PK()?'pok':IM()?'imp':ES()?'esc':DT()?'det':CL()?'classic':BK()?'bunker':COOP()?'coop':'mafia'):'mafia');const st=loadStats(),M=st.m[md]||{p:{},g:[]},isI=md==='imp',isE=md==='esc',isP=md==='pok',isD=md==='det'||isE||isP,isC=md==='coop'||md==='bunker'||isD,isB=md==='bunker'||isD,title=GAMES[pageOf(md)].t;const rows=Object.values(M.p).sort((a,b)=>b.pts-a.pts);
   if(!rows.length)return `<div class="box"><div class="lbl">${esc(title)}</div><p class="small mute">Пока пусто. После первой партии здесь появится рейтинг компании. Данные хранятся на этом телефоне.</p></div>`;
-  return `<div class="box"><div class="lbl">${esc(title)} · рейтинг на этом телефоне</div><div class="scroll"><table class="st"><thead><tr><th>Игрок</th><th>Очки</th><th>Игр</th><th>${isE?'Выбрались':isD?'Раскрыли':isC?'Выжили':'Побед'}</th>${isD?'':isB?'<th>В бункере</th>':isC?'':(isI?'<th>Самозванцем</th>':'<th>Мафией</th>')}${isB||isI?'':'<th>Цели</th>'}${isC?'':'<th>Снайп.</th>'}</tr></thead><tbody>${rows.map((r,i)=>`<tr><td>${i<3?['1.','2.','3.'][i]+' ':''}${esc(r.n)}</td><td>${r.pts}</td><td>${r.g}</td><td>${Math.round(r.w/r.g*100)}%</td>${isD?'':isB?`<td>${r.maf}</td>`:isC?'':`<td>${r.maf}${r.maf?' ('+r.mw+' поб.)':''}</td>`}${isB||isI?'':`<td>${r.goals}</td>`}${isC?'':`<td>${r.snipe}</td>`}</tr>`).join('')}</tbody></table></div>
+  return `<div class="box"><div class="lbl">${esc(title)} · рейтинг на этом телефоне</div><div class="scroll"><table class="st"><thead><tr><th>Игрок</th><th>Очки</th><th>Игр</th><th>${isE?'Выбрались':isP?'Побед':isD?'Раскрыли':isC?'Выжили':'Побед'}</th>${isD?'':isB?'<th>В бункере</th>':isC?'':(isI?'<th>Самозванцем</th>':'<th>Мафией</th>')}${isB||isI?'':'<th>Цели</th>'}${isC?'':'<th>Снайп.</th>'}</tr></thead><tbody>${rows.map((r,i)=>`<tr><td>${i<3?['1.','2.','3.'][i]+' ':''}${esc(r.n)}</td><td>${r.pts}</td><td>${r.g}</td><td>${Math.round(r.w/r.g*100)}%</td>${isD?'':isB?`<td>${r.maf}</td>`:isC?'':`<td>${r.maf}${r.maf?' ('+r.mw+' поб.)':''}</td>`}${isB||isI?'':`<td>${r.goals}</td>`}${isC?'':`<td>${r.snipe}</td>`}</tr>`).join('')}</tbody></table></div>
   ${isC?'':'<p class="tiny mute">«Снайп.» — голоса против мафии и маньяка.</p>'}
   ${M.g.length?`<div class="lbl" style="margin-top:10px">Последние партии</div>${M.g.slice(0,8).map(g=>`<p class="small">${esc(g.d)} · ${esc(g.t)} · ${esc(g.w)}</p>`).join('')}`:''}</div>
   <button class="btn ghost" style="width:100%" data-act="resetStats">${ui.rs?'Точно очистить всю статистику?':'Очистить статистику'}</button>`}
 
 /* ---------- share card ---------- */
-async function shareCard(){if(!S||!S.win)return;if(IM()){const txt=iShareText();try{if(navigator.share){await navigator.share({text:txt});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(txt);toast('Итоги скопированы')}catch(e){toast('Не получилось поделиться')}return}if(ES()){const txt=eShareText();try{if(navigator.share){await navigator.share({text:txt});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(txt);toast('Итоги скопированы')}catch(e){toast('Не получилось поделиться')}return}if(DT()){const txt=dShareText();try{if(navigator.share){await navigator.share({text:txt});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(txt);toast('Итоги скопированы')}catch(e){toast('Не получилось поделиться')}return}if(CL()){const F=S.final;const txt=`Мафия: Классика\n${S.win.side==='town'?'Город победил':S.win.side==='man'?'Маньяк победил':'Мафия победила'}\n`+S.players.map(p=>`${p.name} — ${CROLE[p.role].n} (${F.pts[p.pid]||0} оч.)`).join('\n')+'\n'+location.origin+location.pathname+'#classic';try{if(navigator.share){await navigator.share({text:txt});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(txt);toast('Итоги скопированы')}catch(e){toast('Не получилось поделиться')}return}if(BK()){const F=S.final,c=bcat();const txt=`Бункер · ${c.title}\n${({both:'Выжили все',in:'Бункер выжил',out:'Выжили снаружи',none:'Никто не выжил'})[S.win.side]}\nВ бункере: ${inside().map(p=>p.name+' ('+p.cards.prof.t.split(',')[0]+')').join(', ')}\nСнаружи: ${outside().map(p=>p.name).join(', ')||'—'}\n`+S.players.map(p=>p.name+': '+(F.pts[p.pid]||0)+' оч.').join('\n')+'\n'+location.origin+location.pathname+'#bunker';try{if(navigator.share){await navigator.share({text:txt});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(txt);toast('Итоги скопированы')}catch(e){toast('Не получилось поделиться')}return}const s=sc(),F=S.final||{pts:{},awards:[]},W=1080,H=1350,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+async function shareCard(){if(!S||!S.win)return;if(PK()||IM()){const txt=PK()?pShareText():iShareText();try{if(navigator.share){await navigator.share({text:txt});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(txt);toast('Итоги скопированы')}catch(e){toast('Не получилось поделиться')}return}if(ES()){const txt=eShareText();try{if(navigator.share){await navigator.share({text:txt});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(txt);toast('Итоги скопированы')}catch(e){toast('Не получилось поделиться')}return}if(DT()){const txt=dShareText();try{if(navigator.share){await navigator.share({text:txt});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(txt);toast('Итоги скопированы')}catch(e){toast('Не получилось поделиться')}return}if(CL()){const F=S.final;const txt=`Мафия: Классика\n${S.win.side==='town'?'Город победил':S.win.side==='man'?'Маньяк победил':'Мафия победила'}\n`+S.players.map(p=>`${p.name} — ${CROLE[p.role].n} (${F.pts[p.pid]||0} оч.)`).join('\n')+'\n'+location.origin+location.pathname+'#classic';try{if(navigator.share){await navigator.share({text:txt});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(txt);toast('Итоги скопированы')}catch(e){toast('Не получилось поделиться')}return}if(BK()){const F=S.final,c=bcat();const txt=`Бункер · ${c.title}\n${({both:'Выжили все',in:'Бункер выжил',out:'Выжили снаружи',none:'Никто не выжил'})[S.win.side]}\nВ бункере: ${inside().map(p=>p.name+' ('+p.cards.prof.t.split(',')[0]+')').join(', ')}\nСнаружи: ${outside().map(p=>p.name).join(', ')||'—'}\n`+S.players.map(p=>p.name+': '+(F.pts[p.pid]||0)+' оч.').join('\n')+'\n'+location.origin+location.pathname+'#bunker';try{if(navigator.share){await navigator.share({text:txt});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(txt);toast('Итоги скопированы')}catch(e){toast('Не получилось поделиться')}return}const s=sc(),F=S.final||{pts:{},awards:[]},W=1080,H=1350,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
   x.fillStyle=s.bg;x.fillRect(0,0,W,H);const gr=x.createRadialGradient(W/2,0,50,W/2,0,900);gr.addColorStop(0,s.acc+'55');gr.addColorStop(1,'transparent');x.fillStyle=gr;x.fillRect(0,0,W,H);
   x.fillStyle=s.acc;x.font='bold 44px Manrope, sans-serif';x.fillText((COOP()?'ВЫЖИВАНИЕ':'МАФИЯ: ВЫЖИВАНИЕ')+' · '+s.title.toUpperCase(),70,110);
   const t=COOP()?(S.win.side==='town'?'Мы выжили':'Группа не выжила'):S.win.side==='town'?'Выжившие победили':S.win.side==='man'?'Маньяк победил':s.roles.maf.pl+' победили';
@@ -2177,7 +2435,7 @@ function render(){if(S&&S.svNote&&S.phase!=='lobby'&&ui.svSeen!==S.gid){ui.svSee
   const app=$('#app');if(!app)return;
   if(pDown){pPend=true;return}
   const a=document.activeElement,fid=a&&a.id,ss=a&&a.selectionStart;
-  const s=(IM()||(!S&&ui.page==='impostor'))?GAMES.impostor:(ES()||(!S&&ui.page==='escape'))?GAMES.escape:(DT()||(!S&&ui.page==='detective'))?GAMES.detective:(CL()||(!S&&ui.page==='classic'))?GAMES.classic:(BK()||(!S&&ui.page==='bunker'))?bcat():sc();const hubAcc=!S&&ui.page==='hub';document.body.style.setProperty('--acc',hubAcc?'#b5d94a':s.acc);document.body.style.setProperty('--sbg',hubAcc?'#0d0f14':s.bg);setTitle();
+  const s=(PK()||(!S&&ui.page==='poker'))?GAMES.poker:(IM()||(!S&&ui.page==='impostor'))?GAMES.impostor:(ES()||(!S&&ui.page==='escape'))?GAMES.escape:(DT()||(!S&&ui.page==='detective'))?GAMES.detective:(CL()||(!S&&ui.page==='classic'))?GAMES.classic:(BK()||(!S&&ui.page==='bunker'))?bcat():sc();const hubAcc=!S&&ui.page==='hub';document.body.style.setProperty('--acc',hubAcc?'#b5d94a':s.acc);document.body.style.setProperty('--sbg',hubAcc?'#0d0f14':s.bg);setTitle();
   let h;
   if(!S)h=homeView();else if(S.phase==='lobby')h=lobbyView();else h=gameView();
   document.body.classList.toggle('night',!!S&&S.phase==='night');
@@ -2223,8 +2481,8 @@ function hubView(){
   <div class="row"><input id="code" maxlength="8" placeholder="Код игры" value="${esc(ui.code)}" style="flex:1 1 120px;text-transform:uppercase" autocomplete="off"><button class="btn pri" data-act="join">Войти</button></div>
   ${ui.err?`<p class="small" style="color:${/…$/.test(ui.err)?'var(--mute)':'#ff8a90'}">${esc(ui.err)}</p>`:''}
   <p class="tiny mute">Код сам приведёт в нужную игру.</p></div>
-  <details class="box"><summary>Статистика компании</summary>${statsHtml('classic')}${statsHtml('mafia')}${statsHtml('coop')}${statsHtml('det')}${statsHtml('bunker')}${statsHtml('esc')}${statsHtml('imp')}</details>`}
-function gameHome(pg){const g=GAMES[pg],md=g.mode;const isC=md==='coop';if(md==='bunker')return bunkerHome(g);if(md==='classic')return classicHome(g);if(md==='det')return detHome(g);if(md==='esc')return escHome(g);if(md==='imp')return impHome(g);
+  <details class="box"><summary>Статистика компании</summary>${statsHtml('classic')}${statsHtml('mafia')}${statsHtml('coop')}${statsHtml('det')}${statsHtml('bunker')}${statsHtml('esc')}${statsHtml('imp')}${statsHtml('pok')}</details>`}
+function gameHome(pg){const g=GAMES[pg],md=g.mode;const isC=md==='coop';if(md==='bunker')return bunkerHome(g);if(md==='classic')return classicHome(g);if(md==='det')return detHome(g);if(md==='esc')return escHome(g);if(md==='imp')return impHome(g);if(md==='pok')return pokHome(g);
   return `<button class="btn ghost sm" data-act="page" data-v="hub" style="margin-top:6px">← Все игры</button>
   <div class="hero"><h1>${isC?'<span>Выживание</span>':'Мафия:<br><span>Выживание</span>'}</h1><p class="mute">${esc(g.d)} От ${g.min} игроков.</p></div>
   <div class="lbl">Истории</div>
@@ -2259,9 +2517,9 @@ function lobbyView(){const s=sc(),host=isHost||S.local;
   </div>
   ${SVM()&&!S.local?`<div class="box"><div class="lbl">${BK()?'Катастрофа':'Сценарий'} · голосование</div><p class="small mute">${S.svLock?'Создатель выбирает сам. Голоса не учитываются.':'Тапните, во что хотите играть. Побеждает больше голосов, при ничьей — жребий. Создатель может начать в любой момент.'}</p>${!S.svLock&&svLeader().bv?`<p class="small">Лидирует: <b>${esc(svLeader().best.map(svTitle).join(' / '))}</b> · ${svLeader().bv} гол.</p>`:''}${S.svLock?(isHost?(BK()?catStrip(S.cat,'pickCat'):scenStrip(S.scen,'pickScen')):''):svStrip()}${isHost?`<button class="btn sm ghost" data-act="svLock">${S.svLock?'Вернуть голосование':'Выбрать самому, без голосования'}</button>`:''}</div>`:''}
   ${BK()?(S.local?catStrip(S.cat,'pickCat'):'')+catDetail(S.cat):''}
-  ${!COOP()&&!BK()&&!CL()&&!DT()&&!ES()&&!IM()&&S.players.length===4?'<div class="box"><p class="small">Вчетвером первая ночь — ночь знакомства: убивать нельзя, детектив уже проверяет.</p></div>':''}
-  ${IM()?iLobby():ES()?eLobby():DT()?dLobby():CL()?cOptsHtml():COOP()||BK()?'':optsHtml()}
-  ${BK()||CL()||DT()||ES()||IM()?'':`${S.local?`<div class="lbl">Сценарий — выберите</div>${scenStrip(S.scen,'pickScen')}`:''}
+  ${!COOP()&&!BK()&&!CL()&&!DT()&&!ES()&&!IM()&&!PK()&&S.players.length===4?'<div class="box"><p class="small">Вчетвером первая ночь — ночь знакомства: убивать нельзя, детектив уже проверяет.</p></div>':''}
+  ${PK()?pLobby():IM()?iLobby():ES()?eLobby():DT()?dLobby():CL()?cOptsHtml():COOP()||BK()?'':optsHtml()}
+  ${BK()||CL()||DT()||ES()||IM()||PK()?'':`${S.local?`<div class="lbl">Сценарий — выберите</div>${scenStrip(S.scen,'pickScen')}`:''}
   ${scenDetail(S.scen,S.mode)}`}
   <button class="btn ghost" data-act="leave" style="width:100%">Выйти из комнаты</button>`;
   return h}
@@ -2315,13 +2573,14 @@ function hl(t){let x=esc(t);const names=S.players.map(p=>esc(p.name)).filter(n=>
   const re=new RegExp(`(клянусь|честно|точно|я не|не я|видел[аи]?|слышал[аи]?|вру|врёт|врет|подозр[а-яё]*|мафи[а-яё]*|${names.join('|')||'zzzz'})`,'gi');return x.replace(re,'<mark>$1</mark>')}
 
 function netBanner(){return (!S||S.local||isHost||!net.status)?'':`<div class="box" style="border-color:var(--red)"><p class="small">${esc(net.status)}</p></div>`}
-function gameView(){const vp=viewPid();let h=(IM()?iTop():ES()?eTop():DT()?dTop():CL()?cTop():BK()?bTop():topBar())+netBanner();
-  h+=`<div class="tabs"><button class="${ui.tab==='game'?'on':''}" data-act="tab" data-v="game">Игра</button><button class="${ui.tab==='dos'?'on':''}" data-act="tab" data-v="dos">Досье</button><button class="${ui.tab==='rules'?'on':''}" data-act="tab" data-v="rules">Правила</button></div>`;
-  if(ui.tab==='dos')return h+(IM()?iDossier(vp):ES()?eDossier(vp):DT()?dDossier(vp):BK()?bDossier():dossier());
+function gameView(){const vp=viewPid();let h=(PK()?pTop():IM()?iTop():ES()?eTop():DT()?dTop():CL()?cTop():BK()?bTop():topBar())+netBanner();
+  h+=`<div class="tabs"><button class="${ui.tab==='game'?'on':''}" data-act="tab" data-v="game">Игра</button><button class="${ui.tab==='dos'?'on':''}" data-act="tab" data-v="dos">${PK()?'История':'Досье'}</button><button class="${ui.tab==='rules'?'on':''}" data-act="tab" data-v="rules">Правила</button></div>`;
+  if(ui.tab==='dos')return h+(PK()?pDossier():IM()?iDossier(vp):ES()?eDossier(vp):DT()?dDossier(vp):BK()?bDossier():dossier());
   if(ui.tab==='stats')return h+statsHtml();
-  if(ui.tab==='rules')return h+(IM()?iRules():ES()?eRules():DT()?dRules():CL()?cRules():BK()?bRules():goals()+(COOP()?coopRules():rulesHtml()));
+  if(ui.tab==='rules')return h+(PK()?pRules()+pCombos():IM()?iRules():ES()?eRules():DT()?dRules():CL()?cRules():BK()?bRules():goals()+(COOP()?coopRules():rulesHtml()));
   if(S.local&&S.lq&&S.lq.i<S.lq.q.length&&!S.lq.show){const pid=S.lq.q[S.lq.i];
     return h+`<div class="pass"><p class="mute">${esc({deal:'Раздача карт',mission:'Тайный выбор отряда',night:'Ночь',reveal:'Раскрытие карт'}[S.phase]||'')} · ${S.lq.i+1} из ${S.lq.q.length}</p><p>Передай телефон</p><div class="nmx">${esc(nm(pid))}</div><button class="btn pri" data-act="lqShow">Я ${esc(nm(pid))} — показать</button><p class="tiny mute">Остальные отворачиваются</p></div>`}
+  if(PK())return h+pPhase(vp);
   if(IM())return h+iPhase(vp);
   const me_=P(vp);
   if(!S.local&&!me_&&S.phase!=='end')h+=`<div class="box"><p>Игра уже идёт без вас. Можно наблюдать.</p></div>`;
@@ -2461,6 +2720,7 @@ function playerBar(){const ph=S.phase,p=P(me.pid);let lab='',btn='';
   if(ph==='lobby'){if(!isHost)return `<div class="hostbar"><div class="in"><div class="lab"><b>Ждём игроков</b>Игру начнёт создатель, когда соберутся все</div></div></div>`;
     lab=`<b>Вы создатель и тоже игрок</b>${S.players.length<minP()?'Нужно ещё '+(minP()-S.players.length):'Все в сборе?'}`;btn=`<button class="btn pri" data-act="start" ${S.players.length<minP()?'disabled':''}>Раздать карты</button>`}
   else if(ph==='end'){lab='<b>Партия окончена</b>'+(isHost?'Сыграть ещё раз тем же составом':'Новую партию запускает создатель');if(isHost)btn=`<button class="btn pri" data-act="again">Новая игра</button>`}
+  else if(PK())return pBar();
   else if(IM()){lab=`<b>${PHN[ph]||''}</b>${ph==='play'?(P(me.pid)?.alive?'Ходите по отсекам, выполняйте задания':'Вы призрак — молчите'):''}${ph==='play'?'':ph==='meet'?'Говорите вслух':ph==='ivote'?'Голосуйте на экране':''}`}
   else if(ES()&&ph==='esc'){lab='<b>Таймер идёт</b>Ответ может ввести любой. Ошибка −30 с'}
   else{const can=p&&(ph==='deal'||p.alive),my=mine('go',me.pid);
@@ -2510,6 +2770,18 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
 const A={
   pickScenHome:v=>{ui.scen=v;render()},
   svote:v=>send('sv',v,me.pid),
+  popt:v=>{if(!isHost)return;const [k,x]=String(v).split(':');S.popts=Object.assign({},PDEF,S.popts||{});S.popts[k]=x==='true'?true:x==='false'?false:+x;commit()},
+  pkF:()=>send('pa',{t:'fold',s:S.po.seq},me.pid),
+  pkC:()=>{const o=S.po,owe=o.max-(o.bet[me.pid]||0);send('pa',{t:owe>0?'call':'check',s:o.seq},me.pid)},
+  pkRz:()=>send('pa',{t:'raise',a:+ui.pkR,s:S.po.seq},me.pid),
+  pkSet:v=>{ui.pkR=+v;render()},
+  pkStep:v=>{const o=S.po,bb=pBl()[1],mb=o.bet[me.pid]||0,maxTo=mb+o.ch[me.pid],minTo=Math.min(maxTo,o.max+o.minR);ui.pkR=Math.max(minTo,Math.min(maxTo,(+ui.pkR||minTo)+(+v)*bb));render()},
+  pkPeek:()=>{const k=S.po.hand+':'+S.gid;ui.pkOpen=ui.pkOpen===k?null:k;render()},
+  pkShow:()=>send('shw',true,me.pid),
+  pkRb:()=>send('rb',true,me.pid),
+  pkStop:()=>{if(!isHost)return;S.po.stop=!S.po.stop;commit()},
+  pkSkip:()=>{if(!isHost)return;pTimeout();commit()},
+  pkEndNow:()=>{if(!isHost)return;if(!ui.pkEndC){ui.pkEndC=1;setTimeout(()=>{ui.pkEndC=0;render()},4000);return render()}ui.pkEndC=0;pEnd();commit()},
   svLock:()=>{if(!isHost)return;S.svLock=!S.svLock;commit()},
   pickScen:v=>{if(!(isHost||S.local))return;S.scen=v;ui.scen=v;commit()},
   create:()=>createGame(),
@@ -2583,7 +2855,8 @@ const A={
   toNight:()=>{if(S.hunt)return toast('Сначала охотник стреляет');afterVres();commit()},
   toDay:()=>{if(S.hunt)return toast('Сначала охотник стреляет');afterMorning();commit()},
   shot:v=>{const who=S.hunt&&S.hunt.pid;if(!who)return;if(S.local||isHost){if(input(who,'shot',v))commit()}else{send('shot',v,me.pid)}},
-  again:()=>{if(IM()){const pl=S.players.map(p=>({pid:p.pid,name:p.name,alive:true}));const code=S.code,loc=S.local,k=S.kicked,o=S.iopts;S=newState(code,loc);S.mode='imp';S.iopts=o;S.players=pl;S.kicked=k||[];ui.itask=null;ui.iwalk=null;commit();return}
+  again:()=>{if(PK()){const pl=S.players.map(p=>({pid:p.pid,name:p.name,alive:true}));const code=S.code,loc=S.local,k=S.kicked,o=S.popts;S=newState(code,loc);S.mode='pok';S.popts=o;S.players=pl;S.kicked=k||[];ui.pkR=0;ui.pkOpen=null;commit();return}
+    if(IM()){const pl=S.players.map(p=>({pid:p.pid,name:p.name,alive:true}));const code=S.code,loc=S.local,k=S.kicked,o=S.iopts;S=newState(code,loc);S.mode='imp';S.iopts=o;S.players=pl;S.kicked=k||[];ui.itask=null;ui.iwalk=null;commit();return}
     if(ES()){const pl=S.players.map(p=>({pid:p.pid,name:p.name,alive:true}));const code=S.code,loc=S.local,k=S.kicked;S=newState(code,loc);S.mode='esc';S.players=pl;S.kicked=k||[];ui.ein={};ui.eDoc=null;ui.eLast=undefined;ui.eScare=undefined;commit();return}
     if(DT()){const pl=S.players.map(p=>({pid:p.pid,name:p.name,alive:true}));const code=S.code,loc=S.local,k=S.kicked;S=newState(code,loc);S.mode='det';S.players=pl;S.kicked=k||[];ui.dAcc={};ui.dDoc=null;commit();return}
     if(CL()){const pl=S.players.map(p=>({pid:p.pid,name:p.name,alive:true}));const code=S.code,loc=S.local,k=S.kicked,co=S.copts;S=newState(code,loc);S.mode='classic';S.copts=co;S.players=pl;S.kicked=k||[];ui.flip={};commit();return}
