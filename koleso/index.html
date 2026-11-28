@@ -139,6 +139,8 @@ body.jmode .app,body.smode .app{display:none}body.jmode .jr{display:block}
 .sync{font-size:12px;padding:3px 10px;border-radius:12px;background:#33343a;color:var(--mut);white-space:nowrap}
 .sync.on{background:#1f3a2a;color:#8fe0a8}.sync.warn{background:#4a3517;color:#ffc878}
 @media(max-width:700px){.top{flex-wrap:wrap;height:auto;padding:6px 10px}.top .sp{display:none}}
+.plist{display:grid;gap:3px}.plist div{display:flex;gap:6px;align-items:center;font-size:12px;background:var(--row);padding:3px 6px;border-radius:4px}
+.plist span{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.plist button{height:20px;padding:0 6px;font-size:11px}
 #conf{position:fixed;inset:0;pointer-events:none;z-index:21;width:100%;height:100%}
 body.stream .left,body.stream .right>*:not(.keep){display:none}
 body.stream .app{grid-template-columns:minmax(0,1fr) 290px}
@@ -223,9 +225,13 @@ body.stream .app{grid-template-columns:minmax(0,1fr) 290px}
       <label class="lab"><span>Громкость</span><input type="range" id="musVol" min="0" max="100" value="45"></label>
       <label class="lab">В ожидании<select id="musIdle"><option value="lounge">Лаунж — спокойно</option><option value="retro">Телешоу — бодро</option><option value="none">Тишина</option></select></label>
       <label class="lab">Во время прокрутки<select id="musSpin"><option value="electro">Электро с нарастанием</option><option value="roll">Барабанная дробь</option><option value="none">Тишина</option></select></label>
-      <label class="lab">Свой трек ожидания<input type="file" id="musFileIdle" accept="audio/*" style="padding-top:4px"></label>
-      <label class="lab">Свой трек прокрутки<input type="file" id="musFileSpin" accept="audio/*" style="padding-top:4px"></label>
-      <div class="r"><span class="note" id="musInfo"></span><button class="xs" id="musClear">Убрать свои треки</button></div>
+      <label class="lab">Свои песни для прокрутки (можно несколько)<input type="file" id="musFileSpin" accept="audio/*" multiple style="padding-top:4px"></label>
+      <div class="plist" id="plSpin"></div>
+      <label class="lab">Свои песни для ожидания (можно несколько)<input type="file" id="musFileIdle" accept="audio/*" multiple style="padding-top:4px"></label>
+      <div class="plist" id="plIdle"></div>
+      <label class="chk"><input type="checkbox" id="musShuffle" checked> Перемешивать песни</label>
+      <label class="chk" title="Колесо крутится 10–20 секунд — так чаще попадаете на самое яркое место песни"><input type="checkbox" id="musMid"> Начинать песню прокрутки не с начала, а с середины</label>
+      <div class="r"><span class="note" id="musInfo"></span><button class="xs" id="musClear">Убрать все свои песни</button></div>
     </div>
     <div class="card">
       <h3>Шанс за ожидание</h3>
@@ -979,9 +985,15 @@ const Mus={ctx:null,out:null,noise:null,timer:null,track:null,step:0,next:0,prog
   sched(){const c=this.ctx;if(!this.track)return;const tr=this.T[this.track],sd=60/tr.bpm/4;while(this.next<c.currentTime+.15){tr.f.call(this,this.step,this.next,sd);this.next+=sd;this.step++}},
   stopAll(){clearInterval(this.timer);this.timer=null;this.track=null;if(this.el){this.el.pause();this.el=null}},
   play(mode){this.mode=mode;this.stopAll();$('#eq').classList.toggle('off',true);if(!S.music.on||!this.init())return;this.ctx.resume();
-    const cu=this.custom[mode];if(cu){this.el=new Audio(cu);this.el.loop=true;this.vol();this.el.play().catch(()=>{});$('#eq').classList.remove('off');return}
+    const pl=PL[mode];if(pl.length){this.playList(mode);return}
     const name=mode==='spin'?S.music.spin:S.music.idle;if(name==='none')return;
     this.track=name;this.step=0;this.next=this.ctx.currentTime+.05;this.timer=setInterval(()=>this.sched(),25);$('#eq').classList.remove('off')},
+  playList(mode){const pl=PL[mode],k=mode+'I';let i=this[k]??-1;
+    i=S.music.shuffle&&pl.length>1?(()=>{let r;do{r=Math.random()*pl.length|0}while(r===i);return r})():(i+1)%pl.length;this[k]=i;
+    const el=new Audio(pl[i].url);this.el=el;el.loop=mode==='spin';this.vol();
+    if(mode==='spin'&&S.music.mid)el.addEventListener('loadedmetadata',()=>{if(el.duration>40)el.currentTime=el.duration*(.25+Math.random()*.3)},{once:true});
+    if(mode==='idle')el.onended=()=>{if(this.el===el&&!spinning)this.playList('idle')};
+    el.play().catch(()=>{});$('#eq').classList.remove('off');$('#musInfo').textContent='Играет: '+pl[i].name},
   spinStart(){this.prog=0;this.play('spin')},
   spinEnd(){this.stopAll();$('#eq').classList.add('off');clearTimeout(this.idleT);this.idleT=setTimeout(()=>{if(!spinning)this.play('idle')},2600)}
 };
@@ -989,10 +1001,20 @@ const Mus={ctx:null,out:null,noise:null,timer:null,track:null,step:0,next:0,prog
 const IDB={open(){return new Promise((res,rej)=>{const r=indexedDB.open('auc-wheel',1);r.onupgradeneeded=()=>r.result.createObjectStore('tracks');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})},
   async put(k,v){const db=await this.open();return new Promise(r=>{const tx=db.transaction('tracks','readwrite');v==null?tx.objectStore('tracks').delete(k):tx.objectStore('tracks').put(v,k);tx.oncomplete=r;tx.onerror=r})},
   async get(k){const db=await this.open();return new Promise(r=>{const q=db.transaction('tracks').objectStore('tracks').get(k);q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)})}};
-function musInfo(){const n=[Mus.custom.idle&&'ожидание',Mus.custom.spin&&'прокрутка'].filter(Boolean);$('#musInfo').textContent=n.length?'Свои треки: '+n.join(', '):''}
-(async()=>{try{for(const k of['idle','spin']){const b=await IDB.get(k);if(b){Mus.custom[k]=URL.createObjectURL(b);Mus.custom[k+'Name']=b.name}}}catch(e){}musInfo()})();
-['Idle','Spin'].forEach(K=>$('#musFile'+K).onchange=async e=>{const f=e.target.files[0];if(!f)return;const k=K.toLowerCase();Mus.custom[k]=URL.createObjectURL(f);try{await IDB.put(k,f)}catch(err){}musInfo();if(!S.music.on){S.music.on=true;$('#musOn').checked=true;save()}if((k==='spin')===spinning||k==='idle'&&!spinning)Mus.play(spinning?'spin':'idle')});
-$('#musClear').onclick=async()=>{Mus.custom={};try{await IDB.put('idle',null);await IDB.put('spin',null)}catch(e){}musInfo();if(!spinning)Mus.play('idle')};
+const PL={idle:[],spin:[]};
+function musInfo(){['spin','idle'].forEach(m=>{$('#pl'+(m==='spin'?'Spin':'Idle')).innerHTML=PL[m].map((t,i)=>`<div><span title="${esc(t.name)}">${esc(t.name.replace(/\.[^.]+$/,''))}</span><button data-pl="${m}" data-i="${i}">Убрать</button></div>`).join('')});
+  const n=PL.spin.length+PL.idle.length;if(!n)$('#musInfo').textContent=''}
+async function plSave(m){try{await IDB.put('pl-'+m,PL[m].map(t=>t.file))}catch(e){}}
+(async()=>{try{for(const m of['idle','spin']){let arr=await IDB.get('pl-'+m);if(!arr){const old=await IDB.get(m);arr=old?[old]:[]}
+  PL[m]=(arr||[]).filter(Boolean).map(f=>({file:f,name:f.name||'Песня',url:URL.createObjectURL(f)}))}}catch(e){}musInfo()})();
+['Idle','Spin'].forEach(K=>$('#musFile'+K).onchange=async e=>{const fs=[...e.target.files];e.target.value='';if(!fs.length)return;const m=K.toLowerCase();
+  fs.forEach(f=>PL[m].push({file:f,name:f.name,url:URL.createObjectURL(f)}));await plSave(m);musInfo();
+  if(!S.music.on){S.music.on=true;$('#musOn').checked=true;save()}if(m==='idle'&&!spinning)Mus.play('idle')});
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-pl]');if(!b)return;const m=b.dataset.pl;PL[m].splice(+b.dataset.i,1);await plSave(m);musInfo();if(m==='idle'&&!spinning)Mus.play('idle')});
+$('#musShuffle').checked=S.music.shuffle!==false;$('#musShuffle').onchange=e=>{S.music.shuffle=e.target.checked;save()};
+$('#musMid').checked=!!S.music.mid;$('#musMid').onchange=e=>{S.music.mid=e.target.checked;save()};
+if(S.music.shuffle==null)S.music.shuffle=true;
+$('#musClear').onclick=async()=>{PL.idle=[];PL.spin=[];try{for(const k of['idle','spin','pl-idle','pl-spin'])await IDB.put(k,null)}catch(e){}musInfo();if(!spinning)Mus.play('idle')};
 $('#musOn').checked=S.music.on;$('#musVol').value=S.music.vol;$('#musIdle').value=S.music.idle;$('#musSpin').value=S.music.spin;
 $('#musOn').onchange=e=>{S.music.on=e.target.checked;save();Mus.play(spinning?'spin':'idle')};
 $('#musVol').oninput=e=>{S.music.vol=+e.target.value;Mus.vol();save()};
