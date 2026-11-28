@@ -283,7 +283,8 @@ body.stream .app{grid-template-columns:minmax(0,1fr) 290px}
 
 <div class="modal" id="mWin"><div class="box">
   <div class="note" id="mTitle">Победитель</div><div class="w" id="mName"></div><div class="note" id="mInfo"></div>
-  <a id="kpLink" class="b" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;justify-content:center;height:36px;border-radius:4px;padding:0 14px;text-decoration:none;justify-self:center">Открыть на Кинопоиске</a>
+  <a id="kpLink" class="b kp" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;justify-content:center;height:36px;border-radius:4px;padding:0 14px;text-decoration:none;justify-self:center">Открыть на Кинопоиске</a>
+  <button class="xs" id="kpCopy" style="justify-self:center">Скопировать ссылку на Кинопоиск</button>
   <div class="vrow" id="vetoRow"></div>
   <div id="condBox" style="display:grid;gap:6px"><button id="condBtn">Крутить условие вечера</button><div id="condTxt" style="font-weight:700;font-size:18px;min-height:1.4em;color:#ffd27a"></div></div>
   <div class="r" style="justify-content:center"><button class="b" id="mLog">Записать в журнал</button><button id="mOk">Закрыть</button></div>
@@ -487,6 +488,8 @@ function landed(g){
   }else win(l,'Шанс был '+(g.p*100).toFixed(1)+'%');
 }
 let lastWinName='';
+const inFrame=(()=>{try{return window.top!==window}catch(e){return true}})();
+document.addEventListener('click',e=>{const a=e.target.closest('a.kp');if(a&&inFrame)a.removeAttribute('target')},true);
 const kp=n=>'https://www.kinopoisk.ru/index.php?kp_query='+encodeURIComponent(n);
 function win(l,info){lastWinName=l.name;lastWin=l;$('#kpLink').href=kp(l.name);
   let fate=false;if(vetoLot!=null){fate=l.id===vetoLot;if(fate){S.fateEver=true}if(fate)info='Судьба! Колесо снова выбрало этот фильм после вето — смотрим без вариантов';vetoLot=null}
@@ -1051,7 +1054,7 @@ function jRender(){
   $('#jStats').innerHTML=[[nights,'вечеров'],[done.length,'досмотрели'],[drops.length,'дропнули',J.length?Math.round(drops.length/(done.length+drops.length||1)*100)+'% от выпавших':''],[ra==null?'—':ra.toFixed(2),'средняя оценка'],[best?scoreOf(best):'—','лучший',best?.film],[worst?scoreOf(worst):'—','худший',worst?.film],[debts.length,'долгов',debts.map(d=>d.film).join(', ')]]
     .map(([b,s,sm])=>`<div class="stat"><b>${esc(b)}</b><span>${s}</span>${sm?`<small title="${esc(sm)}">${esc(sm)}</small>`:''}</div>`).join('');
   const rows=J.filter(j=>(!q||norm(j.film).includes(q))&&(!f||j.status===f)).sort((a,b)=>(b.date||'0').localeCompare(a.date||'0')||(b.id-a.id));
-  $('#jBody').innerHTML=rows.length?rows.map(j=>`<tr data-id="${j.id}"><td class="num">${fd(j.date)}</td><td><a href="${kp(j.film)}" target="_blank" rel="noopener" style="color:inherit" title="Открыть на Кинопоиске"><b>${esc(j.film)}</b></a>${j.by?` <small class="note">· предложил ${esc(j.by)}</small>`:''}${j.note?`<br><small class="note">${esc(j.note)}</small>`:''}</td><td><span class="chip c-${j.status}">${ST[j.status]}</span></td><td class="num">${sc(scoreOf(j))}${Object.keys(j.ratings||{}).length?`<br><small class="note">${Object.entries(j.ratings).filter(([,v])=>v!==''&&v!=null).map(([k,v])=>esc(k)+' '+v).join(' · ')}</small>`:''}</td><td>${esc((j.who||[]).join(', '))}</td><td><button class="xs" data-e="${j.id}">Изменить</button></td></tr>`).join(''):'<tr><td colspan="6" class="note" style="text-align:center;padding:20px">Ничего не найдено</td></tr>';
+  $('#jBody').innerHTML=rows.length?rows.map(j=>`<tr data-id="${j.id}"><td class="num">${fd(j.date)}</td><td><a class="kp" href="${kp(j.film)}" target="_blank" rel="noopener" style="color:inherit" title="Открыть на Кинопоиске"><b>${esc(j.film)}</b></a>${j.by?` <small class="note">· предложил ${esc(j.by)}</small>`:''}${j.note?`<br><small class="note">${esc(j.note)}</small>`:''}</td><td><span class="chip c-${j.status}">${ST[j.status]}</span></td><td class="num">${sc(scoreOf(j))}${Object.keys(j.ratings||{}).length?`<br><small class="note">${Object.entries(j.ratings).filter(([,v])=>v!==''&&v!=null).map(([k,v])=>esc(k)+' '+v).join(' · ')}</small>`:''}</td><td>${esc((j.who||[]).join(', '))}</td><td><button class="xs" data-e="${j.id}">Изменить</button></td></tr>`).join(''):'<tr><td colspan="6" class="note" style="text-align:center;padding:20px">Ничего не найдено</td></tr>';
 }
 let editId=null;
 function jEdit(j){
@@ -1247,6 +1250,7 @@ async function syncInit(){
 }
 function setView(v){document.body.classList.toggle('jmode',v==='journal');document.body.classList.toggle('smode',v==='stats');if(v==='stats')sRender();document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));if(v==='journal')jRender();else setTimeout(resize,30)}
 document.querySelector('.tabs').onclick=e=>{const b=e.target.closest('button');if(b)setView(b.dataset.v)};
+$('#kpCopy').onclick=async e=>{const u=$('#kpLink').href;try{await navigator.clipboard.writeText(u);e.target.textContent='Ссылка скопирована'}catch(err){e.target.textContent=u}setTimeout(()=>e.target.textContent='Скопировать ссылку на Кинопоиск',2500)};
 $('#mOk').onclick=()=>{$('#mWin').classList.remove('on');if(S.genrePick){S.genrePick=null;render()}};
 $('#img').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{centerImg=im;draw()};im.src=r.result};r.readAsDataURL(f)};
 $('#spinBtn').onclick=spin;
