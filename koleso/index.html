@@ -141,6 +141,7 @@ body.jmode .app,body.smode .app{display:none}body.jmode .jr{display:block}
 @media(max-width:700px){.top{flex-wrap:wrap;height:auto;padding:6px 10px}.top .sp{display:none}}
 .plist{display:grid;gap:3px}.plist div{display:flex;gap:6px;align-items:center;font-size:12px;background:var(--row);padding:3px 6px;border-radius:4px}
 .plist span{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.plist button{height:20px;padding:0 6px;font-size:11px}
+.pres label{position:relative}.pres .rm{background:none;border:0;height:18px;padding:0 2px;color:var(--mut);font-size:13px}.pres .rm:hover{color:var(--red)}
 #conf{position:fixed;inset:0;pointer-events:none;z-index:21;width:100%;height:100%}
 body.stream .left,body.stream .right>*:not(.keep){display:none}
 body.stream .app{grid-template-columns:minmax(0,1fr) 290px}
@@ -207,6 +208,7 @@ body.stream .app{grid-template-columns:minmax(0,1fr) 290px}
     <div class="card">
       <h3>Сегодняшний вечер</h3>
       <div class="lab">Кто пришёл<div class="pres" id="present"></div></div>
+      <form class="r" id="guestForm"><input id="guestName" placeholder="Имя нового гостя" maxlength="24" style="flex:1"><button class="b xs" style="height:32px">Добавить</button></form>
       <label class="lab">Вето на каждого<input type="number" id="vetoN" min="0" max="5" value="1"></label>
       <div class="vl" id="vetoLeft"></div>
       <button class="b xs" id="newNight">Начать новый вечер</button>
@@ -620,12 +622,22 @@ $('#vetoRow').onclick=e=>{const b=e.target.closest('[data-v]');if(!b||!lastWin)r
   else banner('Вето от '+n+'! Перекрут');
   render();setTimeout(spin,1500)};
 function eveRender(){
-  $('#present').innerHTML=S.members.map(n=>`<label class="chk"><input type="checkbox" data-p="${esc(n)}" ${S.present.includes(n)?'checked':''}> ${esc(n)}</label>`).join('');
+  $('#present').innerHTML=S.members.map(n=>`<label class="chk"><input type="checkbox" data-p="${esc(n)}" ${S.present.includes(n)?'checked':''}> <span style="border-bottom:2px solid ${mcol(n)}">${esc(n)}</span><button type="button" class="rm" data-rm="${esc(n)}" title="Убрать из клуба">×</button></label>`).join('');
   $('#vetoN').value=S.vetoN;
   $('#vetoLeft').innerHTML=S.present.map(n=>{const left=Math.max(0,S.vetoN-(S.vetoUsed[n]||0));return`<span class="${left?'':'used'}" style="box-shadow:inset 3px 0 0 ${mcol(n)}">${esc(n)}: вето ${left}</span>`}).join('');
   const opts=['<option value="">Общий</option>',...S.members.map(n=>`<option>${esc(n)}</option>`)].join('');
   ['#lotOwner','#ioOwner'].forEach(s=>{const v=$(s).value;$(s).innerHTML=opts;$(s).value=S.members.includes(v)?v:''});
 }
+
+$('#guestForm').addEventListener('submit',e=>{e.preventDefault();const n=$('#guestName').value.trim().replace(/[,:]/g,'');if(!n)return;
+  const ex=S.members.find(m=>m.toLowerCase()===n.toLowerCase());
+  if(ex){if(!S.present.includes(ex))S.present.push(ex);toast(ex+' уже в клубе — отмечен(а) на сегодня')}
+  else{S.members.push(n);S.present.push(n);toast('Добро пожаловать, '+n+'!')}
+  $('#guestName').value='';render()});
+let rmArm={};$('#present').addEventListener('click',e=>{const b=e.target.closest('[data-rm]');if(!b)return;e.preventDefault();const n=b.dataset.rm;
+  if(S.members.length<=1)return toast('В клубе должен остаться хотя бы один человек');
+  if(!rmArm[n]||Date.now()-rmArm[n]>3000){rmArm[n]=Date.now();b.textContent='точно?';setTimeout(()=>{b.textContent='×'},3000);return}
+  S.members=S.members.filter(m=>m!==n);S.present=S.present.filter(m=>m!==n);delete S.vetoUsed[n];toast(n+' убран(а) из клуба. История в журнале сохранится');render()});
 $('#present').onchange=e=>{S.present=[...document.querySelectorAll('#present input:checked')].map(i=>i.dataset.p);save();eveRender()};
 $('#vetoN').onchange=e=>{S.vetoN=Math.max(0,Math.min(5,+e.target.value||0));save();eveRender()};
 $('#newNight').onclick=()=>{snap();S.lots.forEach(l=>l.bids={});S.bidReveal=false;S.genrePick=null;S.lots.forEach(l=>{if(lastWin&&l.id===lastWin.id)l.wait=0;else if(!skipped(l))l.wait=(l.wait||0)+1});S.vetoUsed={};S.dropOrder=[];S.lots.forEach(l=>l.out=false);if(S.cmode==='pct')normalize();S.hist.unshift({t:new Date().toLocaleDateString('ru-RU'),name:'— новый вечер —'});$('#dropTxt').classList.remove('on');render()};
