@@ -234,6 +234,7 @@ ul.rules{padding-left:20px}ul.rules li{margin:6px 0}
 .ty-phone .dp,.ty-phone .dtiny{color:#c9ccd2}.ty-phone .dkv td{border-color:#333;color:#ddd}
 .dpaper .btn:not(.pri){background:#2a2117;color:#f3ead6;border-color:#2a2117}
 .dtl{border-left:2px solid #b9a985;margin:8px 0 10px 6px;padding-left:12px}.dtl div{position:relative;margin:0 0 8px;font-size:14px}.dtl div:before{content:'';position:absolute;left:-17px;top:6px;width:8px;height:8px;border-radius:50%;background:#8a7350}.dtl b{font-family:'PT Mono',monospace;font-size:12.5px;color:#6a3a1a;display:block}
+.elv{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:8px;border:1px solid var(--c);color:var(--c)}.epatrol{background:#3a0b10;border:2px solid #ff3b5c;border-radius:14px;padding:12px 14px;margin:10px 0;text-align:center;animation:dflick 1s infinite}.epatrol b{display:block;color:#ff6b80;font-size:18px;letter-spacing:.08em}
 .dsvg{display:block;width:100%;height:auto;border-radius:4px;margin:8px 0 10px;filter:sepia(.25) contrast(1.05);box-shadow:0 3px 10px rgba(0,0,0,.35)}.dsvg.sm{width:120px;float:right;margin:0 0 8px 12px}
 </style>
 </head>
@@ -1034,7 +1035,7 @@ function initNet(){
 }
 
 /* ---------- engine (host) ---------- */
-function newState(code,local){return {v:1,mode:ui.page==='poker'?'pok':ui.page==='impostor'?'imp':ui.page==='escape'?'esc':ui.page==='detective'?'det':ui.page==='survive'?'coop':ui.page==='bunker'?'bunker':ui.page==='classic'?'classic':'mafia',cat:ui.cat,copts:{don:true,lov:true,man:false,open:true},gid:rid(6),dcase:ui.dcase||'quiet',rev:0,code:code||'',local:!!local,hostPid:local?null:me.pid,scen:ui.scen,phase:'lobby',pn:0,pk:0,players:[],kicked:[],day:0,evac:4,meters:{a:4,b:4,c:4},inv:{},inp:{},log:[],chron:[],priv:{},votes:[],missions:[],crisis:null,timer:null,deck:[],lead:[],li:0,lastHeal:null,shield:false,res:null,win:null,ai:null,lq:null,opts:{},hostNow:Date.now()}}
+function newState(code,local){return {v:1,mode:ui.page==='poker'?'pok':ui.page==='impostor'?'imp':ui.page==='escape'?'esc':ui.page==='detective'?'det':ui.page==='survive'?'coop':ui.page==='bunker'?'bunker':ui.page==='classic'?'classic':'mafia',cat:ui.cat,copts:{don:true,lov:true,man:false,open:true},gid:rid(6),dcase:ui.dcase||'quiet',room:ui.room||'clock',rev:0,code:code||'',local:!!local,hostPid:local?null:me.pid,scen:ui.scen,phase:'lobby',pn:0,pk:0,players:[],kicked:[],day:0,evac:4,meters:{a:4,b:4,c:4},inv:{},inp:{},log:[],chron:[],priv:{},votes:[],missions:[],crisis:null,timer:null,deck:[],lead:[],li:0,lastHeal:null,shield:false,res:null,win:null,ai:null,lq:null,opts:{},hostNow:Date.now()}}
 const ADV=['intro','cres','discuss','vres','morning','inv','dnight','eintro'],WAIT=['deal','crisis','team','mission','vote','night','reveal','bvote','accuse'];
 const pool=()=>S.phase==='deal'?S.players:alive();
 const goN=()=>pool().filter(p=>S.inp[p.pid]?.go).length;
@@ -1084,21 +1085,21 @@ function validNa(pid,v){if(COOP()){if(['guard','rest','search'].includes(v))retu
   if(p.role==='maf')return t.role!=='maf';
   if(p.role==='doc')return v!==S.lastHeal;
   return v!==pid}
-const SVM=()=>BK()||COOP()||DT()||(S&&S.mode==='mafia');
-const svList=()=>DT()?Object.keys(DCASES):BK()?BCAT.map(x=>x.id):SCEN.map(x=>x.id);
-const svTitle=id=>id==='rnd'?'Случайно':((DT()?Object.values(DCASES):BK()?BCAT:SCEN).find(x=>x.id===id)||{}).title||id;
+const SVM=()=>BK()||COOP()||DT()||ES()||(S&&S.mode==='mafia');
+const svList=()=>ES()?Object.keys(EROOMS):DT()?Object.keys(DCASES):BK()?BCAT.map(x=>x.id):SCEN.map(x=>x.id);
+const svTitle=id=>id==='rnd'?'Случайно':((ES()?Object.values(EROOMS):DT()?Object.values(DCASES):BK()?BCAT:SCEN).find(x=>x.id===id)||{}).title||id;
 function svTally(){const c={};Object.entries(S.sv||{}).forEach(([pid,v])=>{if(P(pid))c[v]=(c[v]||0)+1});return c}
 function svLeader(){const c=svTally();let best=[],bv=0;for(const [k,v] of Object.entries(c)){if(v>bv){bv=v;best=[k]}else if(v===bv)best.push(k)}return {best,bv,c}}
 function svResolve(){S.svNote='';if(S.local||S.svLock)return;const {best,bv}=svLeader();if(!bv)return;let pick=best[Math.floor(Math.random()*best.length)],note=best.length>1?'ничья, решил жребий':'';
   if(pick==='rnd'){const L=svList();pick=L[Math.floor(Math.random()*L.length)];note='выпал случайный вариант'}
-  if(DT())S.dcase=pick;else if(BK())S.cat=pick;else S.scen=pick;S.svNote=`Голосование выбрало: ${svTitle(pick)}${note?' ('+note+')':''}`}
-function svStrip(){const L=svLeader(),my=(S.sv||{})[me.pid],items=DT()?Object.values(DCASES).map(x=>({id:x.id,t:x.title,sub:'Дело №'+x.no,acc:x.acc,bg:x.bg,pic:x.pic})):BK()?BCAT.map(x=>({id:x.id,t:x.title,sub:x.sub,acc:x.acc,bg:x.bg,pic:x.pic})):SCEN.map(x=>({id:x.id,t:x.title,sub:x.sub,acc:x.acc,bg:x.bg,pic:x.id}));
+  if(ES())S.room=pick;else if(DT())S.dcase=pick;else if(BK())S.cat=pick;else S.scen=pick;S.svNote=`Голосование выбрало: ${svTitle(pick)}${note?' ('+note+')':''}`}
+function svStrip(){const L=svLeader(),my=(S.sv||{})[me.pid],items=ES()?Object.values(EROOMS).map(x=>({id:x.id,t:x.title,sub:ELV[x.lvl][0]+' · '+x.min+' мин',acc:x.acc,bg:x.bg,pic:x.pic})):DT()?Object.values(DCASES).map(x=>({id:x.id,t:x.title,sub:'Дело №'+x.no,acc:x.acc,bg:x.bg,pic:x.pic})):BK()?BCAT.map(x=>({id:x.id,t:x.title,sub:x.sub,acc:x.acc,bg:x.bg,pic:x.pic})):SCEN.map(x=>({id:x.id,t:x.title,sub:x.sub,acc:x.acc,bg:x.bg,pic:x.id}));
   const who=id=>Object.entries(S.sv||{}).filter(([pid,v])=>v===id&&P(pid)).map(([pid])=>P(pid).name);
   const chip=id=>{const w=who(id);return w.length?`<span class="svc ${L.best.includes(id)?'lead':''}">${w.length} · ${esc(w.map(n=>n.slice(0,1).toUpperCase()).join(''))}</span>`:''};
   return `<div class="strip">${items.map(x=>`<button class="sc ${my===x.id?'on':''}" style="--a:${x.acc};--b:${x.bg}" data-act="svote" data-v="${x.id}"><span class="pic">${pic(x.pic)}</span>${chip(x.id)}<span class="tx"><small>${esc(x.sub)}</small><h3>${esc(x.t)}</h3></span></button>`).join('')}</div>
   <div class="row" style="margin:6px 0 10px"><button class="btn sm ${my==='rnd'?'pri':'ghost'}" data-act="svote" data-v="rnd">🎲 Мне всё равно — случайно ${chip('rnd')}</button></div>`}
 function input(pid,k,v){
-  if(k==='sv'){if(S.phase!=='lobby'||!SVM()||!(v==='rnd'||svList().includes(v)))return false;S.sv=S.sv||{};if(S.sv[pid]===v)return false;S.sv[pid]=v;if(!S.svLock){const L=svLeader();if(L.best.length===1&&L.best[0]!=='rnd'){if(DT())S.dcase=L.best[0];else if(BK())S.cat=L.best[0];else S.scen=L.best[0]}}return true}
+  if(k==='sv'){if(S.phase!=='lobby'||!SVM()||!(v==='rnd'||svList().includes(v)))return false;S.sv=S.sv||{};if(S.sv[pid]===v)return false;S.sv[pid]=v;if(!S.svLock){const L=svLeader();if(L.best.length===1&&L.best[0]!=='rnd'){if(ES())S.room=L.best[0];else if(DT())S.dcase=L.best[0];else if(BK())S.cat=L.best[0];else S.scen=L.best[0]}}return true}
   if(PK())return pInput(pid,k,v);
   if(IM())return iInput(pid,k,v);
   if(BK()&&k!=='go')return bInput(pid,k,v);
@@ -1825,7 +1826,7 @@ function dLobby(){const C=DD(),n=S.players.length;return `<div class="dcover"><d
 function dShareText(){const C=DD(),F=S.final||{pts:{},score:{}};return `Детектив · Дело №${C.no} «${C.title}»\n${S.win.side==='town'?'Дело раскрыто':'Дело не раскрыто'}\n`+(S.local?'':S.players.map(p=>`${p.name}: ${F.score[p.pid]||0}/${C.qs.length} верных, ${F.pts[p.pid]||0} оч.`).join('\n')+'\n')+location.origin+location.pathname+'#detective'}
 
 /* ---------- Побег из комнаты: комната ---------- */
-const ER={id:'clock',title:'Мастерская часовщика',sub:'Литейная, 9 · 23:20',min:40,
+const ER_CLOCK={id:'clock',title:'Мастерская часовщика',sub:'Литейная, 9 · 23:20',min:40,
 intro:'Вам пришло письмо без подписи: «Литейная, 9. Приходите в 23:20. Он вас ждёт». Дверь мастерской была открыта. Как только вы вошли, она захлопнулась, и все часы в мастерской разом остановились. Идут только одни — маленькие, на запястье манекена у входа. До полуночи сорок минут. Соседи говорят, что в полночь в этих окнах каждый год видят огонь.',
 stages:['Мастерская','Кабинет','Часовая башня'],
 scramble:['М','Я','В','Е','Р'],
@@ -1872,102 +1873,175 @@ const ESVG=(()=>{const clk=(cx,cy,r,h,m,col)=>{const ah=((h%12)+m/60)*30-90,am=m
  family:`<svg viewBox="0 0 300 90" class="dsvg" style="background:#d8cfbd">${[[50,1],[115,.95],[185,.75],[245,.65]].map(([x,s])=>`<circle cx="${x}" cy="${78-60*s}" r="${13*s}" fill="#5e564a"/><path d="M${x-22*s} 90q0-${44*s} ${22*s}-${44*s}t${22*s} ${44*s}z" fill="#5e564a"/>`).join('')}</svg>`,
  mirror:`<svg viewBox="0 0 200 110" class="dsvg" style="background:#1b1814;max-width:260px;margin:8px auto"><g transform="translate(200,0) scale(-1,1)">${clk(100,55,44,0,0,'#8a6c34').replace(/#f4ecd8/,'#e8dcc0')}<text x="100" y="26" text-anchor="middle" font-size="13" font-family="PT Mono,monospace" fill="#2a2117">XII</text><text x="132" y="60" text-anchor="middle" font-size="13" font-family="PT Mono,monospace" fill="#2a2117">III</text></g></svg>`}})();
 function clockWidget(h,m){const R=Math.PI/180,ah=((h%12)+m/60)*30-90,am=m*6-90;return `<svg viewBox="0 0 120 120" style="width:140px;display:block;margin:6px auto"><circle cx="60" cy="60" r="54" fill="#efe6d2" stroke="#8a6c34" stroke-width="6"/>${Array.from({length:12},(_,i)=>`<circle cx="${60+Math.cos(i*30*R)*44}" cy="${60+Math.sin(i*30*R)*44}" r="${i%3?1.6:3}" fill="#3a2f22"/>`).join('')}<path d="M60 60L${60+Math.cos(ah*R)*26} ${60+Math.sin(ah*R)*26}" stroke="#1b140c" stroke-width="5" stroke-linecap="round"/><path d="M60 60L${60+Math.cos(am*R)*40} ${60+Math.sin(am*R)*40}" stroke="#1b140c" stroke-width="3" stroke-linecap="round"/><circle cx="60" cy="60" r="4" fill="#1b140c"/></svg>`}
+/* ---------- Побег: комната «Алькатрас» (Unreal) ---------- */
+const ER_ALC={id:'alcatraz',title:'Алькатрас',sub:'Остров Алькатрас, блок B · ночь на 12 июня 1962, 01:20',min:45,lvl:'unreal',stamp:'01:20',pic:'halc',acc:'#ff3b5c',bg:'#0a0d12',
+teaser:'Самая охраняемая тюрьма Америки. Ночь, туман над заливом, обходы охраны. Старый заключённый по прозвищу Профессор оставил вам план побега. Подсказок нет. Три ошибки — и вас поймают.',
+noHints:1,wrongPen:60,maxWrong:3,stars:[15,7],fuzzy:1,
+patrols:[[39,25,'По галерее идёт охранник. Луч фонаря скользит по решёткам. Замрите.'],[31,25,'Шаги охраны прямо над вами. Не дышите.'],[22,30,'Внеплановая проверка блока. Фонарь светит в каждую камеру.'],[13,25,'Собаки внизу у причала залаяли. Прожектор повернулся в вашу сторону.'],[5,30,'Сирена молчит, но охрана что-то почуяла. Обход по всему периметру.']],
+intro:'Остров Алькатрас, залив Сан-Франциско, ночь на 12 июня 1962 года. Самая охраняемая тюрьма Америки: вода вокруг ледяная, течение уносит в океан. Полгода назад в одиночке умер старый заключённый, которого все звали Профессором. Перед смертью он передал вам Библию. Внутри — план побега, разорванный на части. В 01:20 свет в блоке погас. До ночной проверки 45 минут. Подсказок не будет. Три ошибки — и вас поймают.',
+stages:['Камера 138','Служебный коридор','Крыша','Берег'],
+scramble:['К','А','Н','П','Л','Е','И'],
+pz:[
+ {id:'a1',st:0,ty:'code',n:4,ans:['1164'],t:'Тайник за раковиной',x:'Под раковиной Профессор выдолбил тайник с инструментами. На крышке — кодовый замок на 4 цифры.',cards:['c1','c2','c3','c24'],hints:[],l:'П',win:'Крышка поддалась. Внутри ложка, заточенная в отвёртку, моток проволоки и обрывок карты. На донышке нацарапана буква «П».'},
+ {id:'a2',st:0,ty:'seq',n:4,syms:['↖','↗','↙','↘','●','◆'],ans:['↙↗↘↖'],t:'Вентиляционная решётка',x:'На задней стене, рядом с раковиной, решётка вентиляции на четырёх винтах. Открутите их не в том порядке — решётка с грохотом рухнет на пол.',cards:['c4','c5','c6'],hints:[],l:'Е',win:'Последний винт вышел без звука. Решётка у вас в руках, за ней тёмный служебный коридор. На обратной стороне решётки буква «Е».'},
+ {id:'a3',st:1,ty:'word',ans:['компас'],t:'Решётчатая дверь коридора',x:'Коридор перегорожен дверью с буквенным замком охраны. Пароль смены меняется каждые сутки ровно в полночь.',cards:['c7','c8','c9'],hints:[],l:'Л',win:'Замок щёлкнул. Дверь открылась, даже не скрипнув: Профессор когда-то смазал петли. На косяке буква «Л».'},
+ {id:'a4',st:1,ty:'seq',n:4,syms:['Ⅰ','Ⅱ','Ⅲ','Ⅳ','Ⅴ'],ans:['ⅣⅠⅢⅤ'],t:'Паровые вентили',x:'Узкий проход к лестнице на крышу перегораживают горячие трубы. Нужно перекрыть четыре вентиля из пяти. Ошибётесь — пар засвистит на весь блок.',cards:['c10','c11','c12'],hints:[],l:'И',win:'Пар стих, трубы начали остывать. Можно пройти к лестнице. На последнем вентиле мелом выведена «И».'},
+ {id:'a5',st:2,ty:'clock',ans:['2:20'],t:'Дверь на крышу',x:'Наверху тяжёлая дверь на крышу с часовым замком охраны. Он отпирается сам — ненадолго и только в определённую минуту. Выставьте на механизме это время.',cards:['c13','c15'],hints:[],l:'К',win:'В механизме лязгнуло, и дверь приоткрылась. Холодный ветер с залива, туман, луч прожектора над головой. На петле выцарапана «К».'},
+ {id:'a6',st:2,ty:'code',n:4,ans:['3705'],t:'Ящик с плотом',x:'За вентиляционной трубой стоит ящик, который Профессор полгода собирал по частям. Внутри плот из склеенных плащей. Замок на 4 цифры.',cards:['c16','c17','c18'],hints:[],l:'А',win:'Ящик открыт: плот, вёсла из фанеры, жилеты из плащей. На крышке изнутри буква «А».'},
+ {id:'a7',st:3,ty:'word',ans:['ангел','остров ангела','ангел айленд','энджел','энджел айленд','angel','angel island'],t:'Куда грести',x:'Вы у кромки воды, плот надут. Течение в заливе меняется по часам: ошибётесь — и вас унесёт в открытый океан. На ободе самодельного компаса Профессор оставил место для одного слова: куда держать курс.',cards:['c19','c20','c21'],hints:[],l:'Н',win:'Течение подхватило плот и потянуло в залив, прочь от острова. Позади погас прожектор. На весле вырезана буква «Н».'},
+ {id:'a8',st:3,ty:'word',ans:['пеликан'],fin:1,t:'Лодка в тумане',x:'Из тумана выходит рыбацкая лодка без огней. Человек на носу поднимает фонарь: «Кто вы?» Ему нужно одно слово, и сложить его можно из найденных букв.',cards:['c22','c23'],hints:[]}],
+cards:{
+ c1:{ty:'diary',t:'Письмо в Библии',b:[{hand:'Если ты это читаешь, меня уже нет.\nДевять лет я выдавал вам книги, и никто не спрашивал, что я в них прячу.\nКлюч от тайника — мой номер плюс номер камеры, где я провёл свои последние годы.'},{sig:'Профессор'}]},
+ c2:{ty:'report',t:'Список заключённых блока B',b:[{h:'БЛОК B · ЯРУС 2 · 1958'},{kv:[['№1259 · Рэй Коннели','камера 152 · прачечная'],['№1047 · Томас Грир','камера 140 · библиотека'],['№1118 · Фрэнк Доусон','камера 138 · кухня'],['№1302 · Эдди Мэлоун','камера 144 · мастерская']]},{tiny:'Списки обновляются раз в год.'}]},
+ c3:{ty:'report',t:'Журнал переводов',b:[{h:'ПЕРЕВОДЫ МЕЖДУ БЛОКАМИ'},{kv:[['03.1957','№1259: камера 150 → 152'],['11.1958','№1302: камера 144 → блок D, 112'],['02.1959','№1047: камера 140 → блок D, одиночка 117'],['12.1961','№1047: скончался в камере 117']]}]},
+ c24:{ty:'photo',t:'Надпись на стене камеры',b:[{hand:'1934 — открыли\n1963 — закроют?\nЖДИ ПРИЛИВА'},{tiny:'Нацарапано гвоздём над койкой. Кто-то из прежних жильцов.'}]},
+ c4:{ty:'photo',t:'Решётка вентиляции',b:[{svg:'a_grille'},{p:'Решётка на четырёх винтах. Резьба старая, ржавая. Если ослабить винты не в том порядке, решётку перекосит и она упадёт.'}]},
+ c5:{ty:'diary',t:'Записка в корешке Библии',b:[{hand:'Решётку снимай крест-накрест.\nПервый — винт, что ближе всех к койке.\nВторой — по диагонали от первого.\nТретий — тот из оставшихся, что ближе к двери.\nЧетвёртый — последний.'}]},
+ c6:{ty:'plan',t:'План камеры 138',b:[{svg:'a_cell'},{mono:'Камера 1,5 × 2,7 м. Решётка вентиляции на задней стене, если смотреть от двери: её видно над раковиной.'}]},
+ c7:{ty:'invoice',t:'Пароли смены (украдено из караулки)',b:[{h:'ПАРОЛИ ПОСТОВ · ИЮНЬ'},{kv:[['Понедельник','ЯКОРЬ'],['Вторник','КОМПАС'],['Среда','МАЯК'],['Четверг','ШТОРМ'],['Пятница','ТУМАН'],['Суббота','РИФ'],['Воскресенье','ПРИЛИВ']]},{tiny:'Пароль меняется в 00:00.'}]},
+ c8:{ty:'news',t:'Обрывок газеты в коридоре',b:[{h:'San Francisco Chronicle'},{p:'Понедельник, 11 июня 1962 г. · Вечерний выпуск'},{p:'…туман над заливом продержится до утра. Береговая охрана предупреждает: после трёх часов ночи начнётся сильный отлив…'}]},
+ c9:{ty:'photo',t:'Часы на стене коридора',b:[{svg:'a_clock'},{p:'Часы над дверью коридора идут. Тикают так громко, что слышно в камерах.'}]},
+ c10:{ty:'photo',t:'Термометры на трубах',b:[{svg:'a_therm'},{tiny:'Мелом подписаны номера вентилей.'}]},
+ c11:{ty:'diary',t:'Записка механика',b:[{p:'Найдена в личном деле бывшего заключённого-механика, в библиотечной книге.'},{hand:'Пар перекрывай по одному. Начинай с самой горячей трубы, дальше по убыванию.\nНо если стрелка манометра в красном — не трогай: вентиль сорвёт и засвистит.'}]},
+ c12:{ty:'photo',t:'Манометры',b:[{svg:'a_gauge'},{p:'Над каждым вентилем манометр. Красная зона — опасное давление.'}]},
+ c13:{ty:'report',t:'График караула',b:[{h:'СМЕНА КАРАУЛА НА КРЫШЕ'},{mono:'Первая смена заступает в 18:20.\nСмены меняются каждые 2 часа 40 минут.\nВо время смены дверь на крышу отпирается на 5 минут.'}]},
+ c15:{ty:'diary',t:'Пометка Профессора',b:[{hand:'На крышу — только в смену караула. Не раньше: дверь заперта. Не позже: наверху уже новые глаза.\nСмотри на часы в коридоре. Ближайшая смена — твоя.'}]},
+ c16:{ty:'diary',t:'Огни маяка',b:[{p:'Профессор полгода записывал, как мигает маяк на соседнем острове. Каждую ночь друг передавал ему через маяк одно и то же.'},{mono:'···——   ——···   —————   ·····'},{hand:'Четыре знака — четыре цифры. Это мой замок.'}]},
+ c17:{ty:'invoice',t:'Страница из учебника связи',b:[{h:'АЗБУКА МОРЗЕ · ЦИФРЫ'},{kv:[['1','·————'],['2','··———'],['3','···——'],['4','····—'],['5','·····'],['6','—····'],['7','——···'],['8','———··'],['9','————·'],['0','—————']]}]},
+ c18:{ty:'diary',t:'Обрывок карты',b:[{p:'Карандашом на полях:'},{hand:'Ящик за трубой.\nКод не записывай — смотри на маяк.\nА если маяк молчит — значит, всё отменяется.'}]},
+ c19:{ty:'report',t:'Таблица приливов',b:[{h:'ЗАЛИВ САН-ФРАНЦИСКО · 12 ИЮНЯ'},{kv:[['00:40 — 03:10','Прилив: вода идёт в залив'],['03:10 — 09:20','Отлив: вода уходит в океан'],['09:20 — 15:30','Прилив']]}]},
+ c20:{ty:'plan',t:'Карта течений',b:[{svg:'a_bay'},{mono:'В прилив течение от Алькатраса несёт на север, к острову Ангела.\nВ отлив — на запад, под мост Золотые Ворота и в открытый океан.'}]},
+ c21:{ty:'diary',t:'Последний лист плана',b:[{hand:'Время на воде — твой единственный друг.\nУспеешь до смены воды — течение само отнесёт куда надо. Там тебя встретят.\nНапиши на компасе, куда грести. И не спорь с водой.'}]},
+ c22:{ty:'diary',t:'Записка для лодочника',b:[{hand:'Он спросит, кто вы. Назови ему настоящее имя этого острова. Не то, что на табличках, а самое первое.'},{sig:'П.'}]},
+ c23:{ty:'news',t:'Страница из библиотечной книги',b:[{h:'ИСТОРИЯ ОСТРОВА'},{p:'В 1775 году испанский мореплаватель Хуан де Айяла назвал этот скалистый остров Isla de los Alcatraces — «остров пеликанов». Позже название переделали на английский лад, и получился «Алькатрас».'}]}},
+scares:[[40,'Где-то внизу хлопнула железная дверь. Эхо идёт по всему блоку.'],[28,'В соседней камере кто-то шепчет молитву. Или считает ваши шаги.'],[17,'Туман ползёт в коридор через щели. Пахнет солью и ржавчиной.'],[8,'Вдалеке, над водой, тонко и протяжно воет ревун маяка.'],[3,'Наверху лязгают ключи. Утренняя смена пришла раньше.']],
+outro:'Лодка без огней разворачивается и уходит в туман. Позади тает прожектор Алькатраса. Утром охрана найдёт в ваших койках бумажные головы, слепленные из мыла и волос. Вас будут искать много лет. Официально — утонули. Неофициально — никто не знает.',
+fail:'В 02:05 по блоку прошла ночная проверка. Пустых камер не нашли: вы так и не успели уйти дальше коридора. Охрана забрала Библию Профессора. Вас перевели в блок D. Остров пеликанов не отпускает тех, кто не успел.',
+caught:'Луч фонаря ударил прямо в лицо. «Стоять! Руки за голову!» Сирена завыла над всем островом, прожекторы развернулись к блоку. Вас поймали. Утром начальник тюрьмы лично сжёг Библию Профессора во дворе.'};
+Object.assign(ESVG,{
+a_grille:`<svg viewBox="0 0 220 160" class="dsvg" style="background:#5e6266;max-width:300px;margin:8px auto"><rect x="30" y="20" width="160" height="120" fill="#3c4044" stroke="#25282b" stroke-width="5"/>${Array.from({length:9},(_,i)=>`<rect x="${44+i*16}" y="30" width="8" height="100" fill="#1d2023"/>`).join('')}${[[40,30,'↖'],[180,30,'↗'],[40,130,'↙'],[180,130,'↘']].map(([x,y,s])=>`<circle cx="${x}" cy="${y}" r="8" fill="#a59a84" stroke="#4a443a" stroke-width="2"/><path d="M${x-5} ${y}h10M${x} ${y-5}v10" stroke="#4a443a" stroke-width="2"/><text x="${x+(x<100?-24:12)}" y="${y+5}" font-size="14" fill="#f3ead6">${s}</text>`).join('')}</svg>`,
+a_cell:`<svg viewBox="0 0 220 260" class="dsvg" style="background:#e9e2cf;max-width:260px;margin:8px auto"><rect x="40" y="20" width="140" height="220" fill="#d6ccb2" stroke="#3a2f22" stroke-width="4"/><rect x="48" y="150" width="60" height="84" fill="#9a8a6a"/><text x="54" y="196" font-size="11" font-family="monospace" fill="#fff">КОЙКА</text><rect x="140" y="28" width="32" height="26" fill="#b9b2a2" stroke="#3a2f22"/><text x="130" y="72" font-size="10" font-family="monospace" fill="#3a2f22">раковина</text><rect x="70" y="24" width="56" height="10" fill="#555"/><text x="62" y="48" font-size="9" font-family="monospace" fill="#3a2f22">решётка вентиляции</text><path d="M180 140v80" stroke="#e9e2cf" stroke-width="8"/><g stroke="#3a2f22" stroke-width="2">${Array.from({length:6},(_,i)=>`<path d="M178 ${142+i*13}h10"/>`).join('')}</g><text x="190" y="186" font-size="10" font-family="monospace" fill="#3a2f22" transform="rotate(90 190 186)">ДВЕРЬ</text><text x="44" y="256" font-size="9" font-family="monospace" fill="#3a2f22">вид сверху · задняя стена вверху</text></svg>`,
+a_clock:clockWidget(1,40),
+a_therm:`<svg viewBox="0 0 300 150" class="dsvg" style="background:#2b2e31">${[['Ⅰ',90],['Ⅱ',120],['Ⅲ',75],['Ⅳ',105],['Ⅴ',60]].map(([n,t],i)=>`<rect x="${30+i*54}" y="20" width="14" height="96" rx="7" fill="#ddd"/><rect x="${33+i*54}" y="${116-t*.75}" width="8" height="${t*.75}" fill="#d33"/><circle cx="${37+i*54}" cy="120" r="10" fill="#d33"/><text x="${50+i*54}" y="60" font-size="12" font-family="monospace" fill="#f3ead6">${t}°</text><text x="${30+i*54}" y="146" font-size="14" fill="#f3ead6">${n}</text>`).join('')}</svg>`,
+a_gauge:`<svg viewBox="0 0 300 120" class="dsvg" style="background:#2b2e31">${[['Ⅰ',.3],['Ⅱ',.92],['Ⅲ',.4],['Ⅳ',.55],['Ⅴ',.2]].map(([n,v],i)=>{const cx=32+i*59,cy=60,a=Math.PI*(1-v);return `<circle cx="${cx}" cy="${cy}" r="24" fill="#eee" stroke="#777" stroke-width="3"/><path d="M${cx+Math.cos(Math.PI*.2)*20} ${cy-Math.sin(Math.PI*.2)*20}A20 20 0 0 0 ${cx+20} ${cy}" stroke="#d33" stroke-width="5" fill="none"/><path d="M${cx} ${cy}L${cx+Math.cos(a)*18} ${cy-Math.sin(a)*18}" stroke="#111" stroke-width="2.5"/><text x="${cx-6}" y="108" font-size="14" fill="#f3ead6">${n}</text>`}).join('')}</svg>`,
+a_bay:`<svg viewBox="0 0 300 180" class="dsvg"><rect width="300" height="180" fill="#2c5a73"/><path d="M0 0h70l-10 40 20 30-30 40 10 70H0z" fill="#c9b98f"/><path d="M300 0h-60l10 30-20 40 30 60-10 50h50z" fill="#c9b98f"/><path d="M0 70q30-6 60 0" stroke="#e8d070" stroke-width="3" fill="none"/><text x="4" y="64" font-size="8" font-family="monospace" fill="#fff">ЗОЛОТЫЕ ВОРОТА</text><ellipse cx="160" cy="110" rx="16" ry="9" fill="#8a7a5a"/><text x="136" y="132" font-size="9" font-family="monospace" fill="#fff">АЛЬКАТРАС</text><ellipse cx="170" cy="28" rx="30" ry="14" fill="#9aa86a"/><text x="140" y="14" font-size="9" font-family="monospace" fill="#fff">ОСТРОВ АНГЕЛА</text><g stroke="#fff" stroke-width="2" fill="none" stroke-dasharray="5 4"><path d="M160 98q4-30 8-52"/><path d="M146 110q-40-10-80-36"/></g><text x="172" y="70" font-size="8" font-family="monospace" fill="#bfe">прилив ↑</text><text x="80" y="100" font-size="8" font-family="monospace" fill="#fbb">отлив ←</text><text x="230" y="170" font-size="8" font-family="monospace" fill="#fff">САН-ФРАНЦИСКО</text></svg>`});
+PIC.halc=`<rect width="300" height="130" fill="#070a10"/><path d="M0 92h300v38H0z" fill="#0f2230"/><path d="M60 92l20-26h120l26 26z" fill="#1b2128"/><rect x="96" y="44" width="90" height="26" fill="#232a33"/><g fill="#ffcf6a" opacity=".7"><rect x="104" y="52" width="5" height="7"/><rect x="118" y="52" width="5" height="7"/><rect x="160" y="52" width="5" height="7"/></g><rect x="198" y="28" width="8" height="40" fill="#2a313b"/><path d="M202 30L300 6v30z" fill="#fff6c8" opacity=".18"/><circle cx="202" cy="30" r="4" fill="#fff6c8"/><rect width="300" height="130" fill="#9fb0bf" opacity=".07"/><path d="M0 98q70-8 150 0t150 0" stroke="#7aa0b8" stroke-width="1.5" fill="none" opacity=".5"/>`;
+const ELV={easy:['Easy','#7fe0a8'],normal:['Normal','#ffd166'],hard:['Hard','#ff8a5c'],unreal:['Unreal','#ff3b5c']};
+Object.assign(ER_CLOCK,{lvl:'normal',stamp:'23:20',pic:'hesc',acc:'#e0a24a',bg:'#0f0d0a',teaser:'Все часы остановились, как только за вами закрылась дверь. Говорят, в полночь в этих окнах каждый год видят огонь.'});
+const EROOMS={clock:ER_CLOCK,alcatraz:ER_ALC};
+const ERR=()=>EROOMS[(S&&S.mode==='esc'&&S.room)||ui.room]||ER_CLOCK;
+const eStatKey=()=>(S&&S.room&&S.room!=='clock')?'esc_'+S.room:'esc';
+const eLvl=R=>{const L=ELV[R.lvl||'normal'];return `<span class="elv" style="--c:${L[1]}">${L[0]}</span>`};
+const erStrip=(sel,act)=>`<div class="strip">${Object.values(EROOMS).map(x=>`<button class="sc ${sel===x.id?'on':''}" style="--a:${x.acc};--b:${x.bg}" data-act="${act}" data-v="${x.id}"><span class="pic">${pic(x.pic)}</span><span class="tx"><small>${ELV[x.lvl][0]} · ${x.min} мин</small><h3>${esc(x.title)}</h3></span></button>`).join('')}</div>`;
+const ePat=()=>{if(!S||!S.esc||S.phase!=='esc')return null;const t=eLeft();return (ERR().patrols||[]).find(([m,d])=>t<=m*60&&t>m*60-d)||null};
+const eShow=t=>ERR().fuzzy?(t>300?'≈ '+Math.ceil(t/60)+' мин':t>0?'< 5 мин':'0 мин'):eFmt(t);
+function eRecs(id){const r=LS.get('maf.erec',null)||{};return r[id]||[]}
+function eRecSave(){if(!S||!S.esc||S.win.side!=='town')return null;const R=ERR(),all=LS.get('maf.erec',null)||{},L=all[R.id]=all[R.id]||[];
+  const ex=L.find(x=>x.gid===S.gid);if(ex)return L.indexOf(ex);const used=R.min*60-(S.esc.leftAt||0);
+  L.push({gid:S.gid,s:used,n:S.local?'Один телефон':S.players.map(p=>p.name).join(', '),d:new Date().toLocaleDateString('ru-RU'),k:S.players.length});L.sort((a,b)=>a.s-b.s);all[R.id]=L.slice(0,10);LS.set('maf.erec',all);return all[R.id].findIndex(x=>x.gid===S.gid)}
+function eRecHtml(id,hl){const L=eRecs(id);return `<div class="box"><div class="lbl">Рекорды · ${esc(EROOMS[id].title)}</div>${L.length?L.slice(0,5).map((x,i)=>`<p class="small" style="${x.gid===hl?'color:var(--acc)':''}"><b>${i+1}. ${eFmt(x.s)}</b> · ${esc(x.n)} <span class="mute">· ${esc(x.d)}</span></p>`).join(''):'<p class="small mute">Пока никто не выбрался. Будьте первыми.</p>'}<p class="tiny mute">Время с учётом штрафов. Хранится на этом телефоне.</p></div>`}
 
 /* ---------- Побег: механика ---------- */
 const ES=()=>!!S&&S.mode==='esc';
 const eNow=()=>Date.now()+((isHost||S.local)?0:(ui.skew||0));
-const eLeft=()=>{const e=S.esc;if(!e||!e.end)return ER.min*60;return Math.max(0,Math.round(((e.done||eNow())-e.end)/-1000))};
+const eLeft=()=>{const e=S.esc;if(!e||!e.end)return ERR().min*60;return Math.max(0,Math.round(((e.done||eNow())-e.end)/-1000))};
 const eFmt=t=>`${Math.floor(t/60)}:${String(t%60).padStart(2,'0')}`;
-const ePz=id=>ER.pz.find(p=>p.id===id);
-function eOpen(p){const e=S.esc;if(e.solved[p.id])return false;if(p.fin)return ER.pz.every(q=>q.fin||e.solved[q.id]);return ER.pz.filter(q=>q.st<p.st).every(q=>e.solved[q.id])}
+const ePz=id=>ERR().pz.find(p=>p.id===id);
+function eOpen(p){const e=S.esc;if(e.solved[p.id])return false;if(p.fin)return ERR().pz.every(q=>q.fin||e.solved[q.id]);return ERR().pz.filter(q=>q.st<p.st).every(q=>e.solved[q.id])}
 const eNorm=s=>String(s||'').toLowerCase().replace(/ё/g,'е').replace(/[\s.,!-]/g,'');
 function eStart(){const n=S.players.length,ps=shuf(S.players.map(p=>p.pid));const cards={};let off=0;
-  ER.pz.forEach(p=>{p.cards.forEach((c,i)=>cards[c]=ps[(off+i)%n]);off+=p.cards.length});
+  ERR().pz.forEach(p=>{p.cards.forEach((c,i)=>cards[c]=ps[(off+i)%n]);off+=p.cards.length});
   S.esc={end:0,done:0,solved:{},cards,hints:{},last:null,cnt:{},nonce:{},wrong:0};
   S.players.forEach(p=>{p.alive=true;p.role='esc'});
   S.day=1;S.log=[];S.chron=[];S.priv={};S.win=null;S.res=null;S.final=null;S.inv={};S.meters={a:1,b:1,c:1};
-  chron(`${ER.title}: заперты ${n} чел. До полуночи ${ER.min} минут.`);setPhase('eintro')}
-function eGo(){S.esc.end=Date.now()+ER.min*60000;chron('Таймер пошёл.');setPhase('esc')}
+  chron(`${ERR().title}: заперты ${n} чел. Таймер ${ERR().min} минут.`);setPhase('eintro')}
+function eGo(){S.esc.end=Date.now()+ERR().min*60000;chron('Таймер пошёл.');setPhase('esc')}
 function eAdvance(){if(S.phase==='eintro')eGo()}
 function eAuto(){if(S.phase==='eintro'&&!S.local){const g=goN(),t=pool().length;if(t&&(g>=t||(g>=goNeed()&&age()>25)))eGo();return}
   if(S.phase==='esc'&&S.esc.end&&Date.now()>S.esc.end)eFinish(false)}
 function eInput(pid,k,v){const p=P(pid),e=S.esc;if(!p||S.phase!=='esc'||!v||typeof v!=='object')return false;
   if(v.n!=null){if((e.nonce[pid]||{})[k]===v.n)return false;(e.nonce[pid]=e.nonce[pid]||{})[k]=v.n}
   const z=ePz(v.p);if(!z||!eOpen(z))return false;const c=e.cnt[pid]=e.cnt[pid]||{};
-  if(k==='hint'){const lv=e.hints[z.id]||0;if(lv>=z.hints.length)return false;e.hints[z.id]=lv+1;e.end-=120000;c.hint=(c.hint||0)+1;chron(`${p.name} взял(а) подсказку: «${z.t}» (−2 мин).`);e.last={id:rid(5),ty:'hint',p:z.id,by:pid};return true}
-  if(k==='ans'){const ok=z.ans.some(a=>eNorm(a)===eNorm(v.v));e.last={id:rid(5),ty:ok?'ok':'bad',p:z.id,by:pid};
+  if(k==='hint'){if(ERR().noHints)return false;const lv=e.hints[z.id]||0;if(lv>=z.hints.length)return false;e.hints[z.id]=lv+1;e.end-=120000;c.hint=(c.hint||0)+1;chron(`${p.name} взял(а) подсказку: «${z.t}» (−2 мин).`);e.last={id:rid(5),ty:'hint',p:z.id,by:pid};return true}
+  if(k==='ans'){const R=ERR();if(ePat()){e.wrong++;c.wrong=(c.wrong||0)+1;e.last={id:rid(5),ty:'heard',p:z.id,by:pid};chron(`${p.name} тронул(а) замок во время обхода. Охрана что-то услышала.`);if(R.maxWrong&&e.wrong>=R.maxWrong)eFinish(false,'caught');return true}
+    const ok=z.ans.some(a=>eNorm(a)===eNorm(v.v));e.last={id:rid(5),ty:ok?'ok':'bad',p:z.id,by:pid};
     if(ok){e.solved[z.id]=pid;c.solve=(c.solve||0)+1;chron(`${p.name} открыл(а): «${z.t}».`);if(z.fin)eFinish(true)}
-    else{e.end-=30000;e.wrong++;c.wrong=(c.wrong||0)+1;chron(`Неверно: «${z.t}» (−30 с).`)}return true}
+    else{const pen=R.wrongPen||30;e.end-=pen*1000;e.wrong++;c.wrong=(c.wrong||0)+1;chron(`Неверно: «${z.t}» (−${pen} с${R.maxWrong?`, ошибка ${e.wrong} из ${R.maxWrong}`:''}).`);if(R.maxWrong&&e.wrong>=R.maxWrong)eFinish(false,'caught')}return true}
   return false}
-function eFinish(won){const e=S.esc;e.done=Date.now();const left=won?Math.max(0,Math.round((e.end-e.done)/1000)):0;e.leftAt=left;
-  const stars=won?(left>=20*60?3:left>=10*60?2:1):0;const pts={},wonP={},awards=[];
+function eFinish(won,why){const e=S.esc;if(S.phase==='end')return;e.done=Date.now();e.caught=why==='caught';const ST=ERR().stars||[20,10];const left=won?Math.max(0,Math.round((e.end-e.done)/1000)):0;e.leftAt=left;
+  const stars=won?(left>=ST[0]*60?3:left>=ST[1]*60?2:1):0;const pts={},wonP={},awards=[];
   S.players.forEach(p=>{const c=e.cnt[p.pid]||{};pts[p.pid]=(c.solve||0)+stars*2;wonP[p.pid]=won});
   if(!S.local){let b=null,bv=0,tie=false;S.players.forEach(p=>{const v=(e.cnt[p.pid]||{}).solve||0;if(v>bv){bv=v;b=p;tie=false}else if(v===bv)tie=true});if(b&&!tie&&bv>=2)awards.push({k:'Ключник',t:'открыл(а) больше всех замков',pid:b.pid});
     const clean_=S.players.filter(p=>((e.cnt[p.pid]||{}).solve||0)>=1&&!((e.cnt[p.pid]||{}).wrong));if(clean_.length===1)awards.push({k:'Без единой ошибки',t:'ни одного неверного кода',pid:clean_[0].pid})}
   awards.forEach(a=>pts[a.pid]++);
-  S.win={side:won?'town':'lost',why:won?`Вы выбрались. Осталось ${eFmt(left)}.`:'Время вышло. Вы остались в мастерской.'};S.final={pts,won:wonP,stars,awards,goals:{},snipe:{}};chron(S.win.why);setPhase('end')}
-setInterval(()=>{if(!S||!ES()||S.phase!=='esc')return;const el=document.getElementById('etmr');if(el){const t=eLeft();el.textContent=eFmt(t);el.classList.toggle('low',t<=300)}
-  const sc_=ER.scares.filter(([m])=>eLeft()<=m*60).length;if(ui.eScare!==sc_){const first=ui.eScare===undefined;ui.eScare=sc_;if(!first&&sc_){SND.sting&&SND.sting('night');render()}}
+  S.win={side:won?'town':'lost',why:won?`Вы выбрались. Осталось ${eFmt(left)}.`:e.caught?'Вас поймали.':ERR().id==='clock'?'Время вышло. Вы остались в мастерской.':'Время вышло. Вы не успели.'};S.final={pts,won:wonP,stars,awards,goals:{},snipe:{}};chron(S.win.why);setPhase('end')}
+setInterval(()=>{if(!S||!ES()||S.phase!=='esc')return;const el=document.getElementById('etmr');if(el){const t=eLeft();el.textContent=eShow(t);el.classList.toggle('low',t<=300)}
+  const pt=ePat(),pk_=pt?pt[0]:0;if(ui.ePat!==pk_){const f=ui.ePat===undefined;ui.ePat=pk_;if(!f){if(pt)SND.sting&&SND.sting('night');render()}}if(pt){const pe=document.getElementById('epat');if(pe)pe.textContent=Math.max(0,eLeft()-(pt[0]*60-pt[1]))+' с'}
+  const sc_=ERR().scares.filter(([m])=>eLeft()<=m*60).length;if(ui.eScare!==sc_){const first=ui.eScare===undefined;ui.eScare=sc_;if(!first&&sc_){SND.sting&&SND.sting('night');render()}}
   if((S.local||isHost)&&S.esc.end&&Date.now()>S.esc.end){eFinish(false);commit()}},1000);
 
 /* ---------- Побег: экраны ---------- */
-function eTop(){return `<div class="top"><div class="t1"><b>${esc(ER.title)}</b><span class="etmr ${S.phase==='esc'&&eLeft()<=300?'low':''}" id="etmr">${S.phase==='esc'?eFmt(eLeft()):S.phase==='end'&&S.esc.leftAt!=null?eFmt(S.esc.leftAt):eFmt(ER.min*60)}</span>${toggles()}</div></div>`}
-function eNarr(){if(S.phase==='eintro')return ER.intro;if(S.phase==='end')return S.win.side==='town'?ER.outro:ER.fail;if(S.phase==='esc'){const s=ER.scares.filter(([m])=>eLeft()<=m*60).pop();return s?s[1]:''}return ''}
+function eTop(){return `<div class="top"><div class="t1"><b>${esc(ERR().title)}</b><span class="etmr ${S.phase==='esc'&&eLeft()<=300?'low':''}" id="etmr">${S.phase==='esc'?eShow(eLeft()):S.phase==='end'&&S.esc.leftAt!=null?eFmt(S.esc.leftAt):eFmt(ERR().min*60)}</span>${toggles()}</div></div>`}
+function eNarr(){if(S.phase==='eintro')return ERR().intro;if(S.phase==='end')return S.win.side==='town'?ERR().outro:S.esc.caught?ERR().caught:ERR().fail;if(S.phase==='esc'){const s=ERR().scares.filter(([m])=>eLeft()<=m*60).pop();return s?s[1]:''}return ''}
 function eCanSee(c,vp){return S.local||S.esc.cards[c]===vp}
-function eDoc(c,vp){const d=ER.cards[c];if(!d||!eCanSee(c,vp))return '';return `<div class="dmodal" data-act="eclose"><div class="dpaper ty-${d.ty}" data-act="noop"><div class="dtag">Улика${S.local?'':' · только у вас'}</div><h3>${esc(d.t)}</h3>${d.b.map(b=>b.svg?(ESVG[b.svg]||''):dBlock(b)).join('')}<div class="row" style="margin-top:14px"><button class="btn" data-act="eclose">Закрыть</button></div></div></div>`}
+function eDoc(c,vp){const d=ERR().cards[c];if(!d||!eCanSee(c,vp))return '';return `<div class="dmodal" data-act="eclose"><div class="dpaper ty-${d.ty}" data-act="noop"><div class="dtag">Улика${S.local?'':' · только у вас'}</div><h3>${esc(d.t)}</h3>${d.b.map(b=>b.svg?(ESVG[b.svg]||''):dBlock(b)).join('')}<div class="row" style="margin-top:14px"><button class="btn" data-act="eclose">Закрыть</button></div></div></div>`}
 function eInputHtml(z){const k=z.id,st=ui.ein[k]||(ui.ein[k]=z.ty==='code'?Array(z.n).fill(0):z.ty==='seq'?[]:z.ty==='clock'?[12,0]:null);
   if(z.ty==='code')return `<div class="ewheels">${st.map((d,i)=>`<div class="ewh"><button data-act="ecd" data-v="${k}:${i}:1">▲</button><b>${d}</b><button data-act="ecd" data-v="${k}:${i}:-1">▼</button></div>`).join('')}</div>`;
   if(z.ty==='seq')return `<div class="eseq">${Array.from({length:z.n},(_,i)=>`<span>${st[i]||''}</span>`).join('')}</div><div class="esyms">${z.syms.map(s=>`<button data-act="esq" data-v="${k}:${s}">${s}</button>`).join('')}<button data-act="esqc" data-v="${k}" class="clr">⌫</button></div>`;
   if(z.ty==='clock')return `${clockWidget(st[0],st[1])}<div class="ewheels"><div class="ewh"><button data-act="eclk" data-v="${k}:h:1">▲</button><b>${st[0]}</b><button data-act="eclk" data-v="${k}:h:-1">▼</button><small>часы</small></div><div class="ewh"><button data-act="eclk" data-v="${k}:m:5">▲</button><b>${String(st[1]).padStart(2,'0')}</b><button data-act="eclk" data-v="${k}:m:-5">▼</button><small>минуты</small></div></div>`;
   return `<input id="ew_${k}" data-bind="ew_${k}" value="${esc(ui['ew_'+k]||'')}" placeholder="Слово" autocomplete="off" style="width:100%;text-align:center;letter-spacing:.2em;text-transform:uppercase">`}
 function ePuzzle(z,vp){const e=S.esc,mine_=z.cards.filter(c=>eCanSee(c,vp)),other=z.cards.filter(c=>!eCanSee(c,vp)),hl=e.hints[z.id]||0;
-  return `<div class="box epz"><div class="lbl">${esc(ER.stages[z.st])}</div><h3>${esc(z.t)}</h3><p class="small">${esc(z.x)}</p>
-  ${mine_.length?`<div class="dgrid">${mine_.map(c=>`<button class="dtile" data-act="eopen" data-v="${c}"><span class="tiny mute">${S.local?'Улика':'Ваша улика'}</span><b>${esc(ER.cards[c].t)}</b></button>`).join('')}</div>`:''}
+  return `<div class="box epz"><div class="lbl">${esc(ERR().stages[z.st])}</div><h3>${esc(z.t)}</h3><p class="small">${esc(z.x)}</p>
+  ${mine_.length?`<div class="dgrid">${mine_.map(c=>`<button class="dtile" data-act="eopen" data-v="${c}"><span class="tiny mute">${S.local?'Улика':'Ваша улика'}</span><b>${esc(ERR().cards[c].t)}</b></button>`).join('')}</div>`:''}
   ${other.length?`<p class="small" style="color:var(--acc)">Ещё ${other.length===1?'одна улика':other.length+' улики'} у: ${esc([...new Set(other.map(c=>nm(e.cards[c])))].join(', '))}. Спросите вслух.</p>`:''}
-  ${z.fin?`<div class="eletters">${ER.scramble.map(x=>`<span>${x}</span>`).join('')}</div>`:''}
-  ${eInputHtml(z)}<button class="btn pri" style="width:100%;margin-top:10px" data-act="echk" data-v="${z.id}">Проверить</button>
+  ${z.fin?`<div class="eletters">${ERR().scramble.map(x=>`<span>${x}</span>`).join('')}</div>`:''}
+  ${eInputHtml(z)}<button class="btn ${ePat()?'':'pri'}" style="width:100%;margin-top:10px" data-act="echk" data-v="${z.id}">${ePat()?'Тихо! Охрана рядом':'Проверить'}</button>
   ${z.hints.slice(0,hl).map((h,i)=>`<p class="small ehint"><b>Подсказка ${i+1}:</b> ${esc(h)}</p>`).join('')}
-  ${hl<z.hints.length?`<button class="btn ghost sm" style="width:100%;margin-top:8px" data-act="ehint" data-v="${z.id}">${ui.eh===z.id?'Точно? Таймер −2 минуты':'Подсказка (−2 мин)'}</button>`:''}</div>`}
+  ${!ERR().noHints&&hl<z.hints.length?`<button class="btn ghost sm" style="width:100%;margin-top:8px" data-act="ehint" data-v="${z.id}">${ui.eh===z.id?'Точно? Таймер −2 минуты':'Подсказка (−2 мин)'}</button>`:''}</div>`}
 function ePhase(vp){const e=S.esc,ph=S.phase;let h='';
-  if(ph==='eintro')return `<div class="dcover"><div class="dstamp">23:20</div><div class="tiny mute">Побег из комнаты</div><h1><span>${esc(ER.title)}</span></h1><p class="small">${esc(ER.sub)}</p></div>
-  <div class="narr"><div class="k">Пролог</div><p>${esc(ER.intro)}</p></div>
-  <div class="box"><div class="lbl">Как выбраться</div><ul class="rules small"><li>Таймер ${ER.min} минут общий. Он пойдёт, когда все нажмут «Дальше».</li><li>Улики разложены по телефонам: у каждого свои. Загадку почти никогда нельзя решить в одиночку — описывайте друг другу, что видите.</li><li>Ответ вводит кто угодно. Неверный ответ отнимает 30 секунд, подсказка — 2 минуты.</li><li>За каждой загадкой — буква. Последняя дверь откроется словом из них.</li></ul></div>`;
+  const R=ERR();if(ph==='eintro')return `<div class="dcover"><div class="dstamp">${esc(R.stamp||'')}</div><div class="tiny mute">Побег из комнаты · ${eLvl(R)}</div><h1><span>${esc(ERR().title)}</span></h1><p class="small">${esc(ERR().sub)}</p></div>
+  <div class="narr"><div class="k">Пролог</div><p>${esc(ERR().intro)}</p></div>
+  <div class="box"><div class="lbl">Как выбраться</div><ul class="rules small"><li>Таймер ${ERR().min} минут общий. Он пойдёт, когда все нажмут «Дальше».</li><li>Улики разложены по телефонам: у каждого свои. Загадку почти никогда нельзя решить в одиночку — описывайте друг другу, что видите.</li><li>Ответ вводит кто угодно. Неверный ответ отнимает ${R.wrongPen||30} секунд${R.noHints?'. Подсказок нет.':', подсказка — 2 минуты.'}</li>${R.maxWrong?`<li><b>${R.maxWrong} ошибки — и вас поймают.</b> Партия сразу заканчивается.</li>`:''}${R.patrols?`<li><b>Обходы охраны.</b> Во время обхода на экране загорается красное предупреждение. Не трогайте замки, пока оно горит: любая попытка считается ошибкой.</li>`:''}${R.fuzzy?'<li>Точного таймера нет: только примерное время.</li>':''}<li>За каждой загадкой — буква. Последняя загадка решается словом из них.</li></ul></div>`;
   if(ph==='end')return eEnd(vp);
   if(ui.eDoc)h+=eDoc(ui.eDoc,vp);
-  if(e.last&&e.last.id!==ui.eLast){const L=e.last;const fresh=ui.eLast!==undefined;ui.eLast=L.id;if(fresh){const z=ePz(L.p);setTimeout(()=>toast(L.ty==='ok'?`Открыто: ${z.t} — ${nm(L.by)}`:L.ty==='bad'?`${nm(L.by)}: неверно, −30 секунд`:`${nm(L.by)} взял(а) подсказку, −2 минуты`),0);if(L.ty==='ok')SND.sting&&SND.sting('morning')}}
-  const sc_=ER.scares.filter(([m])=>eLeft()<=m*60).pop();if(sc_)h+=`<div class="escare">${esc(sc_[1])}</div>`;
-  const got=ER.pz.filter(z=>e.solved[z.id]&&z.l).map(z=>z.l);
-  h+=`<div class="box"><div class="lbl">Найденные буквы · ${got.length} из 5</div><div class="eletters">${ER.scramble.map(x=>`<span class="${got.includes(x)?'on':''}">${got.includes(x)?x:'?'}</span>`).join('')}</div></div>`;
-  ER.pz.filter(z=>eOpen(z)).forEach(z=>h+=ePuzzle(z,vp));
-  const done=ER.pz.filter(z=>e.solved[z.id]);if(done.length)h+=`<details class="box"><summary>Открыто · ${done.length}</summary>${done.map(z=>`<p class="small"><b>${esc(z.t)}</b> — ${esc(nm(e.solved[z.id]))}<br><span class="mute">${esc(z.win||'')}</span></p>`).join('')}</details>`;
+  if(e.last&&e.last.id!==ui.eLast){const L=e.last;const fresh=ui.eLast!==undefined;ui.eLast=L.id;if(fresh){const z=ePz(L.p);setTimeout(()=>toast(L.ty==='ok'?`Открыто: ${z.t} — ${nm(L.by)}`:L.ty==='bad'?`${nm(L.by)}: неверно, −${R.wrongPen||30} секунд`:L.ty==='heard'?`${nm(L.by)}: охрана услышала! Ошибка ${S.esc.wrong} из ${R.maxWrong}`:`${nm(L.by)} взял(а) подсказку, −2 минуты`),0);if(L.ty==='ok')SND.sting&&SND.sting('morning')}}
+  const pt=ePat();if(pt)h+=`<div class="epatrol"><b>ОБХОД · <span id="epat">${Math.max(0,eLeft()-(pt[0]*60-pt[1]))} с</span></b><span class="small">${esc(pt[2])} Не трогайте замки.</span></div>`;
+  if(R.maxWrong)h+=`<p class="small" style="text-align:center;color:${e.wrong?'#ff8a90':'var(--mute)'}">Ошибок: ${e.wrong} из ${R.maxWrong}</p>`;
+  const sc_=ERR().scares.filter(([m])=>eLeft()<=m*60).pop();if(sc_)h+=`<div class="escare">${esc(sc_[1])}</div>`;
+  const got=ERR().pz.filter(z=>e.solved[z.id]&&z.l).map(z=>z.l);
+  h+=`<div class="box"><div class="lbl">Найденные буквы · ${got.length} из ${ERR().scramble.length}</div><div class="eletters">${ERR().scramble.map(x=>`<span class="${got.includes(x)?'on':''}">${got.includes(x)?x:'?'}</span>`).join('')}</div></div>`;
+  ERR().pz.filter(z=>eOpen(z)).forEach(z=>h+=ePuzzle(z,vp));
+  const done=ERR().pz.filter(z=>e.solved[z.id]);if(done.length)h+=`<details class="box"><summary>Открыто · ${done.length}</summary>${done.map(z=>`<p class="small"><b>${esc(z.t)}</b> — ${esc(nm(e.solved[z.id]))}<br><span class="mute">${esc(z.win||'')}</span></p>`).join('')}</details>`;
   return h+micPanel()}
-function eEnd(vp){const F=S.final||{pts:{},stars:0,awards:[]},won=S.win.side==='town';recordStats();const rows=S.players.slice().sort((a,b)=>(F.pts[b.pid]||0)-(F.pts[a.pid]||0));
-  return `<div class="win ${won?'town':'maf'}"><h1>${won?'Вы выбрались':'Время вышло'}</h1><p>${won?`Осталось ${eFmt(S.esc.leftAt||0)} · ${'★'.repeat(F.stars)}${'☆'.repeat(3-F.stars)}`:`Открыто загадок: ${Object.keys(S.esc.solved).length} из ${ER.pz.length}`}</p></div>
-  <div class="dcover end"><div class="k">${won?'Эпилог':'Полночь'}</div><p>${esc(won?ER.outro:ER.fail)}</p></div>
-  <div class="box"><div class="lbl">Как это было</div>${S.chron.map(c=>`<p class="small">${esc(c.t)}</p>`).join('')}<p class="tiny mute">Неверных ответов: ${S.esc.wrong} · подсказок: ${Object.values(S.esc.hints).reduce((a,b)=>a+b,0)}</p></div>
+function eEnd(vp){const F=S.final||{pts:{},stars:0,awards:[]},won=S.win.side==='town';recordStats();const rp=eRecSave(),R=ERR();const rows=S.players.slice().sort((a,b)=>(F.pts[b.pid]||0)-(F.pts[a.pid]||0));
+  return `<div class="win ${won?'town':'maf'}"><h1>${won?'Вы выбрались':S.esc.caught?'Вас поймали':'Время вышло'}</h1>${won&&rp===0?'<p><b>Новый рекорд комнаты!</b></p>':''}<p>${won?`Осталось ${eFmt(S.esc.leftAt||0)} · ${'★'.repeat(F.stars)}${'☆'.repeat(3-F.stars)}`:`Открыто загадок: ${Object.keys(S.esc.solved).length} из ${ERR().pz.length}`}</p></div>
+  <div class="dcover end"><div class="k">${won?'Эпилог':S.esc.caught?'Тревога':'Время вышло'}</div><p>${esc(won?R.outro:S.esc.caught?R.caught:R.fail)}</p></div>${eRecHtml(R.id,S.gid)}
+  <div class="box"><div class="lbl">Как это было</div>${S.chron.map(c=>`<p class="small">${esc(c.t)}</p>`).join('')}<p class="tiny mute">Неверных ответов: ${S.esc.wrong}${R.noHints?'':' · подсказок: '+Object.values(S.esc.hints).reduce((a,b)=>a+b,0)}</p></div>
   ${F.awards.length?`<div class="box acc"><div class="lbl">Награды</div>${F.awards.map(a=>`<p><b>${esc(a.k)}</b>: ${esc(nm(a.pid))}<br><span class="tiny mute">${esc(a.t)}</span></p>`).join('')}</div>`:''}
   ${S.local?'':`<div class="box"><div class="lbl">Очки</div>${rows.map(p=>`<p class="small"><b>${esc(p.name)}</b> · ${F.pts[p.pid]||0} оч. <span class="mute">· замков: ${(S.esc.cnt[p.pid]||{}).solve||0}</span></p>`).join('')}<p class="tiny mute">Очки: каждый открытый замок +1, каждая звезда команды +2, награда +1.</p></div>`}
   <div class="row"><button class="btn pri" data-act="shareCard">Поделиться итогами</button><button class="btn" data-act="tab" data-v="stats">Статистика</button></div>`}
-function eDossier(vp){const e=S.esc;const vis=Object.keys(ER.cards).filter(c=>eCanSee(c,vp)&&eOpen(ER.pz.find(z=>z.cards.includes(c)))||(eCanSee(c,vp)&&e.solved[ER.pz.find(z=>z.cards.includes(c)).id]));
-  return (ui.eDoc?eDoc(ui.eDoc,vp):'')+`<div class="box"><div class="lbl">Мои улики · ${vis.length}</div>${vis.length?`<div class="dgrid">${vis.map(c=>`<button class="dtile" data-act="eopen" data-v="${c}"><b>${esc(ER.cards[c].t)}</b></button>`).join('')}</div>`:'<p class="small mute">Пока пусто.</p>'}</div><div class="box"><div class="lbl">Журнал</div>${S.chron.map(c=>`<p class="small">${esc(c.t)}</p>`).join('')}</div>`}
-function eRules(){return `<details class="box"><summary>Правила за минуту</summary><ul class="rules small">
-<li>Кооперативная игра от 2 человек на время: ${ER.min} минут на всю комнату.</li>
+function eDossier(vp){const e=S.esc;const vis=Object.keys(ERR().cards).filter(c=>eCanSee(c,vp)&&eOpen(ERR().pz.find(z=>z.cards.includes(c)))||(eCanSee(c,vp)&&e.solved[ERR().pz.find(z=>z.cards.includes(c)).id]));
+  return (ui.eDoc?eDoc(ui.eDoc,vp):'')+`<div class="box"><div class="lbl">Мои улики · ${vis.length}</div>${vis.length?`<div class="dgrid">${vis.map(c=>`<button class="dtile" data-act="eopen" data-v="${c}"><b>${esc(ERR().cards[c].t)}</b></button>`).join('')}</div>`:'<p class="small mute">Пока пусто.</p>'}</div><div class="box"><div class="lbl">Журнал</div>${S.chron.map(c=>`<p class="small">${esc(c.t)}</p>`).join('')}</div>`}
+function eRules(){const R=ERR(),ST=R.stars||[20,10];return `<details class="box"><summary>Правила за минуту</summary><ul class="rules small">
+<li>Кооперативная игра от 2 человек на время: ${R.min} минут на всю комнату.${R.lvl==='unreal'?' Лучше играть втроём и больше.':''}</li>
 <li>Улики раскиданы по телефонам. У тебя — одна часть загадки, у друга — другая. Описывайте, что видите, или показывайте экран.</li>
-<li>Комната открывается по частям: сначала мастерская, потом кабинет, потом башня.</li>
-<li>Ответ может ввести любой. Ошибка −30 секунд, подсказка −2 минуты (по 2 на загадку).</li>
-<li>Выбрались за 20+ минут до конца — три звезды, за 10+ — две.</li></ul></details>`}
-function escHome(g){return `<button class="btn ghost sm" data-act="page" data-v="hub" style="margin-top:6px">← Все игры</button>
-  <div class="hero"><h1><span>Побег из комнаты</span></h1><p class="mute">${esc(g.d)} От ${g.min} игроков, около 40 минут.</p></div>
-  <div class="dcover"><div class="dstamp">23:20</div><div class="tiny mute">Комната №1</div><h1><span>${esc(ER.title)}</span></h1><p class="small">${esc(ER.sub)}</p><p class="small mute" style="margin-top:10px">Все часы остановились, как только за вами закрылась дверь. Говорят, в полночь в этих окнах каждый год видят огонь.</p></div>
+<li>Комната открывается по частям: ${R.stages.map(esc).join(' → ')}.</li>
+<li>Ответ может ввести любой. Ошибка −${R.wrongPen||30} секунд${R.noHints?'. Подсказок нет.':', подсказка −2 минуты (по 2 на загадку).'}</li>
+${R.maxWrong?`<li>${R.maxWrong} ошибки — и вас поймают.</li>`:''}${R.patrols?'<li>Несколько раз за игру проходит охрана. Пока горит красное предупреждение, любая попытка открыть замок считается ошибкой.</li>':''}${R.fuzzy?'<li>Таймер показывает только примерное время.</li>':''}
+<li>Выбрались за ${ST[0]}+ минут до конца — три звезды, за ${ST[1]}+ — две.</li></ul></details>`}
+function escHome(g){const R=ERR();return `<button class="btn ghost sm" data-act="page" data-v="hub" style="margin-top:6px">← Все игры</button>
+  <div class="hero"><h1><span>Побег из комнаты</span></h1><p class="mute">${esc(g.d)} От ${g.min} игроков.</p></div>
+  <div class="lbl">Комнаты</div>${erStrip(R.id,'pickRoomHome')}
+  <div class="dcover"><div class="dstamp">${esc(R.stamp||'')}</div><div class="tiny mute">${eLvl(R)} · ${R.min} минут</div><h1><span>${esc(R.title)}</span></h1><p class="small">${esc(R.sub)}</p><p class="small mute" style="margin-top:10px">${esc(R.teaser||'')}</p></div>
   <div class="box" id="enter"><div class="lbl">Ваше имя</div><input id="nm" maxlength="20" placeholder="Например, Куаныш" value="${esc(me.name)}" autocomplete="off">
   ${ui.err?`<p class="small" style="color:${/…$/.test(ui.err)?'var(--mute)':'#ff8a90'}">${esc(ui.err)}</p>`:''}
   <div class="sep"></div><div class="row"><button class="btn pri" data-act="create">Создать комнату</button></div>
   <div class="row" style="margin-top:10px"><input id="code" maxlength="8" placeholder="Код игры" value="${esc(ui.code)}" style="flex:1 1 120px;text-transform:uppercase" autocomplete="off"><button class="btn" data-act="join">Войти</button></div>
   <p class="tiny mute">Телефоны соединяются напрямую. Надёжнее всего, когда все в одном Wi‑Fi.</p>
   <div class="sep"></div><div class="row"><button class="btn ghost" data-act="local">Один телефон на всех</button>${ui.resume==='esc'?'<button class="btn ghost" data-act="localResume">Продолжить</button>':''}</div></div>
-  <details class="box"><summary>Статистика: Побег из комнаты</summary>${statsHtml('esc')}</details>${eRules()}`}
-function eLobby(){return `<div class="dcover"><div class="dstamp">23:20</div><div class="tiny mute">Комната №1</div><h1><span>${esc(ER.title)}</span></h1><p class="small">${esc(ER.sub)}</p></div><div class="box"><p class="small">${S.local?'Один телефон: все улики видны сразу, решайте вместе.':'Улики разложатся по телефонам. Решить загадку можно, только если делиться тем, что видишь.'} Время: ${ER.min} минут.</p></div>`}
-function eShareText(){const F=S.final||{stars:0};return `Побег из комнаты · ${ER.title}\n${S.win.side==='town'?`Выбрались! Осталось ${eFmt(S.esc.leftAt||0)} ${'★'.repeat(F.stars)}`:'Не выбрались до полуночи'}\n`+S.players.map(p=>p.name).join(', ')+'\n'+location.origin+location.pathname+'#escape'}
+  ${eRecHtml(R.id)}<details class="box"><summary>Статистика: Побег из комнаты</summary>${statsHtml('esc')}${statsHtml('esc_alcatraz')}</details>${eRules()}`}
+function eLobby(){const R=ERR();return `<div class="dcover"><div class="dstamp">${esc(R.stamp||'')}</div><div class="tiny mute">${eLvl(R)} · ${R.min} минут</div><h1><span>${esc(ERR().title)}</span></h1><p class="small">${esc(ERR().sub)}</p></div><div class="box"><p class="small">${S.local?'Один телефон: все улики видны сразу, решайте вместе.':'Улики разложатся по телефонам. Решить загадку можно, только если делиться тем, что видишь.'} Время: ${R.min} минут.${R.noHints?' Подсказок нет.':''}${R.maxWrong?` ${R.maxWrong} ошибки — и вас поймают.`:''}${R.patrols?' Будут обходы охраны.':''}</p><p class="small mute">${esc(R.teaser||'')}</p></div>`}
+function eShareText(){const F=S.final||{stars:0};return `Побег из комнаты · ${ERR().title}\n${S.win.side==='town'?`Выбрались! Осталось ${eFmt(S.esc.leftAt||0)} ${'★'.repeat(F.stars)}`:S.esc.caught?'Нас поймали':'Не успели'}\n`+S.players.map(p=>p.name).join(', ')+'\n'+location.origin+location.pathname+'#escape'}
 if(/[?&]t=1/.test(location.search))window.__T={set:ms=>{S.esc.end=Date.now()+ms;commit()},ui,st:()=>S};
 
 /* ---------- Самозванец: станция ---------- */
@@ -2509,11 +2583,11 @@ function phaseSound(){if(!S||!SND.on||ui.sndPk===S.pk)return;const first=ui.sndP
 /* ---------- stats ---------- */
 function loadStats(){const st=LS.get('maf.stats',null)||{};if(!st.v){const old=st;const nw={v:2,gids:old.gids||[],m:{mafia:{p:old.p||{},g:old.g||[]},coop:{p:{},g:[]}}};LS.set('maf.stats',nw);return nw}return st}
 function recordStats(){if(!S||!S.final||!S.win)return;const st=loadStats();if(st.gids.includes(S.gid))return;
-  st.gids.push(S.gid);st.gids=st.gids.slice(-80);const w=S.win.side,md=PK()?'pok':IM()?'imp':ES()?'esc':DT()?dStatKey():CL()?'classic':BK()?'bunker':COOP()?'coop':'mafia',M=st.m[md]=st.m[md]||{p:{},g:[]};
+  st.gids.push(S.gid);st.gids=st.gids.slice(-80);const w=S.win.side,md=PK()?'pok':IM()?'imp':ES()?eStatKey():DT()?dStatKey():CL()?'classic':BK()?'bunker':COOP()?'coop':'mafia',M=st.m[md]=st.m[md]||{p:{},g:[]};
   S.players.forEach(p=>{const k=p.name.trim().toLowerCase();const r=M.p[k]=M.p[k]||{n:p.name,g:0,w:0,maf:0,mw:0,goals:0,pts:0,snipe:0};r.n=p.name;
     const won=S.final.won?!!S.final.won[p.pid]:SIDE(p.role)===w;r.g++;if(won)r.w++;if(BK()?!p.out:(DT()||ES()||PK())?false:IM()?p.role==='imp':SIDE(p.role)!=='town'){r.maf++;if(won)r.mw++}if(S.final.goals[p.pid])r.goals++;r.pts+=S.final.pts[p.pid]||0;r.snipe+=(S.final.snipe||{})[p.pid]||0});
-  M.g.unshift({d:new Date().toLocaleDateString('ru-RU'),t:PK()?'Техасский холдем, '+S.po.hand+' раздач':IM()?'Станция «Полярис»':ES()?ER.title:DT()?'Дело №'+DD().no+' «'+DD().title+'»':CL()?'Классика':BK()?bcat().title:sc().title,w:PK()?'победил '+nm(pRank()[0]):IM()?(w==='town'?'победил экипаж':'победили самозванцы'):ES()?(w==='town'?'выбрались, осталось '+eFmt(S.esc.leftAt||0):'не выбрались'):DT()?(w==='town'?'дело раскрыто':'дело не раскрыто'):CL()?(w==='town'?'победил город':w==='man'?'победил маньяк':'победила мафия'):BK()?({both:'выжили все',in:'выжил бункер',out:'выжили снаружи',none:'не выжил никто'}[w]):COOP()?(w==='town'?'все выжили':'не выжили'):w==='town'?'победили выжившие':w==='man'?'победил маньяк':'победили '+sc().roles.maf.pl.toLowerCase()});M.g=M.g.slice(0,20);LS.set('maf.stats',st)}
-function statsHtml(md){md=md||(S?(PK()?'pok':IM()?'imp':ES()?'esc':DT()?dStatKey():CL()?'classic':BK()?'bunker':COOP()?'coop':'mafia'):'mafia');const st=loadStats(),M=st.m[md]||{p:{},g:[]},isI=md==='imp',isE=md==='esc',isP=md==='pok',isD=md.startsWith('det')||isE||isP,isC=md==='coop'||md==='bunker'||isD,isB=md==='bunker'||isD,title=md.startsWith('det')?'Детектив · '+((DCASES[md==='det'?'quiet':md.slice(4)]||DCASE).title):GAMES[pageOf(md)].t;const rows=Object.values(M.p).sort((a,b)=>b.pts-a.pts);
+  M.g.unshift({d:new Date().toLocaleDateString('ru-RU'),t:PK()?'Техасский холдем, '+S.po.hand+' раздач':IM()?'Станция «Полярис»':ES()?ERR().title:DT()?'Дело №'+DD().no+' «'+DD().title+'»':CL()?'Классика':BK()?bcat().title:sc().title,w:PK()?'победил '+nm(pRank()[0]):IM()?(w==='town'?'победил экипаж':'победили самозванцы'):ES()?(w==='town'?'выбрались, осталось '+eFmt(S.esc.leftAt||0):'не выбрались'):DT()?(w==='town'?'дело раскрыто':'дело не раскрыто'):CL()?(w==='town'?'победил город':w==='man'?'победил маньяк':'победила мафия'):BK()?({both:'выжили все',in:'выжил бункер',out:'выжили снаружи',none:'не выжил никто'}[w]):COOP()?(w==='town'?'все выжили':'не выжили'):w==='town'?'победили выжившие':w==='man'?'победил маньяк':'победили '+sc().roles.maf.pl.toLowerCase()});M.g=M.g.slice(0,20);LS.set('maf.stats',st)}
+function statsHtml(md){md=md||(S?(PK()?'pok':IM()?'imp':ES()?eStatKey():DT()?dStatKey():CL()?'classic':BK()?'bunker':COOP()?'coop':'mafia'):'mafia');const st=loadStats(),M=st.m[md]||{p:{},g:[]},isI=md==='imp',isE=md.startsWith('esc'),isP=md==='pok',isD=md.startsWith('det')||isE||isP,isC=md==='coop'||md==='bunker'||isD,isB=md==='bunker'||isD,title=md.startsWith('esc')?'Побег · '+((EROOMS[md==='esc'?'clock':md.slice(4)]||ER_CLOCK).title):md.startsWith('det')?'Детектив · '+((DCASES[md==='det'?'quiet':md.slice(4)]||DCASE).title):GAMES[pageOf(md)].t;const rows=Object.values(M.p).sort((a,b)=>b.pts-a.pts);
   if(!rows.length)return `<div class="box"><div class="lbl">${esc(title)}</div><p class="small mute">Пока пусто. После первой партии здесь появится рейтинг компании. Данные хранятся на этом телефоне.</p></div>`;
   return `<div class="box"><div class="lbl">${esc(title)} · рейтинг на этом телефоне</div><div class="scroll"><table class="st"><thead><tr><th>Игрок</th><th>Очки</th><th>Игр</th><th>${isE?'Выбрались':isP?'Побед':isD?'Раскрыли':isC?'Выжили':'Побед'}</th>${isD?'':isB?'<th>В бункере</th>':isC?'':(isI?'<th>Самозванцем</th>':'<th>Мафией</th>')}${isB||isI?'':'<th>Цели</th>'}${isC?'':'<th>Снайп.</th>'}</tr></thead><tbody>${rows.map((r,i)=>`<tr><td>${i<3?['1.','2.','3.'][i]+' ':''}${esc(r.n)}</td><td>${r.pts}</td><td>${r.g}</td><td>${Math.round(r.w/r.g*100)}%</td>${isD?'':isB?`<td>${r.maf}</td>`:isC?'':`<td>${r.maf}${r.maf?' ('+r.mw+' поб.)':''}</td>`}${isB||isI?'':`<td>${r.goals}</td>`}${isC?'':`<td>${r.snipe}</td>`}</tr>`).join('')}</tbody></table></div>
   ${isC?'':'<p class="tiny mute">«Снайп.» — голоса против мафии и маньяка.</p>'}
@@ -2545,7 +2619,7 @@ function render(){if(S&&S.svNote&&S.phase!=='lobby'&&ui.svSeen!==S.gid){ui.svSee
   const app=$('#app');if(!app)return;
   if(pDown){pPend=true;return}
   const a=document.activeElement,fid=a&&a.id,ss=a&&a.selectionStart;
-  const s=(PK()||(!S&&ui.page==='poker'))?GAMES.poker:(IM()||(!S&&ui.page==='impostor'))?GAMES.impostor:(ES()||(!S&&ui.page==='escape'))?GAMES.escape:(DT()||(!S&&ui.page==='detective'))?GAMES.detective:(CL()||(!S&&ui.page==='classic'))?GAMES.classic:(BK()||(!S&&ui.page==='bunker'))?bcat():sc();const hubAcc=!S&&ui.page==='hub';document.body.style.setProperty('--acc',hubAcc?'#b5d94a':s.acc);document.body.style.setProperty('--sbg',hubAcc?'#0d0f14':s.bg);setTitle();
+  const s=(PK()||(!S&&ui.page==='poker'))?GAMES.poker:(IM()||(!S&&ui.page==='impostor'))?GAMES.impostor:(ES()||(!S&&ui.page==='escape'))?ERR():(DT()||(!S&&ui.page==='detective'))?GAMES.detective:(CL()||(!S&&ui.page==='classic'))?GAMES.classic:(BK()||(!S&&ui.page==='bunker'))?bcat():sc();const hubAcc=!S&&ui.page==='hub';document.body.style.setProperty('--acc',hubAcc?'#b5d94a':s.acc);document.body.style.setProperty('--sbg',hubAcc?'#0d0f14':s.bg);setTitle();
   let h;
   if(!S)h=homeView();else if(S.phase==='lobby')h=lobbyView();else h=gameView();
   document.body.classList.toggle('night',!!S&&S.phase==='night');
@@ -2591,7 +2665,7 @@ function hubView(){
   <div class="row"><input id="code" maxlength="8" placeholder="Код игры" value="${esc(ui.code)}" style="flex:1 1 120px;text-transform:uppercase" autocomplete="off"><button class="btn pri" data-act="join">Войти</button></div>
   ${ui.err?`<p class="small" style="color:${/…$/.test(ui.err)?'var(--mute)':'#ff8a90'}">${esc(ui.err)}</p>`:''}
   <p class="tiny mute">Код сам приведёт в нужную игру.</p></div>
-  <details class="box"><summary>Статистика компании</summary>${statsHtml('classic')}${statsHtml('mafia')}${statsHtml('coop')}${statsHtml('det')}${statsHtml('det_wed')}${statsHtml('bunker')}${statsHtml('esc')}${statsHtml('imp')}${statsHtml('pok')}</details>`}
+  <details class="box"><summary>Статистика компании</summary>${statsHtml('classic')}${statsHtml('mafia')}${statsHtml('coop')}${statsHtml('det')}${statsHtml('det_wed')}${statsHtml('bunker')}${statsHtml('esc')}${statsHtml('esc_alcatraz')}${statsHtml('imp')}${statsHtml('pok')}</details>`}
 function gameHome(pg){const g=GAMES[pg],md=g.mode;const isC=md==='coop';if(md==='bunker')return bunkerHome(g);if(md==='classic')return classicHome(g);if(md==='det')return detHome(g);if(md==='esc')return escHome(g);if(md==='imp')return impHome(g);if(md==='pok')return pokHome(g);
   return `<button class="btn ghost sm" data-act="page" data-v="hub" style="margin-top:6px">← Все игры</button>
   <div class="hero"><h1>${isC?'<span>Выживание</span>':'Мафия:<br><span>Выживание</span>'}</h1><p class="mute">${esc(g.d)} От ${g.min} игроков.</p></div>
@@ -2625,8 +2699,9 @@ function lobbyView(){const s=sc(),host=isHost||S.local;
   ${S.players.map(p=>`<div class="pl"><span class="av">${esc(p.name.slice(0,1).toUpperCase())}</span><span class="nm"><b>${esc(p.name)}${p.pid===me.pid&&!S.local?' (вы)':''}</b>${!S.local&&p.pid===S.hostPid?'<span class="tiny mute">создатель · играет как все</span>':''}${!S.local&&isHost&&p.pid!==me.pid&&!onlinePids().has(p.pid)?'<span class="tiny" style="color:#ff8a90">не в сети</span>':''}</span>${host&&p.pid!==S.hostPid?`<button class="btn sm ghost" data-act="kick" data-v="${esc(p.pid)}">Убрать</button>`:''}</div>`).join('')}
   ${S.local?`<div class="row"><input id="addn" maxlength="20" placeholder="Имя игрока" style="flex:1 1 160px" autocomplete="off"><button class="btn" data-act="addLocal">Добавить</button></div>`:''}
   </div>
-  ${SVM()&&!S.local?`<div class="box"><div class="lbl">${DT()?'Дело':BK()?'Катастрофа':'Сценарий'} · голосование</div><p class="small mute">${S.svLock?'Создатель выбирает сам. Голоса не учитываются.':'Тапните, во что хотите играть. Побеждает больше голосов, при ничьей — жребий. Создатель может начать в любой момент.'}</p>${!S.svLock&&svLeader().bv?`<p class="small">Лидирует: <b>${esc(svLeader().best.map(svTitle).join(' / '))}</b> · ${svLeader().bv} гол.</p>`:''}${S.svLock?(isHost?(DT()?dcStrip(S.dcase,'pickDcase'):BK()?catStrip(S.cat,'pickCat'):scenStrip(S.scen,'pickScen')):''):svStrip()}${isHost?`<button class="btn sm ghost" data-act="svLock">${S.svLock?'Вернуть голосование':'Выбрать самому, без голосования'}</button>`:''}</div>`:''}
+  ${SVM()&&!S.local?`<div class="box"><div class="lbl">${ES()?'Комната':DT()?'Дело':BK()?'Катастрофа':'Сценарий'} · голосование</div><p class="small mute">${S.svLock?'Создатель выбирает сам. Голоса не учитываются.':'Тапните, во что хотите играть. Побеждает больше голосов, при ничьей — жребий. Создатель может начать в любой момент.'}</p>${!S.svLock&&svLeader().bv?`<p class="small">Лидирует: <b>${esc(svLeader().best.map(svTitle).join(' / '))}</b> · ${svLeader().bv} гол.</p>`:''}${S.svLock?(isHost?(ES()?erStrip(S.room,'pickRoom'):DT()?dcStrip(S.dcase,'pickDcase'):BK()?catStrip(S.cat,'pickCat'):scenStrip(S.scen,'pickScen')):''):svStrip()}${isHost?`<button class="btn sm ghost" data-act="svLock">${S.svLock?'Вернуть голосование':'Выбрать самому, без голосования'}</button>`:''}</div>`:''}
   ${BK()?(S.local?catStrip(S.cat,'pickCat'):'')+catDetail(S.cat):''}
+  ${ES()&&S.local?`<div class="lbl">Комната — выберите</div>${erStrip(S.room,'pickRoom')}`:''}
   ${DT()&&S.local?`<div class="lbl">Дело — выберите</div>${dcStrip(S.dcase,'pickDcase')}`:''}
   ${!COOP()&&!BK()&&!CL()&&!DT()&&!ES()&&!IM()&&!PK()&&S.players.length===4?'<div class="box"><p class="small">Вчетвером первая ночь — ночь знакомства: убивать нельзя, детектив уже проверяет.</p></div>':''}
   ${PK()?pLobby():IM()?iLobby():ES()?eLobby():DT()?dLobby():CL()?cOptsHtml():COOP()||BK()?'':optsHtml()}
@@ -2833,7 +2908,7 @@ function playerBar(){const ph=S.phase,p=P(me.pid);let lab='',btn='';
   else if(ph==='end'){lab='<b>Партия окончена</b>'+(isHost?'Сыграть ещё раз тем же составом':'Новую партию запускает создатель');if(isHost)btn=`<button class="btn pri" data-act="again">Новая игра</button>`}
   else if(PK())return pBar();
   else if(IM()){lab=`<b>${PHN[ph]||''}</b>${ph==='play'?(P(me.pid)?.alive?'Ходите по отсекам, выполняйте задания':'Вы призрак — молчите'):''}${ph==='play'?'':ph==='meet'?'Говорите вслух':ph==='ivote'?'Голосуйте на экране':''}`}
-  else if(ES()&&ph==='esc'){lab='<b>Таймер идёт</b>Ответ может ввести любой. Ошибка −30 с'}
+  else if(ES()&&ph==='esc'){const R=ERR();lab=ePat()?'<b style="color:#ff6b80">Обход охраны</b>Не трогайте замки':`<b>Таймер идёт</b>Ответ может ввести любой. Ошибка −${R.wrongPen||30} с${R.maxWrong?' · '+S.esc.wrong+'/'+R.maxWrong:''}`}
   else{const can=p&&(ph==='deal'||p.alive),my=mine('go',me.pid);
     if(ADV.includes(ph)){lab=`<b>${(CL()&&ph==='intro')?'День знакомства':(DT()&&ph==='inv')?'День '+S.det.round+' из 3':PHN[ph]}</b>${(DT()&&ph==='inv')?'Завершаем день, когда готовы все (или большинство через 45 с)':'Идём дальше, когда готовы все (или большинство через 25 с)'}: ${goN()}/${pool().length}`;
       if(can)btn=`<button class="btn ${my?'':'pri'}" data-act="go" ${my?'disabled':''}>${my?'Жду других':(DT()&&ph==='inv')?'Завершить день':ph==='discuss'?(COOP()?'Готов к ночи':'Готов голосовать'):'Дальше'}</button>`}
@@ -2881,6 +2956,8 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
 const A={
   pickScenHome:v=>{ui.scen=v;render()},
   pickDcaseHome:v=>{ui.dcase=v;render()},
+  pickRoomHome:v=>{ui.room=v;render()},
+  pickRoom:v=>{if(!(isHost||S.local))return;S.room=v;ui.room=v;commit()},
   pickDcase:v=>{if(!(isHost||S.local))return;S.dcase=v;ui.dcase=v;commit()},
   svote:v=>send('sv',v,me.pid),
   popt:v=>{if(!isHost)return;const [k,x]=String(v).split(':');S.popts=Object.assign({},PDEF,S.popts||{});S.popts[k]=x==='true'?true:x==='false'?false:+x;commit()},
@@ -2969,7 +3046,7 @@ const A={
   shot:v=>{const who=S.hunt&&S.hunt.pid;if(!who)return;if(S.local||isHost){if(input(who,'shot',v))commit()}else{send('shot',v,me.pid)}},
   again:()=>{if(PK()){const pl=S.players.map(p=>({pid:p.pid,name:p.name,alive:true}));const code=S.code,loc=S.local,k=S.kicked,o=S.popts;S=newState(code,loc);S.mode='pok';S.popts=o;S.players=pl;S.kicked=k||[];ui.pkR=0;ui.pkOpen=null;commit();return}
     if(IM()){const pl=S.players.map(p=>({pid:p.pid,name:p.name,alive:true}));const code=S.code,loc=S.local,k=S.kicked,o=S.iopts;S=newState(code,loc);S.mode='imp';S.iopts=o;S.players=pl;S.kicked=k||[];ui.itask=null;ui.iwalk=null;commit();return}
-    if(ES()){const pl=S.players.map(p=>({pid:p.pid,name:p.name,alive:true}));const code=S.code,loc=S.local,k=S.kicked;S=newState(code,loc);S.mode='esc';S.players=pl;S.kicked=k||[];ui.ein={};ui.eDoc=null;ui.eLast=undefined;ui.eScare=undefined;commit();return}
+    if(ES()){const pl=S.players.map(p=>({pid:p.pid,name:p.name,alive:true}));const code=S.code,loc=S.local,k=S.kicked,rm=S.room;S=newState(code,loc);S.mode='esc';S.room=rm;S.players=pl;S.kicked=k||[];ui.ein={};ui.eDoc=null;ui.eLast=undefined;ui.eScare=undefined;commit();return}
     if(DT()){const pl=S.players.map(p=>({pid:p.pid,name:p.name,alive:true}));const code=S.code,loc=S.local,k=S.kicked,dc=S.dcase;S=newState(code,loc);S.mode='det';S.dcase=dc;S.players=pl;S.kicked=k||[];ui.dAcc={};ui.dDoc=null;commit();return}
     if(CL()){const pl=S.players.map(p=>({pid:p.pid,name:p.name,alive:true}));const code=S.code,loc=S.local,k=S.kicked,co=S.copts;S=newState(code,loc);S.mode='classic';S.copts=co;S.players=pl;S.kicked=k||[];ui.flip={};commit();return}
     if(BK()){const pl=S.players.map(p=>({pid:p.pid,name:p.name,alive:true}));const code=S.code,loc=S.local,k=S.kicked,cat=S.cat;S=newState(code,loc);S.mode='bunker';S.cat=cat;S.players=pl;S.kicked=k||[];ui.flip={};commit();return}const pl=S.players.map(p=>({pid:p.pid,name:p.name,alive:true}));const scn=S.scen,code=S.code,loc=S.local,k=S.kicked,md=S.mode,op=S.opts;S=newState(code,loc);S.mode=md;S.opts=op||{};S.players=pl;S.scen=scn;S.kicked=k||[];ui.flip={};commit()},
