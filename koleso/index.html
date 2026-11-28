@@ -177,7 +177,7 @@ body.stream .app{grid-template-columns:minmax(0,1fr) 290px}
       </div>
     </div>
     <div class="tbl">
-      <div class="hd"><span>№</span><span>ID</span><span>Лот</span><span id="valHd" style="text-align:right">Шанс, %</span><span></span><span style="text-align:right">Итог</span><span></span></div>
+      <div class="hd"><span>№</span><span>ID</span><span>Лот</span><span id="valHd" style="text-align:right">Шанс, %</span><span></span><span id="shareHd" style="text-align:right">Итог</span><span></span></div>
       <div id="lots"></div>
     </div>
     <div class="foot"><span>В игре: <b id="cnt">0</b> из <b id="cntAll">0</b></span><span id="sumWrap">Сумма: <b id="sum">0</b></span></div>
@@ -389,7 +389,8 @@ const boost=l=>Math.min(3,1+(S.pity||0)/100*(l.wait||0));
 function effs(){const a=act(),m=new Map();if(!S.fair||S.cmode==='pts'){a.forEach(l=>m.set(l,W(l)*boost(l)));return m}
   const g={};a.forEach(l=>{const k=l.owner||'';(g[k]=g[k]||[]).push(l)});const G=Object.keys(g).length;
   for(const k in g){const t=g[k].reduce((s,l)=>s+W(l),0);g[k].forEach(l=>m.set(l,t?W(l)/t/G*boost(l):0))}return m}
-const share=l=>{const m=effs(),t=[...m.values()].reduce((a,b)=>a+b,0);return m.has(l)&&t?m.get(l)/t*100:0};
+function effD(){const m=effs();if(S.mode!=='drop')return m;const r=new Map();m.forEach((w,l)=>{if(w>0)r.set(l,1/w)});return r}
+const share=l=>{const m=effD(),t=[...m.values()].reduce((a,b)=>a+b,0);return m.has(l)&&t?m.get(l)/t*100:0};
 
 /* ---- проценты: выставить лоту p%, остальные (кроме закреплённых) подстраиваются ---- */
 function setPct(lot,p){
@@ -413,7 +414,7 @@ const GCOL={D:'#5e35b1',C:'#fb8c00',T:'#455a64',H:'#b71c1c',S:'#1e88e5',A:'#e539
 function gsegs(){const m=effs(),gw={};act().forEach(l=>{const w=m.get(l)||0;[...lotG(l)].forEach(g=>gw[g]=(gw[g]||0)+w)});
   const ks=Object.keys(gw).filter(k=>gw[k]>0),t=ks.reduce((s,k)=>s+gw[k],0);let x=0;
   return ks.map(k=>{const sp=gw[k]/t*Math.PI*2,o={l:{id:'g:'+k,name:k==='_'?'Без жанра':GEN[k],color:GCOL[k]||'#616161',isG:true,g:k},s:x,e:x+sp,p:gw[k]/t};x+=sp;return o})}
-function segs(){if(S.mode==='genre'&&!S.genrePick)return gsegs();const m=effs(),a=act().filter(l=>m.get(l)>0),t=a.reduce((s,l)=>s+m.get(l),0);let x=0;return a.map(l=>{const w=m.get(l),sp=w/t*Math.PI*2,o={l,s:x,e:x+sp,p:w/t};x+=sp;return o})}
+function segs(){if(S.mode==='genre'&&!S.genrePick)return gsegs();const m=effD(),a=act().filter(l=>m.get(l)>0),t=a.reduce((s,l)=>s+m.get(l),0);let x=0;return a.map(l=>{const w=m.get(l),sp=w/t*Math.PI*2,o={l,s:x,e:x+sp,p:w/t};x+=sp;return o})}
 function draw(){
   if(!sz)return;const c=sz/2,R=c-6;ctx.clearRect(0,0,sz,sz);
   const sg=segs();
@@ -460,8 +461,7 @@ function spin(){
   if(sg.length<2){if(sg.length===1)win(sg[0].l,'Остался последний лот');return}
   A()?.resume?.();$('#dropTxt').classList.remove('on');
   // выбор: по сектору, либо (выбывание) чаще маленькие — обратные веса
-  const inv=S.mode==='drop'&&S.who==='inv';
-  const ws=sg.map(g=>inv?1/g.p:g.p),wt=ws.reduce((a,b)=>a+b,0);
+  const ws=sg.map(g=>g.p),wt=ws.reduce((a,b)=>a+b,0);
   let x=Math.random()*wt,pick=sg[sg.length-1];for(let i=0;i<sg.length;i++){if(x<ws[i]){pick=sg[i];break}x-=ws[i]}
   const tgt=pick.s+(pick.e-pick.s)*(.08+Math.random()*.84);
   const base=rot+Math.max(1,+$('#turns').value||8)*2*Math.PI,to=base+(((-tgt-base)%(2*Math.PI))+2*Math.PI)%(2*Math.PI),from=rot;
@@ -501,8 +501,8 @@ function render(){
   document.querySelectorAll('#cmode button').forEach(b=>b.classList.toggle('on',b.dataset.c===S.cmode));
   document.querySelectorAll('#mode button').forEach(b=>b.classList.toggle('on',b.dataset.m===S.mode));
   $('#topTitle').textContent=S.mode==='drop'?'Колесо на выбывание':'Колесо аукциона';
-  $('#whoWrap').style.display=S.mode==='drop'?'':'none';$('#who').value=S.who;
-  $('#modeNote').textContent=S.mode==='drop'?'Каждый спин выбивает один лот. Последний оставшийся — победитель.':S.mode==='genre'?(S.genrePick?'Жанр выбран: '+gname(S.genrePick)+'. Теперь крути фильм.':'Сначала колесо выбирает жанр, потом фильм этого жанра. Жанр известен для фильмов из генератора и встроенной базы, остальные — «Без жанра».'):'Один спин — один победитель.';
+  $('#whoWrap').style.display='none';$('#shareHd').textContent=S.mode==='drop'?'Вылет':'Итог';$('#shareHd').title=S.mode==='drop'?'Шанс вылететь на следующем спине':'Шанс выпасть';
+  $('#modeNote').textContent=S.mode==='drop'?'Каждый спин выбивает один фильм. Чем больше у фильма шанс или баллов, тем меньше его сектор и тем труднее ему вылететь. Последний оставшийся — победитель.':S.mode==='genre'?(S.genrePick?'Жанр выбран: '+gname(S.genrePick)+'. Теперь крути фильм.':'Сначала колесо выбирает жанр, потом фильм этого жанра. Жанр известен для фильмов из генератора и встроенной базы, остальные — «Без жанра».'):'Один спин — один победитель.';
   const list=S.lots.map((l,i)=>({l,i})).filter(({l})=>(!hide||!l.out)&&(!q||l.name.toLowerCase().includes(q)));
   list.sort((a,b)=>(a.l.out-b.l.out)||(W(b.l)-W(a.l)));
   const lockSvg='<svg viewBox="0 0 16 16" width="14" height="14"><rect x="3" y="7" width="10" height="7" rx="1.5" fill="currentColor"/><path d="M5 7V5a3 3 0 0 1 6 0v2" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>';
