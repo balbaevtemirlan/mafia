@@ -170,7 +170,7 @@ ul.rules{padding-left:20px}ul.rules li{margin:6px 0}
 .ptag{display:inline-block;font-size:11px;font-weight:800;padding:1px 6px;border-radius:8px;background:#2a3346;color:#cfd6e3;margin-left:2px;vertical-align:1px}.ptag.d{background:#f6f2e8;color:#111}
 .pwin{color:#7fe0a8;font-weight:800;font-size:13px}
 .pmc{display:flex;justify-content:center;width:100%;background:none;border:0;padding:4px 0;cursor:pointer}.pmine.out .pmc{opacity:.5}
-.pacts .row>.btn{flex:1 1 0}#pkr{accent-color:var(--acc);height:28px}
+.pacts .row>.btn,.popts .row>.btn{flex:1 1 0}#pkr{accent-color:var(--acc);height:28px}
 /* impostor */
 .ibar{position:relative;height:22px;border-radius:11px;background:#1a2130;overflow:hidden;margin-top:8px}.ibar i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,#2ecc71,#7fe0a8);transition:width .5s}.ibar span{position:relative;display:block;text-align:center;font-size:12px;line-height:22px;font-weight:700;color:#e8ffe9;text-shadow:0 1px 2px #000}
 .imap{width:100%;display:block;margin:6px 0 12px}.imap rect{fill:#141a26;stroke:#2a3346;stroke-width:2}.imap text{fill:#8b93a5;font-size:13px;font-weight:700;font-family:Manrope,sans-serif}.imap text.sm{font-size:10px;font-weight:600}
@@ -2062,9 +2062,14 @@ const PRG=['двоек','троек','четвёрок','пятёрок','шес
 const PRG1=['двойки','тройки','четвёрки','пятёрки','шестёрки','семёрки','восьмёрки','девятки','десятки','валета','дамы','короля','туза'];
 const PR1=['двойка','тройка','четвёрка','пятёрка','шестёрка','семёрка','восьмёрка','девятка','десятка','валет','дама','король','туз'];
 const PST=['Префлоп','Флоп','Тёрн','Ривер'];
-const PBL=[[5,10],[10,20],[15,30],[25,50],[50,100],[75,150],[100,200],[150,300],[250,500],[400,800],[600,1200],[1000,2000],[1500,3000],[2500,5000],[5000,10000],[10000,20000]];
-const PSTK={500:0,1000:1,2000:2,5000:3};
-const PDEF={stack:1000,grow:10,tmr:60,rebuy:true};
+const PML=[1,2,3,4,6,8,10,15,20,30,40,60,80,100,150,200,300,400,600,800,1000];
+const pBlv=(i,base)=>{const bb=base*PML[Math.min(i,PML.length-1)];return [bb/2,bb]};
+const PSTACKS=[1000,5000,10000,25000,50000,100000];
+const pF=n=>(+n||0).toLocaleString('ru-RU');
+const pPl=(n,f)=>{const a=n%10,b=n%100;return n+' '+(a===1&&b!==11?f[0]:a>=2&&a<=4&&(b<12||b>14)?f[1]:f[2])};
+const pCanRb=pid=>{const o=S.po,op=S.popts||PDEF;return !!(P(pid)&&o.ch[pid]===0&&op.rebuy&&!o.rb[pid]&&!o.stop)};
+const pK=n=>n>=1000&&n%100===0?(n/1000).toLocaleString('ru-RU',{maximumFractionDigits:1})+'к':String(n);
+const PDEF={stack:10000,grow:8,tmr:60,rebuy:true};
 function pEval5(cs){const r=cs.map(pR).sort((a,b)=>b-a),fl=cs.every(c=>pS(c)===pS(cs[0]));
   const cnt={};r.forEach(x=>cnt[x]=(cnt[x]||0)+1);
   const g=Object.entries(cnt).map(([k,v])=>[+k,v]).sort((a,b)=>b[1]-a[1]||b[0]-a[0]);
@@ -2090,7 +2095,7 @@ function pName(v){if(!v)return '';const t=v.tb;switch(v.cat){
 function pCard(c,cls){if(c==null)return `<span class="pc slot ${cls||''}"></span>`;if(c<0)return `<span class="pc back ${cls||''}"></span>`;return `<span class="pc ${pS(c)===1||pS(c)===2?'r':''} ${cls||''}">${PRK[pR(c)]}<i>${PSU[pS(c)]}</i></span>`}
 const pTxt=c=>PRK[pR(c)]+PSU[pS(c)];
 const pNow=()=>Date.now()+(isHost?0:(ui.skew||0));
-const pBl=()=>PBL[Math.min(S.po.lvl,PBL.length-1)];
+const pBl=()=>pBlv(S.po.lvl,S.po.base);
 const pPot=()=>Object.values(S.po.tot).reduce((a,b)=>a+b,0);
 function pAfter(pid,pred){const o=S.po,sz=o.seats.length;const i=o.seats.indexOf(pid);for(let k=1;k<=sz;k++){const q=o.seats[(i+k+sz)%sz];if(pred(q))return q}return null}
 const pLiveNA=()=>{const o=S.po;return o.inh.filter(p=>!o.fold[p]&&!o.ai[p])};
@@ -2103,14 +2108,14 @@ function pStart(){const n=S.players.length;if(n>10){toast('В покер мож�
   const o=S.popts=Object.assign({},PDEF,S.popts||{});
   S.players.forEach(p=>{p.alive=true;p.role='pl'});
   const seats=S.players.map(p=>p.pid),ch={};seats.forEach(pid=>ch[pid]=o.stack);
-  S.po={seats,ch,hand:0,lvl:PSTK[o.stack]!=null?PSTK[o.stack]:1,btnP:seats[Math.floor(Math.random()*n)],inh:[],deck:[],hole:{},board:[],st:0,bet:{},tot:{},fold:{},ai:{},need:[],can:[],cur:null,max:0,minR:0,seq:0,last:{},dl:0,res:null,hist:[],out:[],rb:{},stop:false,shown:{},won:{},startBtn:true};
+  S.po={seats,ch,hand:0,lvl:0,base:Math.max(2,Math.round(o.stack/100)),btnP:seats[Math.floor(Math.random()*n)],inh:[],deck:[],hole:{},board:[],st:0,bet:{},tot:{},fold:{},ai:{},need:[],can:[],cur:null,max:0,minR:0,seq:0,last:{},dl:0,res:null,hist:[],out:[],rb:{},stop:false,shown:{},won:{},startBtn:true};
   chron(`Партия началась: ${n} игроков, по ${o.stack} фишек, блайнды ${pBl().join('/')}.`);
   pNewHand()}
 function pNewHand(){const o=S.po,op=S.popts||PDEF;
   const inh=o.seats.filter(pid=>P(pid)&&o.ch[pid]>0);
   if(inh.length<2||o.stop)return pEnd();
   o.hand++;o.lvlUp=false;
-  if(op.grow&&o.hand>1&&(o.hand-1)%op.grow===0&&o.lvl<PBL.length-1){o.lvl++;o.lvlUp=true;chron(`Раздача ${o.hand}: блайнды выросли до ${pBl().join('/')}.`)}
+  if(op.grow&&o.hand>1&&(o.hand-1)%op.grow===0&&o.lvl<PML.length-1){o.lvl++;o.lvlUp=true;chron(`Раздача ${o.hand}: блайнды выросли до ${pBl().join('/')}.`)}
   if(o.startBtn){o.startBtn=false;if(!inh.includes(o.btnP))o.btnP=pAfter(o.btnP,q=>inh.includes(q))}
   else o.btnP=pAfter(o.btnP,q=>inh.includes(q));
   o.inh=inh;
@@ -2165,7 +2170,7 @@ function pShowdown(){const o=S.po,live=pLive();live.forEach(p=>{o.best[p]=pBest(
 function pWinFold(){const o=S.po,w=pLive()[0],amt=pPot();o.ch[w]+=amt;o.won[w]=amt;o.res={pots:[{amt,win:[w],name:null}],sd:false};pAfterHand()}
 function pAfterHand(){const o=S.po;o.cur=null;o.dl=0;o.need=[];o.can=[];
   const bust=o.inh.filter(p=>o.ch[p]===0&&!o.out.includes(p));bust.sort((a,b)=>(o.tot[a]||0)-(o.tot[b]||0)).forEach(p=>o.out.push(p));
-  const pt=o.res.pots.map(x=>`${x.win.map(nm).join(' и ')} ${x.win.length>1?'делят':'забирает'} ${x.amt}${x.name?' — '+x.name:''}`).join('; ');
+  const pt=o.res.pots.map(x=>`${x.win.map(nm).join(' и ')} ${x.win.length>1?'делят':'забирает'} ${pF(x.amt)}${x.name?' — '+x.name:''}`).join('; ');
   const line=`Раздача ${o.hand}${o.board.length?' ['+o.board.map(pTxt).join(' ')+']':''}: ${pt}${o.res.sd?'':' (остальные сбросили)'}.`;
   o.hist.unshift(line);o.hist=o.hist.slice(0,40);chron(line);
   bust.forEach(p=>chron(`${nm(p)} остаётся без фишек.`));
@@ -2174,26 +2179,25 @@ function pEnd(){const o=S.po;o.cur=null;o.dl=0;
   const rank=pRank();const pts={},won={};
   rank.forEach((p,i)=>{pts[p]=Math.max(0,(rank.length>=3?3:2)-i);won[p]=i===0});
   const w=rank[0];const solo=o.seats.filter(p=>o.ch[p]>0).length===1;
-  S.win={side:'town',why:solo?`${nm(w)} забирает все фишки за ${o.hand} раздач.`:`Партия завершена после ${o.hand} раздач. Больше всех фишек у ${nm(w)}: ${o.ch[w]}.`};
+  S.win={side:'town',why:solo?`${nm(w)} забирает все фишки за ${pPl(o.hand,['раздачу','раздачи','раздач'])}.`:`Партия завершена после ${pPl(o.hand,['раздачи','раздач','раздач'])}. Больше всех фишек у ${nm(w)}: ${o.ch[w]}.`};
   S.final={pts,won,goals:{},snipe:{}};chron(S.win.why);setPhase('end')}
 function pRank(){const o=S.po;return o.seats.filter(p=>P(p)).slice().sort((a,b)=>(o.ch[b]-o.ch[a])||(o.out.indexOf(b)-o.out.indexOf(a)))}
 function pTimeout(){const o=S.po,c=o.cur;if(!c)return;const owe=o.max-(o.bet[c]||0);pAct(c,owe>0?'fold':'check');if(o.last[c])o.last[c].auto=1}
 function pAuto(){const o=S.po;if(!o)return;
   if(S.phase==='hand'){if(o.dl&&Date.now()>o.dl)pTimeout();return}
-  if(S.phase==='show'){const req=S.players.filter(p=>o.ch[p.pid]>0),g=req.filter(p=>S.inp[p.pid]?.go).length;
+  if(S.phase==='show'){const req=S.players.filter(p=>o.ch[p.pid]>0||pCanRb(p.pid)),g=req.filter(p=>S.inp[p.pid]?.go).length;
     if((req.length&&g>=req.length)||(age()>20&&g*2>=req.length)||age()>45)pNewHand()}}
 function pForce(){if(S.phase==='hand')pTimeout();else if(S.phase==='show')pNewHand()}
 function pInput(pid,k,v){const o=S.po,p=P(pid);if(!p||!o)return false;
   if(k==='pa'){if(!v||typeof v!=='object'||v.s!==o.seq)return false;return pAct(pid,String(v.t),v.a)}
   if(k==='go'){if(S.phase!=='show'||S.inp[pid]?.go)return false;S.inp[pid]={...(S.inp[pid]||{}),go:true};pAuto();return true}
-  if(k==='shw'){if(S.phase!=='show'||!o.inh.includes(pid)||o.shown[pid])return false;o.shown[pid]=1;if(o.board.length>=3)o.best[pid]=pBest([...o.hole[pid],...o.board]);return true}
-  if(k==='rb'){const op=S.popts||PDEF;if(!op.rebuy||o.rb[pid]||o.ch[pid]>0||o.stop||!['show','hand'].includes(S.phase))return false;o.ch[pid]=op.stack;o.rb[pid]=1;o.out=o.out.filter(q=>q!==pid);chron(`${p.name} докупается: ${op.stack} фишек.`);return true}
+  if(k==='rb'){const op=S.popts||PDEF;if(!op.rebuy||o.rb[pid]||o.ch[pid]>0||o.stop||!['show','hand'].includes(S.phase))return false;o.ch[pid]=op.stack;o.rb[pid]=1;o.out=o.out.filter(q=>q!==pid);if(S.phase==='show')S.inp[pid]={...(S.inp[pid]||{}),go:true};chron(`${p.name} докупается: ${pF(op.stack)} фишек.`);if(S.phase==='show')pAuto();return true}
   return false}
 
 /* views */
 function pTop(){const o=S.po;if(!o)return '';const [sb,bb]=pBl(),op=S.popts||PDEF;const nxt=op.grow?op.grow-((o.hand-1)%op.grow):0;
-  return `<div class="top"><div class="t1"><b>Покер</b><span class="small mute">${S.phase==='end'?`Партия окончена · ${o.hand} раздач`:`Раздача ${o.hand} · блайнды ${sb}/${bb}`}${S.phase!=='end'&&op.grow&&o.lvl<PBL.length-1?` · рост через ${nxt}`:''}${o.lvlUp&&S.phase==='hand'?' · <b style="color:var(--acc)">блайнды выросли</b>':''}</span>${toggles()}</div></div>`}
-function pLastTxt(l){if(!l)return '';const a=l.a;return {sb:'малый блайнд '+a,bb:'большой блайнд '+a,fold:'фолд',check:'чек',call:'колл '+a,bet:'ставка '+a,raise:'рейз до '+a,allin:'олл-ин '+a}[l.t]+(l.auto?' (время)':'')}
+  return `<div class="top"><div class="t1"><b>Покер</b><span class="small mute">${S.phase==='end'?`Партия окончена · раздач сыграно: ${o.hand}`:`Раздача ${o.hand} · блайнды ${pK(sb)}/${pK(bb)}`}${S.phase!=='end'&&op.grow&&o.lvl<PML.length-1?` · рост через ${nxt}`:''}${o.lvlUp&&S.phase==='hand'?' · <b style="color:var(--acc)">блайнды выросли</b>':''}</span>${toggles()}</div></div>`}
+function pLastTxt(l){if(!l)return '';const a=pF(l.a);return {sb:'малый блайнд '+a,bb:'большой блайнд '+a,fold:'фолд',check:'чек',call:'колл '+a,bet:'ставка '+a,raise:'рейз до '+a,allin:'олл-ин '+a}[l.t]+(l.auto?' (время)':'')}
 function pSeat(pid,vp){const o=S.po,p=P(pid);if(!p)return '';const inH=o.inh.includes(pid),ch=o.ch[pid]||0,ph=S.phase;
   const tags=[pid===o.btnP&&inH?'<span class="ptag d">D</span>':'',pid===o.sbP&&inH&&o.sbP!==o.btnP?'<span class="ptag">МБ</span>':'',pid===o.bbP&&inH?'<span class="ptag">ББ</span>':''].join('');
   let st='';
@@ -2204,12 +2208,12 @@ function pSeat(pid,vp){const o=S.po,p=P(pid);if(!p)return '';const inH=o.inh.inc
   if(inH&&o.ai[pid]&&!o.fold[pid])st=(st&&!/олл-ин/.test(st)?st+' · ':'')+'<b style="color:#ffb648">олл-ин</b>';
   const showC=ph==='show'&&inH&&o.shown[pid]&&o.hole[pid];
   const cards=showC?`<span class="pcs">${o.hole[pid].map(c=>pCard(c,'sm')).join('')}</span>`:(inH&&!o.fold[pid]&&pid!==vp&&ph==='hand'?`<span class="pcs">${pCard(-1,'sm xs')}${pCard(-1,'sm xs')}</span>`:'');
-  const won=ph==='show'&&o.won[pid]?`<span class="pwin">+${o.won[pid]}</span>`:'';
+  const won=ph==='show'&&o.won[pid]?`<span class="pwin">+${pF(o.won[pid])}</span>`:'';
   const bn=ph==='show'&&showC&&o.best[pid]?`<br><span class="tiny">${esc(pName(o.best[pid]))}</span>`:'';
-  return `<div class="pseat ${ph==='hand'&&o.cur===pid?'cur':''} ${inH&&!o.fold[pid]?'':'out'}"><span class="av">${esc(p.name.slice(0,1).toUpperCase())}</span><span class="pn"><b>${esc(p.name)}${pid===vp?' (вы)':''}</b> ${tags}<br><span class="tiny mute">${st}</span>${bn}</span>${cards}<span class="pch"><b>${ch}</b>${(o.bet[pid]&&ph==='hand')?`<span class="tiny">в банке ${o.bet[pid]}</span>`:''}${won}</span></div>`}
+  return `<div class="pseat ${ph==='hand'&&o.cur===pid?'cur':''} ${inH&&!o.fold[pid]?'':'out'}"><span class="av">${esc(p.name.slice(0,1).toUpperCase())}</span><span class="pn"><b>${esc(p.name)}${pid===vp?' (вы)':''}</b> ${tags}<br><span class="tiny mute">${st}</span>${bn}</span>${cards}<span class="pch"><b>${pF(ch)}</b>${(o.bet[pid]&&ph==='hand')?`<span class="tiny">в банке ${pF(o.bet[pid])}</span>`:''}${won}</span></div>`}
 function pBoard(){const o=S.po;const hl=new Set();if(S.phase==='show'&&o.res&&o.res.sd&&o.res.pots[0])o.res.pots[0].cs.forEach(c=>hl.add(c));
   const b=[0,1,2,3,4].map(i=>pCard(o.board[i]!=null?o.board[i]:null,o.board[i]!=null&&hl.size&&!hl.has(o.board[i])?'dim':o.board[i]!=null&&hl.has(o.board[i])?'hl':'')).join('');
-  return `<div class="ptable"><div class="tiny" style="color:#cfe9d9;letter-spacing:.08em;text-transform:uppercase">${S.phase==='show'?'Итог раздачи':PST[o.st]}</div><div class="pboard">${b}</div><div class="pot">Банк: ${pPot()}</div></div>`}
+  return `<div class="ptable"><div class="tiny" style="color:#cfe9d9;letter-spacing:.08em;text-transform:uppercase">${S.phase==='show'?'Итог раздачи':PST[o.st]}</div><div class="pboard">${b}</div><div class="pot">Банк: ${pF(pPot())}</div></div>`}
 function pMine(vp){const o=S.po;if(!o.inh.includes(vp)||!o.hole[vp])return '';const h=o.hole[vp],open=ui.pkOpen===o.hand+':'+S.gid||S.phase==='show'||o.fold[vp];
   const hl=new Set(S.phase==='show'&&o.best[vp]?o.best[vp].cs:[]);
   let combo='';if(open){const b=o.board.length>=3?pBest([...h,...o.board]):null;combo=b?pName(b):pR(h[0])===pR(h[1])?'Карманная пара '+PRG[pR(h[0])]:pS(h[0])===pS(h[1])?'Одномастные':''}
@@ -2221,19 +2225,18 @@ function pActs(vp){const o=S.po;if(S.phase!=='hand'||o.cur!==vp)return '';
   let r=+ui.pkR;if(!(r>=minTo&&r<=maxTo))r=ui.pkR=minTo;
   const pot=pPot(),cl=v=>Math.max(minTo,Math.min(maxTo,Math.round(v)));
   const pre=[['Мин',minTo],['½ банка',cl(o.max+(pot+owe)/2)],['Банк',cl(o.max+pot+owe)],['Олл-ин',maxTo]];
-  const callTxt=owe<=0?'Чек':owe>=ch?`Олл-ин ${ch}`:`Колл ${owe}`;
-  const rTxt=v=>v>=maxTo?`Олл-ин ${maxTo}`:(o.max?'Рейз до ':'Ставка ')+v;
-  return `<div class="box acc pacts"><div class="lbl">Ваш ход${owe>0?` · нужно добавить ${Math.min(owe,ch)}`:''}</div>
+  const callTxt=owe<=0?'Чек':owe>=ch?`Олл-ин ${pF(ch)}`:`Колл ${pF(owe)}`;
+  const rTxt=v=>v>=maxTo?`Олл-ин ${pF(maxTo)}`:(o.max?'Рейз до ':'Ставка ')+pF(v);
+  return `<div class="box acc pacts"><div class="lbl">Ваш ход${owe>0?` · нужно добавить ${pF(Math.min(owe,ch))}`:''}</div>
   <div class="row"><button class="btn ghost" data-act="pkF" style="flex:1">Фолд</button><button class="btn pri" data-act="pkC" style="flex:2">${callTxt}</button></div>
   ${can?`<div class="sep"></div><div class="row" style="gap:6px">${pre.map(([t,v])=>`<button class="btn sm ${r===v?'pri':'ghost'}" data-act="pkSet" data-v="${v}">${t}</button>`).join('')}</div>
   ${minTo<maxTo?`<div class="row" style="align-items:center;gap:8px;margin-top:8px"><button class="btn sm ghost" data-act="pkStep" data-v="-1">−</button><input id="pkr" type="range" min="${minTo}" max="${maxTo}" step="1" value="${r}" style="flex:1"><button class="btn sm ghost" data-act="pkStep" data-v="1">+</button></div>`:''}
   <button class="btn" data-act="pkRz" id="pkrl" style="width:100%;margin-top:8px">${rTxt(r)}</button>`:''}</div>`}
 function pResult(vp){const o=S.po;if(S.phase!=='show'||!o.res)return '';const iIn=o.inh.includes(vp);
-  return `<div class="box acc"><div class="lbl">Раздача ${o.hand}</div>${o.res.pots.map((x,i)=>`<p><b>${x.win.map(p=>esc(nm(p))).join(' и ')}</b> ${x.win.length>1?'делят':'забирает'} <b>${x.amt}</b>${o.res.pots.length>1?` <span class="tiny mute">(${i?'побочный банк':'основной банк'})</span>`:''}${x.name?`<br><span class="small">${esc(x.name)}</span>`:'<br><span class="small mute">Остальные сбросили карты</span>'}</p>`).join('')}
-  ${o.runout?'<p class="tiny mute">Все в олл-ине — общие карты открыты до конца.</p>':''}
-  ${iIn&&!o.shown[vp]?`<button class="btn sm ghost" data-act="pkShow">Показать мои карты всем</button>`:''}</div>`}
+  return `<div class="box acc"><div class="lbl">Раздача ${o.hand}</div>${o.res.pots.map((x,i)=>`<p><b>${x.win.map(p=>esc(nm(p))).join(' и ')}</b> ${x.win.length>1?'делят':'забирает'} <b>${pF(x.amt)}</b>${o.res.pots.length>1?` <span class="tiny mute">(${i?'побочный банк':'основной банк'})</span>`:''}${x.name?`<br><span class="small">${esc(x.name)}</span>`:'<br><span class="small mute">Остальные сбросили карты</span>'}</p>`).join('')}
+  ${o.runout?'<p class="tiny mute">Все в олл-ине — общие карты открыты до конца.</p>':''}</div>`}
 function pBust(vp){const o=S.po,op=S.popts||PDEF;if(!P(vp)||o.ch[vp]>0)return '';
-  return `<div class="box" style="border-color:var(--red)"><p><b>Фишки закончились.</b> ${op.rebuy&&!o.rb[vp]&&!o.stop?'Можно один раз докупиться и вернуться со следующей раздачи.':'Досматривайте партию — место в рейтинге уже есть.'}</p>${op.rebuy&&!o.rb[vp]&&!o.stop?`<button class="btn pri" data-act="pkRb">Докупиться на ${op.stack}</button>`:''}</div>`}
+  return `<div class="box" style="border-color:var(--red)"><p><b>Фишки закончились.</b> ${op.rebuy&&!o.rb[vp]&&!o.stop?'Можно один раз докупиться и вернуться со следующей раздачи.':'Досматривайте партию — место в рейтинге уже есть.'}</p>${op.rebuy&&!o.rb[vp]&&!o.stop?`<button class="btn pri" data-act="pkRb">Докупиться на ${pF(op.stack)}</button>`:''}</div>`}
 function pHost(){const o=S.po;if(!isHost||S.phase==='end')return '';const waited=o.cur&&o.cur!==me.pid&&(Date.now()-(o.curAt||0))>20000;
   return `${waited?`<div class="box"><p class="small">${esc(nm(o.cur))} думает уже больше 20 секунд. Если телефон отключился, можно сходить за игрока.</p><button class="btn sm" data-act="pkSkip">Ход за ${esc(nm(o.cur))}: ${o.max-(o.bet[o.cur]||0)>0?'фолд':'чек'}</button></div>`:''}
   <details class="box"><summary>Управление партией</summary><p class="small mute">Партия идёт, пока у всех, кроме одного, не кончатся фишки. Можно закончить раньше: победит тот, у кого больше фишек.</p>
@@ -2245,7 +2248,7 @@ function pPhase(vp){const o=S.po;if(!o)return '';const ph=S.phase;
   return pResult(vp)+pBoard()+pActs(vp)+pMine(vp)+pBust(vp)+`<div class="box"><div class="lbl">Стол</div>${o.seats.map(p=>pSeat(p,vp)).join('')}</div>`+pHost()}
 function pEndView(vp){const o=S.po,F=S.final||{pts:{}};recordStats();const rank=pRank();
   return `<div class="win town"><h1>${esc(nm(rank[0]))} — победа</h1><p>${esc(S.win.why)}</p></div>
-  <div class="box"><div class="lbl">Итоговые места</div>${rank.map((p,i)=>`<p class="small"><b>${i+1}. ${esc(nm(p))}</b> · ${o.ch[p]} фишек${o.rb[p]?' <span class="mute">· докупался</span>':''} <span class="mute">· +${F.pts[p]||0} оч.</span></p>`).join('')}<p class="tiny mute">В рейтинг: 1-е место +3, 2-е +2, 3-е +1 (вдвоём: +2 и +1).</p></div>
+  <div class="box"><div class="lbl">Итоговые места</div>${rank.map((p,i)=>`<p class="small"><b>${i+1}. ${esc(nm(p))}</b> · ${pF(o.ch[p])} фишек${o.rb[p]?' <span class="mute">· докупался</span>':''} <span class="mute">· +${F.pts[p]||0} оч.</span></p>`).join('')}<p class="tiny mute">В рейтинг: 1-е место +3, 2-е +2, 3-е +1 (вдвоём: +2 и +1).</p></div>
   <div class="box"><div class="lbl">Последние раздачи</div>${o.hist.slice(0,12).map(t=>`<p class="small">${esc(t)}</p>`).join('')}</div>
   <div class="row"><button class="btn pri" data-act="shareCard">Поделиться итогами</button><button class="btn" data-act="tab" data-v="stats">Статистика</button></div>`}
 function pRules(){return `<details class="box" open><summary>Правила за минуту</summary><ul class="rules small">
@@ -2256,19 +2259,21 @@ function pRules(){return `<details class="box" open><summary>Правила за
 <li>Побеждает лучшая комбинация из 5 карт среди ваших двух и пяти общих. По старшинству: старшая карта, пара, две пары, сет, стрит, флеш, фулл-хаус, каре, стрит-флеш, роял-флеш.</li>
 <li>Если кто-то в олл-ине на меньшую сумму, он может выиграть только ту часть банка, которую покрыл. Остальное — побочный банк, его делят другие. Всё считается само.</li>
 <li>Если включён таймер, по истечении времени телефон сам делает чек, а если нужно доплатить — фолд.</li>
-<li>Блайнды растут каждые несколько раздач (настраивается). Кто остался без фишек, может один раз докупиться, если это включено.</li>
+<li>Начальный стек (от 1к до 100к) и скорость роста блайндов выбирает создатель в лобби: быстро — каждые 4 раздачи, обычно — каждые 8, медленно — каждые 12. Кто остался без фишек, может один раз докупиться, если это включено.</li>
 <li>Партия до последнего игрока с фишками. Создатель может закончить раньше — тогда побеждает тот, у кого больше фишек.</li></ul></details>`}
 function pDossier(){const o=S.po;return `<div class="box"><div class="lbl">История раздач</div>${o&&o.hist.length?o.hist.map(t=>`<p class="small">${esc(t)}</p>`).join(''):'<p class="small mute">Пока пусто.</p>'}</div>`+pCombos()}
 function pCombos(){const ex=[['Роял-флеш','10 В Д К Т одной масти'],['Стрит-флеш','5 подряд одной масти'],['Каре','4 одинаковые'],['Фулл-хаус','3 + 2 одинаковые'],['Флеш','5 одной масти'],['Стрит','5 подряд'],['Сет','3 одинаковые'],['Две пары','2 + 2'],['Пара','2 одинаковые'],['Старшая карта','ничего из этого']];
   return `<details class="box"><summary>Комбинации — от старшей к младшей</summary>${ex.map(([a,b])=>`<p class="small"><b>${a}</b> <span class="mute">— ${b}</span></p>`).join('')}<p class="tiny mute">Т — туз, К — король, Д — дама, В — валет. Туз может быть и младшей картой стрита: Т 2 3 4 5.</p></details>`}
-function pLobby(){const host=isHost,o=Object.assign({},PDEF,S.popts||{}),n=S.players.length;const bl=PBL[PSTK[o.stack]!=null?PSTK[o.stack]:1];
+function pLobby(){const host=isHost,o=Object.assign({},PDEF,S.popts||{}),n=S.players.length;const bl=pBlv(0,Math.max(2,Math.round(o.stack/100)));
   const b=(k,v,t)=>`<button class="btn sm ${o[k]===v?'pri':'ghost'}" ${host?`data-act="popt" data-v="${k}:${v}"`:'disabled'}>${t}</button>`;
-  return `<div class="box"><div class="lbl">Настройки ${host?'':'· меняет создатель'}</div>
-  <p class="small" style="margin:4px 0">Фишек у каждого</p><div class="row" style="gap:6px">${b('stack',500,'500')}${b('stack',1000,'1 000')}${b('stack',2000,'2 000')}${b('stack',5000,'5 000')}</div>
-  <p class="small" style="margin:10px 0 4px">Блайнды растут</p><div class="row" style="gap:6px">${b('grow',6,'каждые 6 раздач')}${b('grow',10,'каждые 10')}${b('grow',0,'не растут')}</div>
+  const sp={4:'быстро',8:'обычно',12:'медленно'};
+  return `<div class="box popts"><div class="lbl">Настройки ${host?'':'· меняет создатель'}</div>
+  <p class="small" style="margin:4px 0">Начальный стек</p><div class="row" style="gap:6px">${PSTACKS.map(v=>b('stack',v,pK(v))).join('')}</div>
+  <p class="small" style="margin:10px 0 4px">Скорость блайндов</p><div class="row" style="gap:6px">${b('grow',4,'Быстро')}${b('grow',8,'Обычно')}${b('grow',12,'Медленно')}${b('grow',0,'Не растут')}</div>
+  <p class="tiny mute" style="margin:4px 0 0">${o.grow?`Блайнды растут каждые ${pPl(o.grow,['раздачу','раздачи','раздач'])}: ${[0,1,2,3].map(i=>pBlv(i,Math.max(2,Math.round(o.stack/100))).map(pK).join('/')).join(' → ')} → …`:'Блайнды всю партию одинаковые — партия может затянуться.'}</p>
   <p class="small" style="margin:10px 0 4px">Время на ход</p><div class="row" style="gap:6px">${b('tmr',30,'30 с')}${b('tmr',60,'60 с')}${b('tmr',0,'без таймера')}</div>
   <p class="small" style="margin:10px 0 4px">Докупка</p><div class="row" style="gap:6px">${b('rebuy',true,'можно один раз')}${b('rebuy',false,'нельзя')}</div>
-  <p class="tiny mute" style="margin-top:10px">Стартовые блайнды ${bl[0]}/${bl[1]}. ${n>10?'<b style="color:#ff8a90">За столом максимум 10 игроков.</b>':'От 2 до 10 игроков.'} Чем быстрее растут блайнды, тем короче партия.</p></div>`}
+  <p class="tiny mute" style="margin-top:10px">Старт: у каждого ${pK(o.stack)} фишек, блайнды ${bl.map(pK).join('/')} (стек = 100 больших блайндов). ${n>10?'<b style="color:#ff8a90">За столом максимум 10 игроков.</b>':'От 2 до 10 игроков.'}</p></div>`}
 function pokHome(g){return `<button class="btn ghost sm" data-act="page" data-v="hub" style="margin-top:6px">← Все игры</button>
   <div class="hero"><h1><span>Покер</span></h1><p class="mute">${esc(g.d)} От ${g.min} до 10 игроков.</p></div>
   <div class="box" id="enter"><div class="lbl">Ваше имя</div><input id="nm" maxlength="20" placeholder="Например, Куаныш" value="${esc(me.name)}" autocomplete="off">
@@ -2280,16 +2285,16 @@ function pokHome(g){return `<button class="btn ghost sm" data-act="page" data-v=
 function pBar(){const o=S.po,ph=S.phase;let lab='',btn='';
   if(ph==='hand'){const c=o.cur;const left=o.dl?Math.max(0,Math.ceil((o.dl-pNow())/1000)):0;
     lab=c===me.pid?`<b>Ваш ход</b>${PST[o.st]}${o.dl?' · осталось '+pTm(left):''}`:`<b>${PST[o.st]}</b>${c?'Ходит '+esc(nm(c))+(o.dl?' · '+pTm(left):''):'Открываем карты…'}`}
-  else if(ph==='show'){const req=S.players.filter(p=>o.ch[p.pid]>0),g=req.filter(p=>S.inp[p.pid]?.go).length,my=S.inp[me.pid]?.go||mine('go',me.pid);
+  else if(ph==='show'){const req=S.players.filter(p=>o.ch[p.pid]>0||pCanRb(p.pid)),g=req.filter(p=>S.inp[p.pid]?.go).length,my=S.inp[me.pid]?.go||mine('go',me.pid);
     lab=`<b>${o.stop?'Последняя раздача сыграна':'Следующая раздача'}</b>Когда готовы все: ${g}/${req.length}`;
-    if(o.ch[me.pid]>0||isHost)btn=`<button class="btn ${my?'':'pri'}" data-act="go" ${my?'disabled':''}>${my?'Жду других':o.stop?'К итогам':'Раздать'}</button>`}
+    if(o.ch[me.pid]>0||isHost||pCanRb(me.pid))btn=`<button class="btn ${my?'':pCanRb(me.pid)?'ghost':'pri'}" data-act="go" ${my?'disabled':''}>${my?'Жду других':pCanRb(me.pid)?'Без докупки':o.stop?'К итогам':'Раздать'}</button>`}
   return `<div class="hostbar"><div class="in"><div class="lab">${lab}</div>${btn}</div></div>`}
 function pShareText(){const o=S.po;return `Покер · Вечер игр\n${S.win.why}\n`+pRank().map((p,i)=>`${i+1}. ${nm(p)} — ${o.ch[p]} фишек`).join('\n')+'\n'+location.origin+location.pathname+'#poker'}
 const pTm=l=>`<span class="pktm">${l}</span> с`;
 setInterval(()=>{if(!S||!PK()||S.phase!=='hand'||!S.po||!S.po.cur)return;const o=S.po;
   if(o.dl){const l=String(Math.max(0,Math.ceil((o.dl-pNow())/1000)));document.querySelectorAll('.pktm').forEach(e=>{if(e.textContent!==l)e.textContent=l})}
   if(isHost&&o.cur!==me.pid&&Date.now()-(o.curAt||0)>20000&&ui.pkWait!==o.seq){ui.pkWait=o.seq;render()}},500);
-document.addEventListener('input',e=>{if(e.target.id!=='pkr'||!S||!PK())return;ui.pkR=+e.target.value;const o=S.po,vp=me.pid,maxTo=(o.bet[vp]||0)+o.ch[vp],l=$('#pkrl');if(l)l.textContent=ui.pkR>=maxTo?`Олл-ин ${maxTo}`:(o.max?'Рейз до ':'Ставка ')+ui.pkR});
+document.addEventListener('input',e=>{if(e.target.id!=='pkr'||!S||!PK())return;ui.pkR=+e.target.value;const o=S.po,vp=me.pid,maxTo=(o.bet[vp]||0)+o.ch[vp],l=$('#pkrl');if(l)l.textContent=ui.pkR>=maxTo?`Олл-ин ${pF(maxTo)}`:(o.max?'Рейз до ':'Ставка ')+pF(ui.pkR)});
 
 /* ---------- commit / sync ---------- */
 function commit(){S.rev++;S.hostNow=Date.now();if(S.local)LS.set('maf.local',S);else{LS.set('maf.host',{code:S.code,S});broadcast()}speak();render()}
@@ -2302,7 +2307,7 @@ function handlePeer(pr){let c=false,pl=P(pr.pid);const name=clean(pr.name).slice
   if(!pl){if(S.phase==='lobby'&&S.players.length<16&&!S.kicked.includes(pr.pid)){S.players.push({pid:pr.pid,name,alive:true});c=true;pl=P(pr.pid)}else return false}
   else if(S.phase==='lobby'&&pl.name!==name){pl.name=name;c=true}
   if(Array.isArray(pr.sp)){const ids=new Set(S.log.map(l=>l.i));for(const e of pr.sp.slice(-4)){if(e&&typeof e.i==='string'&&!ids.has(e.i)&&typeof e.t==='string'&&clean(e.t)){addLog({i:e.i,d:S.day,s:P(e.s)?e.s:pr.pid,by:pr.pid,t:clean(e.t).slice(0,280)});c=true}}}
-  if(pr.pk===S.pk&&pr.a&&typeof pr.a==='object'){for(const k of ['pa','shw','rb','sv','mv','vn','tk','kl','rp','btn','sab','fix','iv','rdy','ans','hint','req','share','code','acc','dn','shot','ready','cv','team','ms','vote','na','go','ne','use','rv','oa','bv','act'])if(pr.a[k]!==undefined&&input(pr.pid,k,pr.a[k]))c=true}
+  if(pr.pk===S.pk&&pr.a&&typeof pr.a==='object'){for(const k of ['pa','rb','sv','mv','vn','tk','kl','rp','btn','sab','fix','iv','rdy','ans','hint','req','share','code','acc','dn','shot','ready','cv','team','ms','vote','na','go','ne','use','rv','oa','bv','act'])if(pr.a[k]!==undefined&&input(pr.pid,k,pr.a[k]))c=true}
   return c}
 function onRemote(d){if(!d||!d.gid)return;if(S&&S.gid===d.gid&&d.rev<S.rev)return;
   S=JSON.parse(JSON.stringify(d));ui.skew=(S.hostNow||Date.now())-Date.now();
@@ -2777,7 +2782,6 @@ const A={
   pkSet:v=>{ui.pkR=+v;render()},
   pkStep:v=>{const o=S.po,bb=pBl()[1],mb=o.bet[me.pid]||0,maxTo=mb+o.ch[me.pid],minTo=Math.min(maxTo,o.max+o.minR);ui.pkR=Math.max(minTo,Math.min(maxTo,(+ui.pkR||minTo)+(+v)*bb));render()},
   pkPeek:()=>{const k=S.po.hand+':'+S.gid;ui.pkOpen=ui.pkOpen===k?null:k;render()},
-  pkShow:()=>send('shw',true,me.pid),
   pkRb:()=>send('rb',true,me.pid),
   pkStop:()=>{if(!isHost)return;S.po.stop=!S.po.stop;commit()},
   pkSkip:()=>{if(!isHost)return;pTimeout();commit()},
