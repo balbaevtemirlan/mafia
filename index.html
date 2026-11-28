@@ -276,6 +276,8 @@ ul.rules{padding-left:20px}ul.rules li{margin:6px 0}
  .gmain>.opt,.gsolo>.opt,.gmain>button.pl,.gsolo>button.pl{grid-column:auto;margin:6px 0}
  .pkrow{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px;align-items:start}
  .pkrow>.box{margin:12px 0}
+ .mis{max-width:640px;margin:12px auto}.mis button{aspect-ratio:auto;min-height:190px}
+ .imap{max-width:600px;margin:6px auto 12px}
 }
 @media (min-width:1500px){.wrap,.hostbar .in{max-width:1380px}.gcols{grid-template-columns:minmax(0,1fr) 440px}}
 
@@ -2888,7 +2890,7 @@ function hl(t){let x=esc(t);const names=S.players.map(p=>esc(p.name)).filter(n=>
 
 function netBanner(){return (!S||S.local||isHost||!net.status)?'':`<div class="box" style="border-color:var(--red)"><p class="small">${esc(net.status)}</p></div>`}
 function gameView(){return gCols(gameViewRaw())}
-function gCols(x){const i=x.indexOf('<!--body-->');if(i<0)return x;const head=x.slice(0,i);let body=x.slice(i+11);const side=[];body=body.replace(/<!--side-->([\s\S]*?)<!--\/side-->/g,(m,c)=>{side.push(c);return ''});
+function gCols(x){if(ui.tab==='rules')x=x.replace(/<details class="box">/g,'<details class="box" open>');const i=x.indexOf('<!--body-->');if(i<0)return x;const head=x.slice(0,i);let body=x.slice(i+11);const side=[];body=body.replace(/<!--side-->([\s\S]*?)<!--\/side-->/g,(m,c)=>{side.push(c);return ''});
   return head+(side.length?`<div class="gcols"><div class="gmain">${body}</div><aside class="gside">${side.join('')}</aside></div>`:`<div class="gsolo">${body}</div>`)}
 function gameViewRaw(){const vp=viewPid();let h=(PK()?pTop():IM()?iTop():ES()?eTop():DT()?dTop():CL()?cTop():BK()?bTop():topBar())+netBanner();
   h+=`<div class="tabs"><button class="${ui.tab==='game'?'on':''}" data-act="tab" data-v="game">Игра</button><button class="${ui.tab==='dos'?'on':''}" data-act="tab" data-v="dos">${PK()?'История':'Досье'}</button><button class="${ui.tab==='rules'?'on':''}" data-act="tab" data-v="rules">Правила</button></div><!--body-->`;
